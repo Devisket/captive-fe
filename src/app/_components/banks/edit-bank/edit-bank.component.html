@@ -1,0 +1,58 @@
+@if(bank){
+  <div class="row d-flex justify-content-center">
+    <div class="col-4">
+      <form #editBankForm="ngForm" autocomplete="off" (ngSubmit)="updateBank()">
+        <h2 class="text-center"> {{ bank.bankName }}</h2>
+        <hr />
+        <div class="mb-3 form-floating">
+          <input
+            type="text"
+            class="form-control"
+            name="bankShortName"
+            [(ngModel)]="bank.bankShortName"
+            placeholder="Short Name"
+          />
+          <label>Short Name</label>
+        </div>
+        <div class="mb-3 form-floating">
+          <input
+            type="text"
+            class="form-control"
+            name="bankName"
+            [(ngModel)]="bank.bankName"
+            placeholder="Complete Name"
+          />
+          <label>Bank Name</label>
+        </div>
+        
+        <div class="form-group text-center">
+          <button class="btn btn-success me-2 btn-sm" 
+          [disabled]="!editBankForm.dirty"
+          type="submit">
+            Update
+          </button>
+          <button
+            class="btn btn-default me-2 btn-sm"
+            routerLink="/banks"
+            type="button"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  @if(editBankForm.dirty){
+    <div class="row">
+      <div class="col-4 mt-3 offset-4 text-center text-sm">
+        <div class="alert alert-warning pb-0">
+          <p>
+            <strong>Warning: </strong>
+            You have made changes. Any unsaved changes will be lost.
+          </p>
+        </div>
+      </div>
+    </div>
+  }
+}

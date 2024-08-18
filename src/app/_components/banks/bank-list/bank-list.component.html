@@ -1,0 +1,34 @@
+<div class="row">
+    <div class="d-flex mt-3 justify-content-between">
+        <h2>Client Bank List</h2>
+        <button routerLink="/register-bank" class="btn btn-outline-primary"><i class="fa fa-plus"></i> Register New Bank</button>
+    </div>
+
+    <div class="container my-3">
+        <form class="d-flex" role="search">
+            <input class="form-control me-2" type="search" placeholder="Type to start searching bank" aria-label="Search">
+        </form>
+    </div>
+
+    @for (bank of bankService.banks(); track $index ) {
+        <div class="col-2">
+            <div class="card mb-4">
+                <div routerLink="/banks/{{bank.id}}" class="card-img-wrapper">
+                    <img src="./../../../../assets/images/bank.jpg" alt="{{bank.bankShortName}}" class="card-img-top p-2">
+                    <ul class="list-inline member-icons animate text-center">
+                        <li class="list-inline-item">
+                            <button routerLink="/banks/{{bank.id}}/edit" class="btn btn-info"><i class="fa fa-edit"></i></button>
+                        </li>
+                        <li class="list-inline-item">
+                            <button 
+                                class="btn btn-danger" disabled><i class="fa fa-trash"></i></button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body p-1">
+                    <h6 class="card-title text-center">{{ bank.bankShortName }}</h6>
+                </div>
+            </div>
+        </div>
+    }
+</div>
