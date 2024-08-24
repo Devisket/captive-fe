@@ -4,7 +4,7 @@
     <div class="container">
       <a routerLink="/" title="Nox Player" rel="home" class="navbar-brand"> 
         <div class="d-flex justify-content-start">
-          <img class="rounded-3" alt="Captive Logo" src="./../.././../assets/images/captive-logo.png" title="Captive App" width="28" height="28">
+          <img class="rounded-3" alt="Captive Logo" src="../../../../assets/images/captive-logo.png" title="Captive App" width="28" height="28">
           <strong class="mx-2">CAPTIVE</strong>
       </div>
     </a>
@@ -15,10 +15,10 @@
           </li>
           <li class="nav-item">
             <a class="nav-link">Ordering</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link">Accounting</a>
           </li> -->
+          <li class="nav-item">
+            <a routerLink="/users" class="nav-link">User List</a>
+          </li> 
           <li class="nav-item">
             <a routerLink="/banks" class="nav-link">Bank List</a>
           </li>
@@ -30,6 +30,9 @@
             <a class="nav-link">Contact</a>
           </li>
         }
+        <li class="nav-item">
+          <a routerLink="/errors" class="nav-link">Error</a>
+        </li>
       </ul>
   
       @if(accountService.currentUser()){

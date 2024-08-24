@@ -1,26 +1,22 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, inject, OnInit } from '@angular/core';
+import { DatePipe, TitleCasePipe } from '@angular/common';
+import { Component, inject, OnInit} from '@angular/core';
+import { UsersService } from '../../../_services/users.service';
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [],
+  imports: [TitleCasePipe, DatePipe],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.css'
 })
 export class UserListComponent implements OnInit {
-  http = inject(HttpClient);
-  users: any;
-  
+  userService = inject(UsersService);
+
   ngOnInit(): void {
-    this.getUsers();
+    if (this.userService.users().length === 0) this.loadUsers();
   }
 
-  getUsers() {
-    this.http.get('https://localhost:5001/api/users').subscribe({
-      next: response => this.users = response,
-      error: error => console.log(error),
-      complete: () => console.group('Request completed')
-    })
+  loadUsers() {
+    this.userService.getUsers();
   }
 }

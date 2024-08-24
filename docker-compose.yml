@@ -1,0 +1,15 @@
+services:
+  ordering:
+    container_name: orderingcontainer
+    build: .
+    image: ordering:v1
+    ports:
+      - 80:80
+    expose:
+      - 80
+    networks:
+      - internalnet
+
+networks:
+  internalnet:
+    driver: bridge

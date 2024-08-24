@@ -1,0 +1,18 @@
+<h4>Internal server error</h4>
+
+@if(error) {
+    <h5 class="text-danger">Error: {{error.message}}</h5>
+    <p class="font-weight-bold">Note: this is an API error.</p>
+
+    <p>What to do next?</p>
+    <ul>
+        <li>Solution 1.</li>
+        <li>Solution 2.</li>
+        <li>Solution 3.</li>
+        <li>Solution 4.</li>
+    </ul>
+    <p>Following..</p>
+    <code class="mt-5" style="background-color: whitesmoke;">
+        {{ error.details }}
+    </code>
+}

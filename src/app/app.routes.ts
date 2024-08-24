@@ -8,6 +8,10 @@ import { BankListComponent } from './_components/banks/bank-list/bank-list.compo
 import { EditProfileComponent } from './_components/auth/edit-profile/edit-profile.component';
 import { preventUnsavedChangesGuard } from './_guards/prevent-unsaved-changes.guard';
 import { AddBankComponent } from './_components/banks/add-bank/add-bank.component';
+import { UserListComponent } from './_components/users/user-list/user-list.component';
+import { TestErrorsComponent } from './_components/errors/test-errors/test-errors.component';
+import { NotFoundComponent } from './_components/errors/not-found/not-found.component';
+import { ServerErrorComponent } from './_components/errors/server-error/server-error.component';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -16,6 +20,7 @@ export const routes: Routes = [
         runGuardsAndResolvers: 'always',
         canActivate: [authGuard],
         children: [
+            {path: 'users', component: UserListComponent},
             {path: 'banks', component: BankListComponent},
             {path: 'banks/:id', component: BankDetailComponent},
             {path: 'banks/:id/edit', component: EditBankComponent,
@@ -26,6 +31,9 @@ export const routes: Routes = [
             {path: 'register-bank', component: AddBankComponent}
         ]
     },
+    {path: 'errors', component: TestErrorsComponent},
+    {path: 'not-found', component: NotFoundComponent},
+    {path: 'server-error', component: ServerErrorComponent},
     {
         path: '**', // Your specified path
         component: HomeComponent,

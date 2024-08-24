@@ -1,10 +1,10 @@
 import { Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NavComponent } from './layouts/nav/nav.component';
 import { AccountService } from './_services/account.service';
 import { HomeComponent } from "./_components/home/home.component";
-import { FooterComponent } from './layouts/footer/footer.component';
+import { FooterComponent } from './_components/layouts/footer/footer.component';
 import { NgxSpinnerComponent } from 'ngx-spinner';
+import { NavComponent } from './_components/layouts/nav/nav.component';
 
 @Component({
   selector: 'app-root',
