@@ -10,7 +10,7 @@
         </form>
     </div>
 
-    @for (bank of bankService.banks(); track $index ) {
+    @for (bank of bankInfos; track $index ) {
         <div class="col-2">
             <div class="card mb-4">
                 <div routerLink="/banks/{{bank.id}}" class="card-img-wrapper">
@@ -31,4 +31,5 @@
             </div>
         </div>
     }
+  
 </div>

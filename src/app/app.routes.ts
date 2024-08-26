@@ -28,7 +28,7 @@ export const routes: Routes = [
             },
             {path: 'branches/:id', component: EditBranchComponent},
             {path: 'edit-profile', component: EditProfileComponent},
-            {path: 'register-bank', component: AddBankComponent}
+            { path: 'register-bank', component: AddBankComponent }
         ]
     },
     {path: 'errors', component: TestErrorsComponent},

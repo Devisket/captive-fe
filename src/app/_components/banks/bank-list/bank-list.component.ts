@@ -3,6 +3,7 @@ import { BanksService } from '../../../_services/banks.service';
 import { RouterLink } from '@angular/router';
 import { NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Bank } from '../../../_models/bank';
 
 @Component({
   selector: 'app-bank-list',
@@ -13,12 +14,11 @@ import { FormsModule } from '@angular/forms';
 })
 export class BankListComponent implements OnInit {
   bankService = inject(BanksService);
+  bankInfos: Bank[] = [];
 
   ngOnInit(): void {
-    if (this.bankService.banks().length === 0) this.loadBanks();
-  }
-
-  loadBanks() {
-    this.bankService.getBanks();
+    this.bankService.getBanks().subscribe(data => {
+      this.bankInfos = data.bankInfos;
+    });
   }
 }

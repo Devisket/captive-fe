@@ -1,6 +1,6 @@
 import { Component, HostListener, inject, OnInit, ViewChild } from '@angular/core';
 import { Bank } from '../../../_models/bank';
-import { BanksService } from '../../../_services/banks.service';
+import { BanksService } from '../../../_services/BanksService';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -35,20 +35,6 @@ export class EditBankComponent implements OnInit{
   loadBank() {
     let bankId = this.route.snapshot.paramMap.get('id');
     if(!bankId) return;
-    this.bankService.getBank(bankId).subscribe({
-      next: bank => this.bank = bank
-    })
+   
   }
-
-  updateBank() {
-    this.bankService.updateBank(this.editBankForm?.value, this.bank?.id).subscribe({
-      next: _ => {
-        this.toastr.success("Bank has been updated successsfully");
-        this.editBankForm?.reset(this.bank);
-        this.router.navigateByUrl('/banks');
-      },
-      error: error => this.toastr.error("Not saved")
-    })
-  }
-
 }

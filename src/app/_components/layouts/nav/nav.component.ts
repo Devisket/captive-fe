@@ -24,7 +24,7 @@ export class NavComponent {
   login() {
     this.accountService.login(this.model).subscribe({
       next: response => {
-        this.router.navigateByUrl('/banks');
+        this.router.navigateByUrl('/bank-info');
       },
       error: error => {
         this.toastr.error(error.error);

@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { BanksService } from '../../../_services/banks.service';
+import { BanksService } from '../../../_services/BanksService';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Bank } from '../../../_models/bank';
 import { TabDirective, TabsModule } from 'ngx-bootstrap/tabs';
@@ -26,8 +26,8 @@ export class BankDetailComponent implements OnInit{
   loadBank() {
     const bankId = this.route.snapshot.paramMap.get('id');
     if(!bankId) return;
-    this.bankService.getBank(bankId).subscribe({
-      next: bank => this.bank = bank
-    })
+    //this.bankService.getBank(bankId).subscribe({
+    //  next: bank => this.bank = bank
+    //})
   }
 }
