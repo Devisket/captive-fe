@@ -15,8 +15,13 @@ import { Bank } from '../../../_models/bank';
 export class BankListComponent implements OnInit {
   bankService = inject(BanksService);
   bankInfos: Bank[] = [];
+  selectedBank: any = {};
 
   ngOnInit(): void {
+    this.getBanks();
+  }
+
+  getBanks() {
     this.bankService.getBanks().subscribe(data => {
       this.bankInfos = data.bankInfos;
     });

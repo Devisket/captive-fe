@@ -1,9 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { BanksService } from '../../../_services/BanksService';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Bank } from '../../../_models/bank';
 import { TabDirective, TabsModule } from 'ngx-bootstrap/tabs';
 import { DatePipe, NgFor } from '@angular/common';
+import { BanksService } from '../../../_services/banks.service';
 
 @Component({
   selector: 'app-bank-detail',

@@ -10,8 +10,13 @@ import { Observable, of, tap } from 'rxjs';
 export class BanksService {
   private http = inject(HttpClient);
   queryUrl = environment.queryUrl;
+  commandUrl = environment.commandUrl;
 
   getBanks(): Observable<any> {
     return this.http.get<any>(this.queryUrl + "Bank");
+  }
+
+  addBank(bank: any) {
+    return this.http.post(this.commandUrl + "BankInfo", bank);
   }
 }
