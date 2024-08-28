@@ -1,9 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { BanksService } from '../../../_services/banks.service';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Bank } from '../../../_models/bank';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-bank-list',
@@ -14,8 +15,9 @@ import { Bank } from '../../../_models/bank';
 })
 export class BankListComponent implements OnInit {
   bankService = inject(BanksService);
+  router = inject(Router);
+  private toastr = inject(ToastrService);
   bankInfos: Bank[] = [];
-  selectedBank: any = {};
 
   ngOnInit(): void {
     this.getBanks();
@@ -24,6 +26,23 @@ export class BankListComponent implements OnInit {
   getBanks() {
     this.bankService.getBanks().subscribe(data => {
       this.bankInfos = data.bankInfos;
+    });
+  }
+
+  deleteBank(bankId: any, event: Event) { 
+    if (!confirm('Confirm Deletion!')) {
+      event.preventDefault();
+      return;
+    }
+    this.bankService.deleteBank(bankId).subscribe({
+      error: (error) => {
+        this.toastr.error(error.error);
+        console.log(error.error);
+      },
+      next: (response) => {
+        this.toastr.success('Successfully deleted bank.');
+        this.bankInfos = this.bankInfos.filter(bank => bank.id !== bankId);
+      },
     });
   }
 }

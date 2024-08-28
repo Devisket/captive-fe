@@ -1,0 +1,117 @@
+@if (branch) {
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">{{ title }}</h4>
+        <button type="button" class="btn-close close pull-right" (click)="bsModalRef.hide()">
+            <span class="visually-hidden">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form id="editBranchForm" #editBranchForm="ngForm" autocomplete="off" (ngSubmit)="updateBranch()">
+            <h2 class="text-center"> UPDATE BRANCH</h2>
+            <hr />
+            <div class="row">
+                <div class="col-6">
+                    <div class="mb-3 form-floating">
+                        <input type="text"
+                            class="form-control"
+                            name="branchName"
+                            [(ngModel)]="branch.branchName"
+                            placeholder="Short Name" />
+                        <label>Branch Name</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="mb-3 form-floating">
+                        <input type="text"
+                            class="form-control"
+                            name="brstnCode"
+                            [(ngModel)]="branch.brstn"
+                            placeholder="Complete Name" />
+                        <label>BRSTN CODE</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <div class="mb-3 form-floating">
+                        <input type="text"
+                            class="form-control"
+                            name="mergingBranchId"
+                            [(ngModel)]="branch.mergingBranchId"
+                            placeholder="Merging To" />
+                        <label>Merging to</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="mb-3 form-floating">
+                        <select class="form-control"
+                            name="tagId"
+                            [(ngModel)]="branch.tagId"
+                            placeholder="tagId">
+                            <option value=""></option>
+                            @for (tag of tags; track $index) {
+                                <option value="{{tag}}">{{tag}}</option>
+                            }
+                        </select>
+                        <label>Tag</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-3 form-floating">
+                <input type="text"
+                    class="form-control"
+                    name="branchAddress1"
+                    [(ngModel)]="branch.branchAddress1"
+                    placeholder="Address" />
+                <label>Address 1</label>
+            </div>
+            <div class="mb-3 form-floating">
+                <input type="text"
+                    class="form-control"
+                    name="branchAddress2"
+                    [(ngModel)]="branch.branchAddress2"
+                    placeholder="Address" />
+                <label>Address 2</label>
+            </div>
+            <div class="mb-3 form-floating">
+                <input type="text"
+                    class="form-control"
+                    name="branchAddress3"
+                    [(ngModel)]="branch.branchAddress3"
+                    placeholder="Address" />
+                <label>Address 3</label>
+            </div>
+            <div class="mb-3 form-floating">
+                <input type="text"
+                    class="form-control"
+                    name="branchAddress4"
+                    [(ngModel)]="branch.branchAddress4"
+                    placeholder="Address" />
+                <label>Address 2</label>
+            </div>
+            <div class="mb-3 form-floating">
+                <input type="text"
+                    class="form-control"
+                    name="branchAddress5"
+                    [(ngModel)]="branch.branchAddress5"
+                    placeholder="Address" />
+                <label>Address 5</label>
+            </div>
+            <input type="text" name="id" [(ngModel)]="branch.id"/>
+            <input type="text" name="bankInfoId" [(ngModel)]="bankInfoId"/>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-between">
+            
+            <button type="button" tabindex="-1" class="btn btn-default me-2 btn-sm" (click)="bsModalRef.hide()">Cancel</button>
+            <button type="submit" 
+                class="btn btn-success me-2 btn-sm"
+                [disabled]="!editBranchForm.dirty"
+                form="editBranchForm"
+                ><i class="fa fa-save"></i>Save
+            </button>
+        </div>
+    </div>
+}

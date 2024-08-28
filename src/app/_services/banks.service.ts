@@ -19,4 +19,8 @@ export class BanksService {
   addBank(bank: any) {
     return this.http.post(this.commandUrl + "BankInfo", bank);
   }
+
+  deleteBank(bankId: any) {
+    return this.http.delete(this.commandUrl + "BankInfo/id/" + bankId);
+  }
 }
