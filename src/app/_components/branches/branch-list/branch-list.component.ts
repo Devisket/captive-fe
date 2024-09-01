@@ -23,12 +23,10 @@ export class BranchListComponent implements OnInit{
   toastr = inject(ToastrService);
   bsModalRef: BsModalRef<EditBranchComponent> = new BsModalRef<EditBranchComponent>();
   modalService = inject(BsModalService);
-  private cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.bankInfo;
     this.getBranches();
-    this.cdr.markForCheck();
   }
 
   getBranches() {

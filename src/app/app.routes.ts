@@ -11,6 +11,9 @@ import { TestErrorsComponent } from './_components/errors/test-errors/test-error
 import { NotFoundComponent } from './_components/errors/not-found/not-found.component';
 import { ServerErrorComponent } from './_components/errors/server-error/server-error.component';
 import { BankListComponent } from './_components/banks/bank-list/bank-list.component';
+import { AddProductTypeComponent } from './_components/product-types/add-product-type/add-product-type.component';
+import { EditProductTypeComponent } from './_components/product-types/edit-product-type/edit-product-type.component';
+import { AddFormCheckComponent } from './_components/form-checks/add-form-check/add-form-check.component';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -26,7 +29,10 @@ export const routes: Routes = [
                 canDeactivate: [preventUnsavedChangesGuard]
             },
             {path: 'edit-profile', component: EditProfileComponent},
-            { path: 'register-bank', component: AddBankComponent }
+            { path: 'register-bank', component: AddBankComponent },
+            { path: 'add-product-type/:id', component: AddProductTypeComponent },
+            { path: 'edit-product-type/:id/bank/:bankId', component: EditProductTypeComponent },
+            { path: 'add-form-check/:id/bank/:bankId', component: AddFormCheckComponent }
         ]
     },
     {path: 'errors', component: TestErrorsComponent},

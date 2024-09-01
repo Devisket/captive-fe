@@ -1,0 +1,105 @@
+@if (bankInfo) {
+    <div class="row d-flex justify-content-center">
+      <div class="col-6">
+        <form id="addFormCheckForm" #addFormCheckForm="ngForm" autocomplete="off" (ngSubmit)="addFormCheck()">
+          <h2 class="text-center"> Add Form Check</h2>
+          <hr />
+            <div class="mb-3">
+                <input
+                type="text"
+                class="form-control"
+                value="{{ bankInfo.bankName }}"
+                disabled/>
+            </div>
+            @if (productType) {
+                <input type="hidden" name="productTypeId" [(ngModel)]="productType.productTypeId"/>
+            }
+            <div class="mb-3">
+                <input
+                type="text"
+                class="form-control"
+                value="{{ productType?.productTypeName }}"
+                disabled/>
+            </div>
+            <div class="mb-3 form-floating">
+                <input 
+                class="form-control" 
+                name="checkType"
+                [(ngModel)]="model.checkType"
+                />
+                <label>Check Type</label>
+            </div>
+            <div class="mb-3 form-floating">
+                <input 
+                class="form-control" 
+                name="formType"
+                [(ngModel)]="model.formType"
+                />
+                <label>Form Type</label>
+            </div>
+            <div class="mb-3 form-floating">
+                <input 
+                class="form-control" 
+                name="description"
+                [(ngModel)]="model.description"
+                />
+                <label>Description</label>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <div class="mb-3 form-floating">
+                        <input
+                        class="form-control" 
+                        name="fileInitial"
+                        [(ngModel)]="model.fileInitial"
+                        />
+                        <label>File Initial</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="mb-3 form-floating">
+                        <input type="number"
+                        class="form-control" 
+                        name="quantity"
+                        [(ngModel)]="model.quanitity"
+                        />
+                        <label>Quantity</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <button
+                class="btn btn-outline-secondary me-2 btn-sm"
+                routerLink="/banks/{{ bankInfo.id }}"
+                type="button"
+                tabindex="-1"
+                >
+                Cancel
+                </button>
+                <button
+                class="btn btn-success me-2 btn-sm"
+                [disabled]="!addFormCheckForm.dirty"
+                type="submit"
+                >
+                <i class="fa fa-save"></i>
+                Save
+                </button>
+            </div>
+        </form>
+      </div>
+    </div>
+    @if(addFormCheckForm.dirty){
+    <div class="row">
+      <div class="col-4 mt-3 offset-4 text-center text-sm">
+        <div class="alert alert-warning pb-0">
+          <p>
+            <strong>Warning: </strong>
+            Any unsaved changes will be lost.
+          </p>
+        </div>
+      </div>
+    </div>
+    } }
+    

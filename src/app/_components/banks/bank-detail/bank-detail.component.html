@@ -1,67 +1,68 @@
 <div class="d-flex justify-content-between">
-    <h3>{{ bankInfo?.bankName }}</h3>
-    <button routerLink="/banks" class="btn btn-outline-secondary btn-sm float-end">Back To Bank List</button>
+  <h3>{{ bankInfo?.bankName }}</h3>
+  <div class="d-flex justify-content-end">
+      <button type="button" (click)="openAddBranchModal()"  *ngIf="activeTabset === 'Branches'" class="btn btn-outline-info float-end">Add Branch</button>
+      <button type="button" routerLink="/add-form-check/{{bankInfo?.id}}" *ngIf="activeTabset === 'Form Checks'" class="btn btn-outline-info float-end">Form Checks</button>
+      <button type="button" routerLink="/add-product-type/{{bankInfo?.id}}" *ngIf="activeTabset === 'Products'" class="btn btn-outline-success float-end">Add Products</button>
+      <button type="button" (click)="openAddBranchModal()"  *ngIf="activeTabset === 'Check Inventory'" class="btn btn-outline-danger float-end">Add Check Inventory</button>
+      <button type="button" (click)="openAddBranchModal()"  *ngIf="activeTabset === 'File Processes'" class="btn btn-outline-primary float-end">Process File</button>
+  </div>
 </div>
-
+<hr>
 <div class="row">
     <div class="col-12">
-        <tabset class="bank-tabset" #bankTabs>
-            <tab heading="File Processes">
-                <div class="table-responsive">
-                    <table class="table table-sm" width="100%">
-                        <thead>
-                            <tr>
-                                <th>Batch</th>
-                                <th>No of Files</th>
-                                <th>Date Upload</th>
-                                <th>Status</th>
-                                <th class="text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
+        <tabset 
+        [justified]="true" 
+        class="bank-tabset" #bankTabs>
+            <tab heading="File Processes" 
+            [active]="activeTabset === 'File Processes'"
+            (selectTab)="onTabChange($event)">
+              <div class="table-responsive">
+                <table class="table table-sm" width="100%">
+                  <thead>
+                    <tr>
+                      <th>Batch</th>
+                      <th>No of Files</th>
+                      <th>Date Upload</th>
+                      <th>Status</th>
+                      <th class="text-center">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+              </div>
             </tab>
-            <tab heading="Check Inventory">
-                <div class="table-responsive mt-3">
-                    <table class="table table-sm" width="100%">
-                        <thead>
-                            <tr>
-                                <th>Starting File</th>
-                                <th>Ending File</th>
-                                <th>Check Orders</th>
-                                <th>Status</th>
-                                <th class="text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                           
-                        </tbody>
-                    </table>
-                </div>
+            <tab heading="Check Inventory" 
+              [active]="activeTabset === 'Check Inventory'"
+              (selectTab)="onTabChange($event)">
+              <div class="table-responsive mt-3">
+                <table class="table table-sm" width="100%">
+                  <thead>
+                    <tr>
+                      <th>Starting File</th>
+                      <th>Ending File</th>
+                      <th>Check Orders</th>
+                      <th>Status</th>
+                      <th class="text-center">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+              </div>
             </tab>
-            <tab heading="Branches">
-                <button type="button" (click)="openAddBranchModal()" class="btn btn-sm btn-outline-info">Add Branch</button>
-                @if(bankInfo != null){
-                <app-branch-list [bankInfo]="bankInfo"></app-branch-list>
-                }
+            <tab heading="Branches" 
+                [active]="activeTabset === 'Branches'"
+                (selectTab)="onTabChange($event)">
+                <app-branch-list *ngIf="bankInfo" [bankInfo]="bankInfo"></app-branch-list>
             </tab>
-            <tab heading="Products">
-                <div class="table-responsive">
-                    <table class="table table-sm" width="100%">
-                        <thead>
-                            <tr>
-                                <th>Product Name</th>
-                                <th class="text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            
-                        </tbody>
-                    </table>
-                </div>
+            <tab heading="Products" 
+                [active]="activeTabset === 'Products'"
+                (selectTab)="onTabChange($event)">
+                <app-product-type-list *ngIf="bankInfo" [bankInfo]="bankInfo"></app-product-type-list>
             </tab>
-        </tabset>
+          </tabset>
+          
     </div>
 </div>

@@ -1,0 +1,29 @@
+<div class="table-responsive">
+    <table class="table table-sm text-sm"  width="100%">
+        <thead>
+            <tr>
+                <th>Check Type</th>
+                <th>Form Type</th>
+                <th>Product Type</th>
+                <th>Description</th>
+                <th>Quantity</th>
+                <th class="text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let formCheck of formChecks">
+                <td>{{ formCheck.checkType }}</td>
+                <td>{{ formCheck.formType }}</td>
+                <td>{{ formCheck.productId }}</td>
+                <td>{{ formCheck.description }}</td>
+                <td>{{ formCheck.quanitity }}</td>
+                <td class="text-center">
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-sm text-primary me-2"> <i class="fa fa-edit"></i> Edit </button>
+                        <button type="button" class="btn btn-sm text-danger" (click)="deleteFormCheck(formCheck.id, $event)"> <i class="fa fa-trash"></i> Delete </button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

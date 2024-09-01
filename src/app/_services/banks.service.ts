@@ -11,6 +11,7 @@ export class BanksService {
   private http = inject(HttpClient);
   queryUrl = environment.queryUrl;
   commandUrl = environment.commandUrl;
+  bankInfos: Bank[] = [];
 
   getBanks(): Observable<any> {
     return this.http.get<any>(this.queryUrl + "Bank");
@@ -22,5 +23,11 @@ export class BanksService {
 
   deleteBank(bankId: any) {
     return this.http.delete(this.commandUrl + "BankInfo/id/" + bankId);
+  }
+
+  getbankInfos() {
+    this.http.get<any>(this.queryUrl + "Bank").subscribe(data => {
+      this.bankInfos = data.bankInfos;
+    });
   }
 }
