@@ -14,6 +14,7 @@ import { BankListComponent } from './_components/banks/bank-list/bank-list.compo
 import { AddProductTypeComponent } from './_components/product-types/add-product-type/add-product-type.component';
 import { EditProductTypeComponent } from './_components/product-types/edit-product-type/edit-product-type.component';
 import { AddFormCheckComponent } from './_components/form-checks/add-form-check/add-form-check.component';
+import { EditFormCheckComponent } from './_components/form-checks/edit-form-check/edit-form-check.component';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -32,7 +33,8 @@ export const routes: Routes = [
             { path: 'register-bank', component: AddBankComponent },
             { path: 'add-product-type/:id', component: AddProductTypeComponent },
             { path: 'edit-product-type/:id/bank/:bankId', component: EditProductTypeComponent },
-            { path: 'add-form-check/:id/bank/:bankId', component: AddFormCheckComponent }
+            { path: 'add-form-check/:id/bank/:bankId', component: AddFormCheckComponent },
+            { path: 'edit-form-check/:id/product/:productId/bank/:bankId', component: EditFormCheckComponent }
         ]
     },
     {path: 'errors', component: TestErrorsComponent},

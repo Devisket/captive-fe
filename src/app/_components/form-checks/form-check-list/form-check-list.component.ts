@@ -5,22 +5,27 @@ import { FormCheck } from '../../../_models/form-check';
 import { NgFor } from '@angular/common';
 import { ProductType } from '../../../_models/product-type';
 import { FormsModule, NgForm } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { Bank } from '../../../_models/bank';
 
 @Component({
   selector: 'app-form-check-list',
   standalone: true,
-  imports: [NgFor, FormsModule],
+  imports: [NgFor, FormsModule, RouterLink],
   templateUrl: './form-check-list.component.html',
   styleUrl: './form-check-list.component.css'
 })
 export class FormCheckListComponent implements OnInit{
 
   productType = input.required<ProductType>();
+  bankInfo = input.required<Bank>();
+
   formCheckService = inject(FormCheckService);
   toastr = inject(ToastrService);
   formChecks: FormCheck[] = [];
   ngOnInit(): void {
     this.productType;
+    this.bankInfo;
     this.getFormChecks()
   }
 
@@ -32,7 +37,9 @@ export class FormCheckListComponent implements OnInit{
   }
 
   deleteFormCheck(formCheckId: string, event: Event){
-    const productTypeId = this.productType().productTypeId;
+
+    const productTypeId = this.productType().productTypeId; 
+    console.log(formCheckId, productTypeId);
     if (!confirm('Confirm Deletion!')) {
       event.preventDefault();
       return;

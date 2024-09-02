@@ -4,8 +4,9 @@
     
       <div *ngFor="let productType of productTypes" style="background-color: azure;" class="p-4 pb-0">
         <div class="d-flex justify-content-between">
-           <h4><strong class="text-primary"> {{ productType.productTypeName | uppercase }} </strong></h4>
+           <h4 style="cursor: pointer;" (click)="toggleFormCheckList(productType.productTypeId)"><strong class="text-primary"> {{ productType.productTypeName | uppercase }} </strong></h4>
           <div class="d-flex justify-content-start">
+
             <button type="button" [routerLink]="['/add-form-check', productType.productTypeId, 'bank', bankInfo().id]" class="btn btn-info btn-sm me-3">
               <i class="fa fa-plus"></i> ADD FORM CHECK
             </button>
@@ -17,7 +18,7 @@
             </button>
           </div>
         </div>
-        <app-form-check-list *ngIf="productType" [productType]="productType"></app-form-check-list>
+        <app-form-check-list *ngIf="visibleProductTypes[productType.productTypeId] && productType && bankInfo()" [productType]="productType" [bankInfo]="bankInfo()"></app-form-check-list>
       </div>
     
 </div>

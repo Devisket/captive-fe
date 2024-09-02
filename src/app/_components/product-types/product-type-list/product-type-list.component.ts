@@ -17,7 +17,12 @@ import { FormCheckService } from '../../../_services/form-check.service';
   styleUrl: './product-type-list.component.css'
 })
 export class ProductTypeListComponent implements OnInit{
-  
+  visibleProductTypes: { [key: string]: boolean } = {};
+
+  toggleFormCheckList(productTypeId: string): void {
+    this.visibleProductTypes[productTypeId] = !this.visibleProductTypes[productTypeId];
+  }
+
   bankInfo = input.required<Bank>();
   productTypeService = inject(ProductTypeService);
   formCheckService = inject(FormCheckService);

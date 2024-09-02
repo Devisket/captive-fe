@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { BanksService } from '../../../_services/banks.service';
 import { Router, RouterLink } from '@angular/router';
-import { NgFor } from '@angular/common';
+import { LowerCasePipe, NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Bank } from '../../../_models/bank';
 import { ToastrService } from 'ngx-toastr';
@@ -9,7 +9,7 @@ import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-bank-list',
   standalone: true,
-  imports: [RouterLink, NgFor, FormsModule],
+  imports: [RouterLink, NgFor, FormsModule, LowerCasePipe],
   templateUrl: './bank-list.component.html',
   styleUrl: './bank-list.component.css'
 })

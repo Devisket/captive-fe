@@ -19,7 +19,11 @@
                 <td>{{ formCheck.quanitity }}</td>
                 <td class="text-center">
                     <div class="d-flex justify-content-center">
-                        <button type="submit" class="btn btn-sm text-primary me-2"> <i class="fa fa-edit"></i> Edit </button>
+                        @if(productType()){
+                            <button type="button" [routerLink]="['/edit-form-check',formCheck.id,'product', productType().productTypeId , 'bank', bankInfo().id]" class="btn text-primary btn-sm me-3">
+                                <i class="fa fa-edit"></i> EDIT
+                            </button>
+                        }
                         <button type="button" class="btn btn-sm text-danger" (click)="deleteFormCheck(formCheck.id, $event)"> <i class="fa fa-trash"></i> Delete </button>
                     </div>
                 </td>
