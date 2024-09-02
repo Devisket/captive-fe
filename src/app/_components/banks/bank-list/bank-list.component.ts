@@ -25,6 +25,7 @@ export class BankListComponent implements OnInit {
 
   getBanks() {
     this.bankService.getBanks().subscribe(data => {
+      if(!data) return; 
       this.bankInfos = data.bankInfos;
     });
   }

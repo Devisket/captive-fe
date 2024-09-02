@@ -32,6 +32,7 @@ export class BranchListComponent implements OnInit{
   getBranches() {
     const bankId = this.bankInfo().id;
     this.branchServices.getBranches(bankId).subscribe(data => {
+      if(!data) return; 
       this.branches = data.branches;
     });
   }

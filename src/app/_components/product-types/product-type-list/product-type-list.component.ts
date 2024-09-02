@@ -32,6 +32,7 @@ export class ProductTypeListComponent implements OnInit{
   getProductTypes(){
       const bankInfoId = this.bankInfo().id;
       this.productTypeService.getProductTypes(bankInfoId).subscribe(data => {
+        if(!data) return; 
         this.productTypes = data.productTypes;
       });
   }

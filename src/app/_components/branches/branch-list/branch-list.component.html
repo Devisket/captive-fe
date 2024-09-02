@@ -1,44 +1,46 @@
-<div class="table-responsive" style="min-height: 300px;">
-    <table class="table table-sm" width="100%">
-        <thead>
-            <tr>
-                <th>NAME</th>
-                <th>BRSTN</th>
-                <th>ADDRESS</th>
-                <th class="text-center">
-                    Action
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            
-            @for (branch of branches; track $index) {
+@if (branches) {
+    <div class="table-responsive" style="min-height: 300px;">
+        <table class="table table-sm" width="100%">
+            <thead>
                 <tr>
-                    <td>{{ branch.branchName }}</td>
-                    <td>{{ branch.brstn }}</td>
-                    <td>
-                        <div dropdown class="dropdown" style="min-width: 300px;">
-                            <a dropdownToggle class="text-dark">{{branch.branchAddress1}}</a>
-                            <div *dropdownMenu class="dropdown-menu">
-                                <ol>
-                                    @if (branch.branchAddress1 != null) { <li class="px-3">{{branch.branchAddress1}}</li> }
-                                    @if (branch.branchAddress2 != null) { <li class="px-3">{{branch.branchAddress2}}</li> }
-                                    @if (branch.branchAddress3 != null) { <li class="px-3">{{branch.branchAddress3}}</li> }
-                                    @if (branch.branchAddress4 != null) { <li class="px-3">{{branch.branchAddress4}}</li> }
-                                    @if (branch.branchAddress5 != null) { <li class="px-3">{{branch.branchAddress5}}</li> }
-                                </ol>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="d-flex justify-content-center">
-                            <button type="button" class="btn btn-sm btn-info me-2" (click)="openEditBranchModal(branch.id)" ><i class="fa fa-edit"></i></button>
-                            <button type="button" class="btn btn-sm btn-danger me-2" (click)="deleteBranch(bankInfo().id, branch.id, $event)"><i class="fa fa-trash"></i></button>
-                        </div>
-                    </td>
+                    <th>NAME</th>
+                    <th>BRSTN</th>
+                    <th>ADDRESS</th>
+                    <th class="text-center">
+                        Action
+                    </th>
                 </tr>
-            }
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+                
+                @for (branch of branches; track $index) {
+                    <tr>
+                        <td>{{ branch.branchName }}</td>
+                        <td>{{ branch.brstn }}</td>
+                        <td>
+                            <div dropdown class="dropdown" style="min-width: 300px;">
+                                <a dropdownToggle class="text-dark">{{branch.branchAddress1}}</a>
+                                <div *dropdownMenu class="dropdown-menu">
+                                    <ol>
+                                        @if (branch.branchAddress1 != null) { <li class="px-3">{{branch.branchAddress1}}</li> }
+                                        @if (branch.branchAddress2 != null) { <li class="px-3">{{branch.branchAddress2}}</li> }
+                                        @if (branch.branchAddress3 != null) { <li class="px-3">{{branch.branchAddress3}}</li> }
+                                        @if (branch.branchAddress4 != null) { <li class="px-3">{{branch.branchAddress4}}</li> }
+                                        @if (branch.branchAddress5 != null) { <li class="px-3">{{branch.branchAddress5}}</li> }
+                                    </ol>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">
+                                <button type="button" class="btn btn-sm btn-info me-2" (click)="openEditBranchModal(branch.id)" ><i class="fa fa-edit"></i></button>
+                                <button type="button" class="btn btn-sm btn-danger me-2" (click)="deleteBranch(bankInfo().id, branch.id, $event)"><i class="fa fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
 
