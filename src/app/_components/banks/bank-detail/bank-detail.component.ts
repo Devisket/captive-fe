@@ -36,7 +36,6 @@ export class BankDetailComponent implements OnInit{
   ngOnInit(): void {
     this.loadBank();
     this.activeTabset = localStorage.getItem('activeTabset') || 'Branches'; //
-    console.log(this.activeTabset)
   }
 
   loadBank() {
