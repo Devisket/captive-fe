@@ -30,33 +30,32 @@ export class ViewConfigurationComponent implements OnInit, OnDestroy{
   editor: Editor  = new Editor();
   jsonDoc: any;
   model: any = {
-    fileName: 'Config Data 1',
-    htmlString: `{"hasPassword":1,"hasBarcode":1,"tableName":"ChkBook","columnDefinition":[{"fieldName":"checkType","columnName":"ChkType"},{"fieldName":"brstn","columnName":"RTNO"},{"fieldName":"accountNumber","columnName":"AcctNo"},{"fieldName":"Account","columnName":"ChkType"},{"fieldName":"accountName1","columnName":"AcctNm1"},{"fieldName":"accountName2","columnName":"AcctNm2"},{"fieldName":"concode","columnName":"ContCode"},{"fieldName":"quantity","columnName":"OrderQty"},{"fieldName":"formType","columnName":"FormType"},{"fieldName":"batch","columnName":"batch"}]}`
-    // htmlString: ''
+    // fileName: 'Config Data 1',
+    // htmlString: `{"hasPassword":1,"hasBarcode":1,"tableName":"ChkBook","columnDefinition":[{"fieldName":"checkType","columnName":"ChkType"},{"fieldName":"brstn","columnName":"RTNO"},{"fieldName":"accountNumber","columnName":"AcctNo"},{"fieldName":"Account","columnName":"ChkType"},{"fieldName":"accountName1","columnName":"AcctNm1"},{"fieldName":"accountName2","columnName":"AcctNm2"},{"fieldName":"concode","columnName":"ContCode"},{"fieldName":"quantity","columnName":"OrderQty"},{"fieldName":"formType","columnName":"FormType"},{"fieldName":"batch","columnName":"batch"}]}`
+    // // htmlString: ''
   };
-  
+
   ngOnInit(): void {
     this.loadBank();
     this.getProductType();
 
-    const jsonObject = JSON.parse(this.model.htmlString);
-    const jsonString = JSON.stringify(jsonObject, null, 2);
+    // const jsonObject = JSON.parse(this.model.htmlString);
+    // const jsonString = JSON.stringify(jsonObject, null, 2);
 
-    this.jsonDoc = {
-      type: 'doc',
-      content: [
-        {
-          type: 'paragraph',
-          content: [
-            {
-              type: 'text',
-              text: jsonString
-            }
-          ]
-        }
-      ]
-    };
-    console.log(this.jsonDoc, jsonObject);
+    // this.jsonDoc = {
+    //   type: 'doc',
+    //   content: [
+    //     {
+    //       type: 'paragraph',
+    //       content: [
+    //         {
+    //           type: 'text',
+    //           text: jsonString
+    //         }
+    //       ]
+    //     }
+    //   ]
+    // };
   }
 
   loadBank() {
@@ -80,6 +79,6 @@ export class ViewConfigurationComponent implements OnInit, OnDestroy{
   }
 
   addProductConfiguration(){
-    // 
+    //
   }
 }

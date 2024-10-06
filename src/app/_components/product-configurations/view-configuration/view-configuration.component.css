@@ -1,4 +1,4 @@
-.ngxEditor {
+.ngxEditorSubWrapper {
     max-height: 500px; /* Adjust the height as needed */
     overflow-y: auto; /* Enable vertical scrolling */
     border: 1px solid #ccc; /* Optional: Add a border for better visibility */
