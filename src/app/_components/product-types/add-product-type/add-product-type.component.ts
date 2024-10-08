@@ -6,6 +6,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ProductTypeService } from '../../../_services/product-type.service';
 import { UpperCasePipe } from '@angular/common';
+import { ProductConfigurationService } from '../../../_services/product-configuration.service';
 
 @Component({
   selector: 'app-add-product-type',
@@ -22,6 +23,7 @@ export class AddProductTypeComponent implements OnInit{
       $event.returnValue = true;
     }
   }
+
   toastr = inject(ToastrService);
   route = inject(ActivatedRoute);
   router = inject(Router);
@@ -34,7 +36,7 @@ export class AddProductTypeComponent implements OnInit{
   ngOnInit(): void {
     this.loadBank()
   }
-  
+
   loadBank() {
     let bankId = this.route.snapshot.paramMap.get('id');
     if (!bankId) return;

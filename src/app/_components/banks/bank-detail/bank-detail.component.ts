@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Bank } from '../../../_models/bank';
 import { TabDirective, TabsModule } from 'ngx-bootstrap/tabs';
 import { DatePipe, NgFor, NgIf } from '@angular/common';
@@ -9,11 +9,15 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { AddBranchComponent } from '../../branches/add-branch/add-branch.component';
 import { ProductTypeListComponent } from "../../product-types/product-type-list/product-type-list.component";
 import { FormCheckListComponent } from "../../form-checks/form-check-list/form-check-list.component";
+import { BatchesService } from '../../../_services/batches.service';
+import { ToastrService } from 'ngx-toastr';
+import { AddBatchComponent } from "../../batches/add-batch/add-batch.component";
+import { BatchListComponent } from "../../batches/batch-list/batch-list.component";
 
 @Component({
   selector: 'app-bank-detail',
   standalone: true,
-  imports: [TabsModule, NgFor, RouterLink, DatePipe, BranchListComponent, NgIf, ProductTypeListComponent, FormCheckListComponent],
+  imports: [TabsModule, NgFor, RouterLink, DatePipe, BranchListComponent, NgIf, ProductTypeListComponent, FormCheckListComponent, AddBatchComponent, BatchListComponent],
   templateUrl: './bank-detail.component.html',
   styleUrl: './bank-detail.component.css'
 })
@@ -21,9 +25,12 @@ export class BankDetailComponent implements OnInit{
 
   private bankService = inject(BanksService);
   private route = inject(ActivatedRoute);
-  
+  private batchService = inject(BatchesService);
+  private toastr = inject(ToastrService);
+
   bsModalRef: BsModalRef<AddBranchComponent> = new BsModalRef<AddBranchComponent>();
   modalService = inject(BsModalService);
+  router = inject(Router)
 
   bank?: Bank;
   // activeTab?: TabDirective;
@@ -36,7 +43,6 @@ export class BankDetailComponent implements OnInit{
   ngOnInit(): void {
     this.loadBank();
     this.activeTabset = localStorage.getItem('activeTabset') || 'Branches'; //
-    console.log(this.activeTabset)
   }
 
   loadBank() {
@@ -64,7 +70,24 @@ export class BankDetailComponent implements OnInit{
     if(this.activeTabset != undefined) localStorage.setItem('activeTabset', this.activeTabset);
   }
 
+  addBatch(bankId: any, event: Event){
+    if (!confirm('Confirm add new batch!')) {
+      event.preventDefault();
+      return;
+    }
+    this.batchService.addBatch(bankId).subscribe(
+      {
+        error: error => console.log(error),
+        next: _ => {
+          this.toastr.success("successfully added new batch.")
+        },
+        complete: () => window.location.reload()
+      }
+    )
+  }
+
+
   onSelect(): void {
-    
+
   }
 }

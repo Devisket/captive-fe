@@ -15,6 +15,10 @@ import { AddProductTypeComponent } from './_components/product-types/add-product
 import { EditProductTypeComponent } from './_components/product-types/edit-product-type/edit-product-type.component';
 import { AddFormCheckComponent } from './_components/form-checks/add-form-check/add-form-check.component';
 import { EditFormCheckComponent } from './_components/form-checks/edit-form-check/edit-form-check.component';
+import { AddBatchComponent } from './_components/batches/add-batch/add-batch.component';
+import { ConfigurationListComponent } from './_components/product-configurations/configuration-list/configuration-list.component';
+import { AddConfigurationComponent } from './_components/product-configurations/add-configuration/add-configuration.component';
+import { ViewConfigurationComponent } from './_components/product-configurations/view-configuration/view-configuration.component';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -34,7 +38,11 @@ export const routes: Routes = [
             { path: 'add-product-type/:id', component: AddProductTypeComponent },
             { path: 'edit-product-type/:id/bank/:bankId', component: EditProductTypeComponent },
             { path: 'add-form-check/:id/bank/:bankId', component: AddFormCheckComponent },
-            { path: 'edit-form-check/:id/product/:productId/bank/:bankId', component: EditFormCheckComponent }
+            { path: 'edit-form-check/:id/product/:productId/bank/:bankId', component: EditFormCheckComponent },
+            { path: 'configuration-list/:productId/bank/:bankId', component: ConfigurationListComponent },
+            { path: 'add-configuration/:productId/bank/:bankId', component: AddConfigurationComponent },
+            { path: 'view-configuration/:productId/bank/:bankId/id/:configurationId', component: ViewConfigurationComponent },
+            { path: 'add-batch/:bankId', component: AddBatchComponent }
         ]
     },
     {path: 'errors', component: TestErrorsComponent},

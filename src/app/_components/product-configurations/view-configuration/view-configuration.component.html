@@ -1,0 +1,16 @@
+
+<div class="col-12 p-3 rounded mb-5" style="border: 1px solid blue;">
+  <div class="d-flex justify-content-between mb-3">
+    <h3 class="text-center text-primary"> {{ productType?.productTypeName }} Configurations</h3>
+    <button routerLink="/banks/{{bankInfo?.id}}" class="btn btn-info">Back to  {{bankInfo?.bankName}} </button>
+  </div>
+  <hr />
+   <form id="editFormCheckForm" #editFormCheckForm="ngForm" autocomplete="off">
+      <div class="NgxEditor__Wrapper mb-3">
+          <ngx-editor-menu [editor]="editor"> </ngx-editor-menu>
+          <div class="ngxEditorSubWrapper">
+              <ngx-editor class="ngxEditor" [editor]="editor" name="configuratonData" [(ngModel)]="jsonDoc" [disabled]="true" [placeholder]="'No configuration data..'"></ngx-editor>
+          </div>
+      </div>
+  </form>
+</div>

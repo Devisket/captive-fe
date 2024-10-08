@@ -1,0 +1,27 @@
+<div class="d-flex justify-content-between mb-3">
+  <h2>{{ productType?.productTypeName }} Configurations</h2>
+  <div class="d-flex justify-content-end mb-3">
+    <button routerLink="/banks/{{bankInfo?.id}}" class="btn btn-info me-2">Back to  {{bankInfo?.bankName}} </button>
+    <button type="button" [routerLink]="['/add-configuration', productType?.productTypeId, 'bank', bankInfo?.id]" class="btn btn-success btn-sm">
+      <i class="fa fa-plus"></i> ADD NEW CONFIGURATION
+    </button>
+  </div>
+</div>
+
+@if(productConfigurations){
+  <ol>
+        @for (productConfiguration of productConfigurations; track $index) {
+          <li class="mb-2">
+            <div class="d-flex justify-content-between">
+                <strong class="text-primary">{{ productConfiguration.productName }}
+                  &nbsp; &nbsp; <small class="text-muted"><em>ID:  {{ productConfiguration.id }}</em></small>
+                </strong>
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-primary btn-sm py-1 me-1" [routerLink]="['/view-configuration', productType?.productTypeId, 'bank', bankInfo?.id, 'id', productConfiguration.id]"><i class="fa fa-eye"> View Configuration</i></button>
+                    <button type="button" class="btn btn-danger btn-sm py-1 me-1" disabled><i class="fa fa-trash"></i></button>
+                </div>
+            </div>
+        </li>
+        }
+    </ol>
+}

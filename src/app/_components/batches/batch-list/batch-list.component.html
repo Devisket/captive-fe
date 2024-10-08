@@ -1,0 +1,41 @@
+@if(batches){
+  <div class="table-responsive">
+    <table class="table table-sm" width="100%">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Batch</th>
+          <th>No of Files</th>
+          <th>Date Upload</th>
+          <th>Status</th>
+          <th class="text-center">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tbody>
+
+          @for (branch of batches; track $index) {
+              <tr>
+                  <td>{{  $index + 1 }}</td>
+                  <td>{{ branch.batchName }}</td>
+                  <td>{{ branch.orderNumber }}</td>
+                  <td>{{ branch.createdDate | date: "MMM dd, yyyy"}}</td>
+                  <td> @if(!branch.batchFileStatus){
+                        <strong class="text-primary">New</strong>
+                      }
+                      @else{
+                        <span class="text-sucess">Processed</span>
+                      }
+                    </td>
+                  <td>
+                      <div class="d-flex justify-content-center">
+                          <button type="button" class="btn btn-sm btn-info me-2"><i class="fa fa-upload"></i> Upload Order Files</button>
+                      </div>
+                  </td>
+              </tr>
+          }
+      </tbody>
+    </table>
+  </div>
+}
