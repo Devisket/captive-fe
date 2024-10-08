@@ -16,7 +16,7 @@ export class BatchesService {
   }
 
   getBatches(bankId: any): Observable<any> {
-    return this.http.get<any>(this.queryUrl + "Batch/" + bankId);
+    return this.http.get<any>(this.queryUrl + bankId + "/Batch");
   }
 
 }

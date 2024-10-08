@@ -1,1 +1,50 @@
-<p>add-configuration works!</p>
+<h1>{{ productType?.productTypeName }} Configuration</h1>
+
+<form id="addProductConfigurationForm" #addProductConfigurationForm="ngForm" autocomplete="off" (ngSubmit)="addProductConfiguration()">
+        <div class="mb-3 form-floating">
+            <input type="text"
+                class="form-control"
+                [(ngModel)]="model.fileName"
+                name="fileName"
+                placeholder="File Name" />
+            <label>File Name</label>
+        </div>
+        <div class="mb-3 form-floating">
+          <input type="text"
+                class="form-control"
+                name="configurationType"
+                [(ngModel)]="model.configurationType"
+                value="0"
+                placeholder="Configuration Type" />
+          <label>Configuration Type</label>
+      </div>
+        <div class="NgxEditor__Wrapper mb-3">
+            <ngx-editor-menu [editor]="editor"> </ngx-editor-menu>
+            <div class="ngxEditorSubWrapper">
+                <ngx-editor
+                  class="ngxEditor"
+                  [editor]="editor"
+                  [(ngModel)]="model.configurationData"
+                  name="configurationData"
+                  [placeholder]="'Type here..'"></ngx-editor>
+            </div>
+        </div>
+        <button
+          type="submit"
+          [disabled]="!addProductConfigurationForm.dirty"
+          class="btn btn-success float-end">
+          <i class="fa fa-save"></i> SAVE</button>
+    </form>
+
+    @if(addProductConfigurationForm.dirty){
+      <div class="row">
+        <div class="col-4 mt-3 offset-4 text-center text-sm">
+          <div class="alert alert-warning pb-0">
+            <p>
+              <strong>Warning: </strong>
+              Any unsaved changes will be lost.
+            </p>
+          </div>
+        </div>
+      </div>
+    }

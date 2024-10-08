@@ -29,7 +29,6 @@ export class BatchListComponent implements OnInit{
     const bankId = this.bankInfo().id;
     this.batchServices.getBatches(bankId).subscribe(data => {
       if(!data) return;
-      console.log(data);
       this.batches = data.batchFiles;
     });
   }

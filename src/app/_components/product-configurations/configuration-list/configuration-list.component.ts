@@ -3,56 +3,46 @@ import { ProductType } from '../../../_models/product-type';
 import { ProductConfigurationService } from '../../../_services/product-configuration.service';
 import { ToastrService } from 'ngx-toastr';
 import { ProductConfiguration } from '../../../_models/product-configuration';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Editor, NgxEditorModule } from 'ngx-editor';
 import { FormsModule } from '@angular/forms';
+import { ProductTypeService } from '../../../_services/product-type.service';
+import { Bank } from '../../../_models/bank';
+import { BanksService } from '../../../_services/banks.service';
 
 @Component({
   selector: 'app-configuration-list',
   standalone: true,
-  imports: [FormsModule, NgxEditorModule],
+  imports: [FormsModule, NgxEditorModule, RouterLink],
   templateUrl: './configuration-list.component.html',
   styleUrl: './configuration-list.component.css'
 })
-export class ConfigurationListComponent implements OnInit, OnDestroy{
+export class ConfigurationListComponent implements OnInit {
 
-  productType = input.required<ProductType>();
   configurationData:string = ""
   route = inject(ActivatedRoute);
   productConfigurationService = inject(ProductConfigurationService);
+  productTypeService = inject(ProductTypeService);
+  bankService = inject(BanksService);
+  productType?: ProductType;
+  bankInfo?: Bank;
   toastr = inject(ToastrService);
   productConfigurations: ProductConfiguration[] = [];
-  editor: Editor  = new Editor();
-  jsonDoc: any;
-  model: any = {};
+
 
   ngOnInit(): void {
     this.productType;
     this.getProductConfigurations();
-    this.model;
-    this.convertToJson();
+    this.loadBank();
+    this.getProductType();
   }
 
-  convertToJson(){
-    const htmlString = this.model.configurationData;
-    if(!htmlString) return "none";
-    const jsonObject = JSON.parse(htmlString);
-    const jsonString = JSON.stringify(jsonObject, null, 2);
-
-    return this.jsonDoc = {
-      type: 'doc',
-      content: [
-        {
-          type: 'paragraph',
-          content: [
-            {
-              type: 'text',
-              text: jsonString
-            }
-          ]
-        }
-      ]
-    };
+  loadBank() {
+    let bankId = this.route.snapshot.paramMap.get("bankId");
+    if (!bankId) return;
+    this.bankService.getBanks().subscribe(data => {
+      this.bankInfo = data.bankInfos.find((bank: Bank) => bank.id === bankId);
+    });
   }
 
   getProductConfigurations(){
@@ -60,20 +50,19 @@ export class ConfigurationListComponent implements OnInit, OnDestroy{
       this.productConfigurationService.getProductConfigurations(productTypeId).subscribe(data => {
         if(!data) return;
         this.productConfigurations = data.productConfigurations;
-        this.model = data.productConfigurations[0];
       });
+  }
+
+  getProductType(){
+    let productTypeId = this.route.snapshot.paramMap.get("productId");
+    let bankId = this.route.snapshot.paramMap.get("bankId");
+    this.productTypeService.getProductTypes(bankId).subscribe( data => {
+      this.productType = data.productTypes.find((product: ProductType) => product.productTypeId === productTypeId);
+    })
   }
 
   getConfigurationData(id: string){
     this.configurationData = id;
-  }
-
-  ngOnDestroy(): void {
-    this.editor.destroy();
-  }
-
-  editProductConfiguration(){
-    //
   }
 
 }

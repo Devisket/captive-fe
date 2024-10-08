@@ -12,6 +12,11 @@ export class ProductConfigurationService {
   queryUrl = environment.queryUrl;
 
   getProductConfigurations(poductTyeId: any): Observable<any> {
-    return this.http.get<any>(this.queryUrl + "ProductType/bankId/" + poductTyeId + "/configuration");
+    return this.http.get<any>(this.queryUrl + "bankId/Product/" + poductTyeId + "/configuration");
+  }
+
+
+  addProductConfigurations(productTypeId: any, bankInfoId: any, productTypeConfiguration: any) {
+    return this.http.post(this.commandUrl + "bank/" + bankInfoId + "/Product/" + productTypeId + "/configuration", productTypeConfiguration);
   }
 }

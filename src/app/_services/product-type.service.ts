@@ -12,7 +12,7 @@ export class ProductTypeService {
   queryUrl = environment.queryUrl;
 
   getProductTypes(bankInfoId: any): Observable<any> {
-    return this.http.get<any>(this.queryUrl + "ProductType/" + bankInfoId);
+    return this.http.get<any>(this.queryUrl + bankInfoId + "/Product");
   }
 
   addProductType(productType: any, bankInfoId: any) {

@@ -10,6 +10,8 @@ import { NgIf } from '@angular/common';
 import { EditConfigurationComponent } from '../edit-configuration/edit-configuration.component';
 import { Editor, NgxEditorModule } from 'ngx-editor';
 import { FormsModule } from '@angular/forms';
+import { ProductConfigurationService } from '../../../_services/product-configuration.service';
+import { ProductConfiguration } from '../../../_models/product-configuration';
 
 @Component({
   selector: 'app-view-configuration',
@@ -24,38 +26,19 @@ export class ViewConfigurationComponent implements OnInit, OnDestroy{
   router = inject(Router);
   bankService = inject(BanksService);
   productTypeService = inject(ProductTypeService);
+  configurationService = inject(ProductConfigurationService);
+  productType?: ProductType;
+  productConfiguration?: ProductConfiguration;
   bankInfos: Bank[] = [];
   bankInfo?: Bank;
-  productType?: ProductType;
   editor: Editor  = new Editor();
   jsonDoc: any;
-  model: any = {
-    // fileName: 'Config Data 1',
-    // htmlString: `{"hasPassword":1,"hasBarcode":1,"tableName":"ChkBook","columnDefinition":[{"fieldName":"checkType","columnName":"ChkType"},{"fieldName":"brstn","columnName":"RTNO"},{"fieldName":"accountNumber","columnName":"AcctNo"},{"fieldName":"Account","columnName":"ChkType"},{"fieldName":"accountName1","columnName":"AcctNm1"},{"fieldName":"accountName2","columnName":"AcctNm2"},{"fieldName":"concode","columnName":"ContCode"},{"fieldName":"quantity","columnName":"OrderQty"},{"fieldName":"formType","columnName":"FormType"},{"fieldName":"batch","columnName":"batch"}]}`
-    // // htmlString: ''
-  };
+  model: any = {};
 
   ngOnInit(): void {
     this.loadBank();
     this.getProductType();
-
-    // const jsonObject = JSON.parse(this.model.htmlString);
-    // const jsonString = JSON.stringify(jsonObject, null, 2);
-
-    // this.jsonDoc = {
-    //   type: 'doc',
-    //   content: [
-    //     {
-    //       type: 'paragraph',
-    //       content: [
-    //         {
-    //           type: 'text',
-    //           text: jsonString
-    //         }
-    //       ]
-    //     }
-    //   ]
-    // };
+    this.getProductConfiguration();
   }
 
   loadBank() {
@@ -74,11 +57,41 @@ export class ViewConfigurationComponent implements OnInit, OnDestroy{
     })
   }
 
+  getProductConfiguration(){
+    let productTypeId = this.route.snapshot.paramMap.get("productId");
+    let configurationId = this.route.snapshot.paramMap.get("configurationId");
+    this.configurationService.getProductConfigurations(productTypeId).subscribe( data => {
+      this.productConfiguration = data.productConfigurations.find((productConfig: ProductConfiguration) => productConfig.id === configurationId);
+      if(!this.productConfiguration) return;
+      this.jsonDoc = JSON.parse(this.productConfiguration?.configurationData);
+    })
+  }
+
+
+      // this.jsonDoc = JSON.parse(this.productConfiguration?.configurationData);
+      // const jsonDocument = {
+      //   type: 'doc',
+      //   content: [
+      //     {
+      //       type: 'paragraph',
+      //       content: [
+      //         {
+      //           type: 'text',
+      //           text: jsonString
+      //         }
+      //       ]
+      //     }
+      //   ]
+      // };
+
+      // const textContent = jsonDocument.content[0].content[0].text;
+      // this.jsonDoc = JSON.parse(textContent);
+
   ngOnDestroy(): void {
     this.editor.destroy();
   }
 
-  addProductConfiguration(){
+  editProductConfiguration(){
     //
   }
 }

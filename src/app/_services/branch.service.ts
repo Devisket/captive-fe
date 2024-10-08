@@ -14,7 +14,7 @@ export class BranchService {
   commandUrl = environment.commandUrl;
 
   getBranches(bankId: any): Observable<any> {
-    return this.http.get<any>(this.queryUrl + "Bank/" + bankId + "/branches");
+    return this.http.get<any>(this.queryUrl + "Bank/" + bankId + "/branch");
   }
 
   getBranch(bankId : any, branchId: any): Observable<any> {
@@ -25,7 +25,7 @@ export class BranchService {
     return this.http.post(this.commandUrl + "BankInfo/" + bankId + "/branch", branch);
   }
 
-  
+
   updateBranch(branch: BankBranch, bankId: any) {
     return this.http.put(this.commandUrl + "BankInfo/" + bankId + "/branch/" + branch.id, branch);
   }
