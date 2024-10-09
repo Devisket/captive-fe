@@ -4,11 +4,13 @@ import { Batch } from '../../../_models/batch';
 import { ToastrService } from 'ngx-toastr';
 import { BatchesService } from '../../../_services/batches.service';
 import { DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-batch-list',
   standalone: true,
-  imports: [DatePipe],
+  imports: [DatePipe, RouterLink, FormsModule],
   templateUrl: './batch-list.component.html',
   styleUrl: './batch-list.component.css'
 })
@@ -31,6 +33,11 @@ export class BatchListComponent implements OnInit{
       if(!data) return;
       this.batches = data.batchFiles;
     });
+  }
+
+  uploadOrderFile()
+  {
+    //
   }
 
 }

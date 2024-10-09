@@ -2,7 +2,14 @@
 <div class="col-12 p-3 rounded mb-5" style="border: 1px solid blue;">
   <div class="d-flex justify-content-between mb-3">
     <h3 class="text-center text-primary"> {{ productType?.productTypeName }} Configurations</h3>
-    <button routerLink="/banks/{{bankInfo?.id}}" class="btn btn-info">Back to  {{bankInfo?.bankName}} </button>
+    <div class="d-flex justify-content-end">
+      <button routerLink="/banks/{{bankInfo?.id}}" class="btn btn-info  me-3">Back to  {{bankInfo?.bankName}} </button>
+      @if(!isExists){
+        <button type="button" [routerLink]="['/add-configuration', productType?.productTypeId, 'bank', bankInfo?.id]" class="btn btn-success btn-sm me-3">
+          <i class="fa fa-plus"></i> ADD NEW CONFIGURATION
+        </button>
+      }
+    </div>
   </div>
   <hr />
    <form id="editFormCheckForm" #editFormCheckForm="ngForm" autocomplete="off">

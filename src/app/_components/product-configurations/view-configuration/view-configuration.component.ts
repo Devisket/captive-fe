@@ -34,6 +34,7 @@ export class ViewConfigurationComponent implements OnInit, OnDestroy{
   editor: Editor  = new Editor();
   jsonDoc: any;
   model: any = {};
+  isExists = false;
 
   ngOnInit(): void {
     this.loadBank();
@@ -59,17 +60,16 @@ export class ViewConfigurationComponent implements OnInit, OnDestroy{
 
   getProductConfiguration(){
     let productTypeId = this.route.snapshot.paramMap.get("productId");
-    let configurationId = this.route.snapshot.paramMap.get("configurationId");
     this.configurationService.getProductConfigurations(productTypeId).subscribe( data => {
-      this.productConfiguration = data.productConfigurations.find((productConfig: ProductConfiguration) => productConfig.id === configurationId);
+      this.productConfiguration = data.productConfigurations.find((productConfig: ProductConfiguration) => productConfig.productId === productTypeId);
       if(!this.productConfiguration) return;
-      this.jsonDoc = JSON.parse(this.productConfiguration?.configurationData);
-    })
-  }
-
-
-      // this.jsonDoc = JSON.parse(this.productConfiguration?.configurationData);
-      // const jsonDocument = {
+      const jsonString = JSON.parse(this.productConfiguration?.configurationData);
+      // const jsonString = "dsd";
+      this.jsonDoc = jsonString;
+      if(this.jsonDoc.type === "doc"){
+        this.isExists = true;
+      }
+      // {
       //   type: 'doc',
       //   content: [
       //     {
@@ -83,9 +83,8 @@ export class ViewConfigurationComponent implements OnInit, OnDestroy{
       //     }
       //   ]
       // };
-
-      // const textContent = jsonDocument.content[0].content[0].text;
-      // this.jsonDoc = JSON.parse(textContent);
+    })
+  }
 
   ngOnDestroy(): void {
     this.editor.destroy();

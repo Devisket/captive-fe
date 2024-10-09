@@ -1,0 +1,17 @@
+.batch-row td{
+  background-color: aquamarine;
+}
+
+thead tr th{
+  background-color: black;
+  color: aliceblue;
+  font-weight: 200;
+}
+
+.order-files-row > td {
+  background-color: azure;
+}
+
+.check-form-header > th {
+  background-color: rgb(227, 250, 255);
+}
