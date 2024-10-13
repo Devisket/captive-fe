@@ -13,11 +13,13 @@ import { BatchesService } from '../../../_services/batches.service';
 import { ToastrService } from 'ngx-toastr';
 import { AddBatchComponent } from "../../batches/add-batch/add-batch.component";
 import { BatchListComponent } from "../../batches/batch-list/batch-list.component";
+import { TagListComponent } from "../../tags/tag-list/tag-list.component";
+import { CheckValidationListComponent } from '../../check-validation/check-validation-list/check-validation-list.component';
 
 @Component({
   selector: 'app-bank-detail',
   standalone: true,
-  imports: [TabsModule, NgFor, RouterLink, DatePipe, BranchListComponent, NgIf, ProductTypeListComponent, FormCheckListComponent, AddBatchComponent, BatchListComponent],
+  imports: [TabsModule, NgFor, RouterLink, DatePipe, BranchListComponent, NgIf, ProductTypeListComponent, FormCheckListComponent, AddBatchComponent, BatchListComponent, CheckValidationListComponent],
   templateUrl: './bank-detail.component.html',
   styleUrl: './bank-detail.component.css'
 })

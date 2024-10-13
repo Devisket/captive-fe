@@ -1,0 +1,48 @@
+  <div class="row d-flex justify-content-center">
+    <div class="col-4">
+      <form id="addTagForm" #addTagForm="ngForm" autocomplete="off" (ngSubmit)="addTag()">
+        <h2 class="text-center"> Add New Tag</h2>
+        <hr />
+
+        <div class="mb-3 form-floating">
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="model.tagName"
+            placeholder="Tag Name"
+            name="tagName"/>
+          <label>Tag Name</label>
+        </div>
+        <div class="d-flex justify-content-between">
+          <button
+            class="btn btn-outline-secondary me-2 btn-sm"
+            routerLink="/tag-list"
+            type="button"
+            tabindex="-1"
+          >
+            Cancel
+          </button>
+          <button
+            class="btn btn-success me-2 btn-sm"
+            [disabled]="!addTagForm.dirty"
+            type="submit"
+          >
+            <i class="fa fa-save"></i>
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  @if(addTagForm.dirty){
+  <div class="row">
+    <div class="col-4 mt-3 offset-4 text-center text-sm">
+      <div class="alert alert-warning pb-0">
+        <p>
+          <strong>Warning: </strong>
+          Any unsaved changes will be lost.
+        </p>
+      </div>
+    </div>
+  </div>
+  }
