@@ -16,9 +16,12 @@ import { EditProductTypeComponent } from './_components/product-types/edit-produ
 import { AddFormCheckComponent } from './_components/form-checks/add-form-check/add-form-check.component';
 import { EditFormCheckComponent } from './_components/form-checks/edit-form-check/edit-form-check.component';
 import { AddBatchComponent } from './_components/batches/add-batch/add-batch.component';
-import { ConfigurationListComponent } from './_components/product-configurations/configuration-list/configuration-list.component';
 import { AddConfigurationComponent } from './_components/product-configurations/add-configuration/add-configuration.component';
 import { ViewConfigurationComponent } from './_components/product-configurations/view-configuration/view-configuration.component';
+import { UploadOrderFilesComponent } from './_components/order-files/upload-order-files/upload-order-files.component';
+import { TagListComponent } from './_components/tags/tag-list/tag-list.component';
+import { CheckValidationListComponent } from './_components/check-validation/check-validation-list/check-validation-list.component';
+import { AddTagComponent } from './_components/tags/add-tag/add-tag.component';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -35,13 +38,16 @@ export const routes: Routes = [
             },
             {path: 'edit-profile', component: EditProfileComponent},
             { path: 'register-bank', component: AddBankComponent },
+            { path: 'tag-list/:bankId', component: TagListComponent },
+            { path: 'add-tag/:bankId', component: AddTagComponent },
             { path: 'add-product-type/:id', component: AddProductTypeComponent },
+            { path: 'check-validation-list/:id', component: CheckValidationListComponent },
             { path: 'edit-product-type/:id/bank/:bankId', component: EditProductTypeComponent },
             { path: 'add-form-check/:id/bank/:bankId', component: AddFormCheckComponent },
             { path: 'edit-form-check/:id/product/:productId/bank/:bankId', component: EditFormCheckComponent },
-            { path: 'configuration-list/:productId/bank/:bankId', component: ConfigurationListComponent },
             { path: 'add-configuration/:productId/bank/:bankId', component: AddConfigurationComponent },
-            { path: 'view-configuration/:productId/bank/:bankId/id/:configurationId', component: ViewConfigurationComponent },
+            { path: 'view-configuration/:productId/bank/:bankId', component: ViewConfigurationComponent },
+            { path: 'upload-order-files/:batchId/bank/:bankId', component: UploadOrderFilesComponent },
             { path: 'add-batch/:bankId', component: AddBatchComponent }
         ]
     },
