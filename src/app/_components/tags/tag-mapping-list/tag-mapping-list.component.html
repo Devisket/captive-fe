@@ -1,19 +1,31 @@
-<div class="table-responsive">
-  <table class="table table-sm" width="100%">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Branch</th>
-        <th>Product</th>
-        <th>Form Check</th>
-        <th class="text-center">Action</th>
-      </tr>
-    </thead>
-    <tbody>
+@if(mapping().length > 0){
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered" width="100%">
+        <thead>
+          <tr class="text-sm tag-mapping-header tag-id" >
+            <th>Branch</th>
+            <th>Product</th>
+            <th>Form Check</th>
+            <th class="text-center">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(map of mapping(); track $index){
+            <tr class="tag-id tag-mapping-row">
+              <td >{{ map.branchId }}</td>
+              <td >{{ map.productId }}</td>
+              <td >{{ map.formCheckId }}</td>
+              <td class="text-center">
+                <button type="button" class="btn btn-sm btn-danger me-2 py-0"><i class="fa fa-trash"></i></button>
+                <button type="button" class="btn btn-sm btn-primary me-2 py-0"><i class="fa fa-edit"></i></button>
+              </td>
+            </tr>
+          }
 
-      <tbody>
+        </tbody>
+      </table>
+    </div>
+
+}
 
 
-    </tbody>
-  </table>
-</div>
