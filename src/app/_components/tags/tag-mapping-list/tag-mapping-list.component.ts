@@ -6,6 +6,11 @@ import { ProductTypeService } from '../../../_services/product-type.service';
 import { Bank } from '../../../_models/bank';
 import { BankBranch } from '../../../_models/bank-branch';
 import { ProductType } from '../../../_models/product-type';
+import { TagMappingService } from '../../../_services/tag-mapping.service';
+import { ToastrService } from 'ngx-toastr';
+import { Tag } from '../../../_models/tag';
+import { ActivatedRoute } from '@angular/router';
+import { FormCheck } from '../../../_models/form-check';
 
 @Component({
   selector: 'app-tag-mapping-list',
@@ -14,42 +19,93 @@ import { ProductType } from '../../../_models/product-type';
   templateUrl: './tag-mapping-list.component.html',
   styleUrl: './tag-mapping-list.component.css'
 })
-export class TagMappingListComponent {
+export class TagMappingListComponent implements OnInit{
 
-  // @Input() mapping: TagMapping[];
   branchService = inject(BranchService);
-  productService = inject(ProductTypeService);
+  productServices = inject(ProductTypeService);
   formCheckService = inject(FormCheckService);
+  route = inject(ActivatedRoute);
   mapping = input.required<TagMapping[]>();
+  tagMappingService = inject(TagMappingService);
+  toastr = inject(ToastrService);
   bankInfo = input.required<Bank>();
-  tagMappings: any = [];
-  branch?: BankBranch;
-  product?: ProductType;
-  maps: any = [];
+  tag = input.required<Tag>();
+  branches: BankBranch[] = [];
+  products: ProductType[] = [];
+  formChecks: FormCheck[] = [];
 
+  maps: TagMapping[] = [];
+  branchLookup: { [key: string]: string } = {};
+  productLookup: { [key: string]: string } = {};
+  formCheckLookup: { [key: string]: string } = {};
 
-  // loadData(){
+  ngOnInit() {
+    this.loadBranches();
+    this.loadProducts();
+    this.maps = this.mapping();
+  }
 
-  //   this.mapping().forEach(map => {
-  //     this.maps = [];
-  //     if(map.branchId){
-  //       let branchId = map.branchId;
-  //       this.branchService.getBranch(this.bankInfo().id, branchId).subscribe(data => {
-  //         let branch = data.branches.find((x: BankBranch) => x.id === branchId);
-  //         this.maps.push({"branch": branch});
-  //       })
-  //     }
+  loadBranches(){
+    this.branchService.getBranches(this.bankInfo().id).subscribe(data => {
+      this.branches = data.branches;
+      this.initializeLookups();
+    })
+  }
 
-  //     if(map.productId){
-  //       let productId = map.productId;
-  //       this.productService.getProductTypes(this.bankInfo().id).subscribe(data => {
-  //         let product = data.productTypes.find((x: ProductType) => x.productTypeId === productId);
-  //         this.maps.push({"product": product});
-  //       })
-  //     }
-  //     this.tagMappings.push(this.maps);
-  //   });
-  // }
-  // // this.tagMappings.push(map.formCheckId);
+  loadProducts(){
+    this.productServices.getProductTypes(this.bankInfo().id).subscribe(data => {
+      this.products = data.productTypes;
+      this.initializeLookups();
+    })
+  }
 
+  initializeLookups() {
+    this.branches.forEach(branch => {
+      this.branchLookup[branch.id] = branch.branchName;
+
+    });
+    this.products.forEach(product => {
+      this.productLookup[product.productTypeId] = product.productTypeName;
+      this.onInnitializedChange(product.productTypeId);
+    });
+
+  }
+
+  getBranchName(id: string): string {
+    return this.branchLookup[id] || '';
+  }
+
+  getProductName(id: string): string {
+    return this.productLookup[id] || '';
+  }
+
+  getFormCheckName(id: string): string {
+    return this.formCheckLookup[id] || '';
+  }
+
+  deleteMapping(mapId: any, event: Event) {
+    if (!confirm('Confirm Deletion!')) {
+      event.preventDefault();
+      return;
+    }
+    this.tagMappingService.deleteTagMapping(this.bankInfo().id, this.tag().id, mapId).subscribe({
+      error: (error) => {
+        this.toastr.error(error.error);
+        console.log(error.error);
+      },
+      next: (response) => {
+        this.toastr.success('Successfully deleted tag mapping from list.');
+        this.maps = this.mapping().filter(map => map.id !== mapId);
+      },
+    });
+  }
+
+  onInnitializedChange(selectedProductId: any) {
+    this.formCheckService.getFormChecks(selectedProductId, this.bankInfo().id).subscribe(data => {
+      this.formChecks = data.bankFormChecks;
+      this.formChecks.forEach(formCheck => {
+      this.formCheckLookup[formCheck.id] = formCheck.formType;
+      });
+    })
+  }
 }

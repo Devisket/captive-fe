@@ -9,6 +9,7 @@ export const authGuard: CanActivateFn = (route, state) => {
   const toastr = inject(ToastrService);
 
   // if(accountService.currentUser()){
+
     return true;
   // } else {
   //   toastr.error('Not allowed request');

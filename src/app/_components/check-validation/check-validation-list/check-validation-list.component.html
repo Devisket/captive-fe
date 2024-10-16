@@ -24,8 +24,7 @@
                  @else {
                   <button type="button" [routerLink]="['/add-tag', checkValidation.id, 'bank', bankInfo().id ]" class="btn btn-sm btn-outline-info me-2 py-0">Add New Tag</button>
                  }
-                <button type="button" class="btn btn-sm py-0 btn-outline-warning me-2">Edit</button>
-                <button type="button" class="btn btn-sm py-0 btn-outline-danger me-2" disabled>Delete</button>
+                <button type="button" [routerLink]="['/edit-check-validation', checkValidation.id, 'bank', bankInfo().id ]" class="btn btn-sm py-0 btn-outline-warning me-2">Edit</button>
             </td>
           </tr>
         }

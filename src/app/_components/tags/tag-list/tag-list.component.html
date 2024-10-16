@@ -1,13 +1,13 @@
-@if (bankInfo) {
+@if (bankInfo && checkValidation) {
 
 <div class="d-flex justify-content-between mb-3">
-  <h1>
+  <h4>
     {{ bankInfo.bankName }} Tag List
-  </h1>
+  </h4>
   <div class="d-flex justify-content-end">
       <button
         class="btn btn-success me-2 btn-sm"
-        routerLink="/add-tag/{{ bankInfo.id }}"
+        [routerLink]="['/add-tag', checkValidation.id, 'bank', bankInfo.id ]"
         type="button"
         tabindex="-1"
         >
@@ -31,17 +31,22 @@
         <div class="col-12">
             <div style="background-color: azure;" class="p-4 pb-0">
               <div class="d-flex justify-content-between">
-                <h4><strong> {{ tag.name | uppercase }} </strong></h4>
+                <h4>{{ tag.name | uppercase }}</h4>
                 <div class="d-flex justify-content-start">
-                  <button type="button" class="btn btn-sm py-0 btn-outline-primary me-2">Add Mapping</button>
-                  <button type="button" class="btn btn-sm py-0 btn-outline-warning me-2">Edit</button>
-                  <button type="button" class="btn btn-sm py-0 btn-outline-danger me-2">Delete</button>
+                  <button type="button" [routerLink]="['/add-tag-mapping', tag.id, 'checkValidation', checkValidation.id, 'bank', bankInfo.id ]" class="btn btn-sm py-0 btn-outline-primary me-2">Add Mapping</button>
+                  <button type="button" [routerLink]="['/edit-tag', tag.id, 'checkValidation', checkValidation.id, 'bank', bankInfo.id ]" class="btn btn-sm py-0 btn-outline-warning me-2">Edit</button>
+                  <button type="button" class="btn btn-sm py-0 btn-outline-danger me-2" (click)="deleteTag(tag.id, $event)">Delete</button>
                   <button type="button" class="btn btn-sm py-0 btn-outline-info me-2" (click)="toggletagMappingVisibility(tag.id)">
-                    <i class="fa fa-arrow-down"></i>
+                    @if(!isTagMappingVisible(tag.id)){
+                      <i class="fa fa-arrow-down text-primary"></i> {{ tag.mapping.length }}
+                    }
+                    @else {
+                      <i class="fa fa-arrow-up text-danger"> {{ tag.mapping.length }}</i>
+                    }
                   </button>
                 </div>
               </div>
-              <app-tag-mapping-list *ngIf="tag.mapping.length > 0 && isTagMappingVisible(tag.id)" [mapping]="tag.mapping" [bankInfo]="bankInfo"></app-tag-mapping-list>
+              <app-tag-mapping-list *ngIf="tag.mapping.length > 0 && isTagMappingVisible(tag.id)" [mapping]="tag.mapping" [bankInfo]="bankInfo" [tag]="tag"></app-tag-mapping-list>
         </div>
       </div>
       </div>

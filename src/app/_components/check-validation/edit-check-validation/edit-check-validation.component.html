@@ -1,27 +1,30 @@
-@if(bankInfo){
+<p>edit-check-validation works!</p>
+@if(bankInfo && checkValidation){
 
   <div class="row d-flex justify-content-center">
     <div class="col-4">
-      <form id="addCheckValidationForm" #addCheckValidationForm="ngForm" autocomplete="off" (ngSubmit)="addCheckValidation()">
-        <h2 class="text-center"> Add New Tag</h2>
+      <form id="editCheckValidationForm" #editCheckValidationForm="ngForm" autocomplete="off" (ngSubmit)="updateCheckValidation()">
+        <h2 class="text-center"> Update Check Validation </h2>
         <hr />
 
         <div class="mb-4 form-floating">
           <input
             type="text"
             class="form-control"
-            [(ngModel)]="model.name"
+            [(ngModel)]="checkValidation.name"
             placeholder="Validation Name"
             name="name"/>
           <label>Validation Name</label>
         </div>
         <div class="mb-4 form-floating">
           <select class="form-control"
-              [(ngModel)]="model.validationType"
+              [(ngModel)]="checkValidation.validationType"
               name="validationType">
-              <option value=""></option>
+              <option value="{{ checkValidation.validationType }}">{{ checkValidation.validationType }}</option>
               @for(validationType of validationTypes; track $index){
-                <option value="{{ validationType }}">{{ validationType }}</option>
+                @if(checkValidation.validationType != validationType){
+                  <option value="{{ validationType }}">{{ validationType }}</option>
+                }
               }
           </select>
           <label>Form Check (optional)</label>
@@ -38,7 +41,7 @@
 
           <button
             class="btn btn-success me-2 btn-sm"
-            [disabled]="!addCheckValidationForm.dirty"
+            [disabled]="!editCheckValidationForm.dirty"
             type="submit"
           >
             <i class="fa fa-save"></i>
@@ -48,7 +51,7 @@
       </form>
     </div>
   </div>
-  @if(addCheckValidationForm.dirty){
+  @if(editCheckValidationForm.dirty){
   <div class="row">
     <div class="col-4 mt-3 offset-4 text-center text-sm">
       <div class="alert alert-warning pb-0">

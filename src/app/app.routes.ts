@@ -22,6 +22,10 @@ import { UploadOrderFilesComponent } from './_components/order-files/upload-orde
 import { TagListComponent } from './_components/tags/tag-list/tag-list.component';
 import { CheckValidationListComponent } from './_components/check-validation/check-validation-list/check-validation-list.component';
 import { AddTagComponent } from './_components/tags/add-tag/add-tag.component';
+import { EditTagComponent } from './_components/tags/edit-tag/edit-tag.component';
+import { AddTagMappingComponent } from './_components/tags/add-tag-mapping/add-tag-mapping.component';
+import { AddCheckValidationComponent } from './_components/check-validation/add-check-validation/add-check-validation.component';
+import { EditCheckValidationComponent } from './_components/check-validation/edit-check-validation/edit-check-validation.component';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -38,8 +42,12 @@ export const routes: Routes = [
             },
             {path: 'edit-profile', component: EditProfileComponent},
             { path: 'register-bank', component: AddBankComponent },
+            { path: 'add-check-validation/:bankId', component: AddCheckValidationComponent },
+            { path: 'edit-check-validation/:checkValidationId/bank/:bankId', component: EditCheckValidationComponent },
             { path: 'tag-list/:checkValidationId/bank/:bankId', component: TagListComponent },
             { path: 'add-tag/:checkValidationId/bank/:bankId', component: AddTagComponent },
+            { path: 'add-tag-mapping/:tagId/checkValidation/:checkValidationId/bank/:bankId', component: AddTagMappingComponent },
+            { path: 'edit-tag/:tagId/checkValidation/:checkValidationId/bank/:bankId', component: EditTagComponent },
             { path: 'add-product-type/:id', component: AddProductTypeComponent },
             { path: 'check-validation-list/:id', component: CheckValidationListComponent },
             { path: 'edit-product-type/:id/bank/:bankId', component: EditProductTypeComponent },
