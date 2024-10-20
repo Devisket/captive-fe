@@ -2,26 +2,33 @@
   <table class="table table-sm" width="100%">
     <thead>
       <tr>
-        <th width="25%">#</th>
-        <th width="25%">Name</th>
-        <th width="30%">Type</th>
-        <th  width="20%" class="text-center">Action</th>
+        <th width="25%" class="bg-info text-secondary">#</th>
+        <th width="25%" class="bg-info text-secondary">Name</th>
+        <th width="30%" class="bg-info text-secondary">Type</th>
+        <th  width="20%" class="text-center bg-info text-secondary">Action</th>
       </tr>
     </thead>
     <tbody>
       <tbody>
-        <tr>
-          <td>1</td>
-          <td>First check validation type</td>
-          <td>First check validation type</td>
-          <td class="text-center">
-              @if("validation_type" == "validation_type"){
-                <button type="button" [routerLink]="['/tag-list', bankInfo().id]"  class="btn btn-sm btn-outline-info me-2 py-0"><i class="fa fa-eye"></i> Tags</button>
-              }
-              <button type="button" class="btn btn-sm py-0 btn-outline-warning me-2">Edit</button>
-              <button type="button" class="btn btn-sm py-0 btn-outline-danger me-2">Delete</button>
-          </td>
-        </tr>
-      </tbody>
+      @if(checkValidations.length > 0 && bankInfo()){
+        @for (checkValidation of checkValidations; track $index) {
+          <tr>
+            <td>{{ $index + 1 }}</td>
+            <td>{{ checkValidation.name }}</td>
+            <td>{{ checkValidation.validationType }}</td>
+            <td class="text-center">
+                <!-- @if(checkValidation.validationType == "Mix"){ -->
+                 @if(checkValidation.tags.length > 0){
+                  <button type="button" [routerLink]="['/tag-list', checkValidation.id, 'bank', bankInfo().id]" class="btn btn-sm btn-outline-info me-2 py-0"><i class="fa fa-eye"></i> Tags</button>
+                 }
+                 @else {
+                  <button type="button" [routerLink]="['/add-tag', checkValidation.id, 'bank', bankInfo().id ]" class="btn btn-sm btn-outline-info me-2 py-0">Add New Tag</button>
+                 }
+                <button type="button" [routerLink]="['/edit-check-validation', checkValidation.id, 'bank', bankInfo().id ]" class="btn btn-sm py-0 btn-outline-warning me-2">Edit</button>
+            </td>
+          </tr>
+        }
+    }
+</tbody>
   </table>
 </div>

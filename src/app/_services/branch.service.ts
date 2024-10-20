@@ -18,7 +18,7 @@ export class BranchService {
   }
 
   getBranch(bankId : any, branchId: any): Observable<any> {
-    return this.http.get<any>(this.queryUrl + "Bank/" + bankId + "/branches/" + branchId);
+    return this.http.get<any>(this.queryUrl + "Bank/" + bankId + "/branch/" + branchId);
   }
 
   addBranch(branch: any, bankId: any) {

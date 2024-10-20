@@ -4,7 +4,7 @@
       <button type="button" (click)="openAddBranchModal()"  *ngIf="activeTabset === 'Branches'" class="btn btn-outline-info float-end">Add Branch</button>
       <button type="button" routerLink="/add-form-check/{{bankInfo?.id}}" *ngIf="activeTabset === 'Form Checks'" class="btn btn-outline-info float-end">Form Checks</button>
       <button type="button" routerLink="/add-product-type/{{bankInfo?.id}}" *ngIf="activeTabset === 'Products'" class="btn btn-outline-success float-end">Add Products</button>
-      <button type="button" routerLink="/check-validation-list/{{bankInfo?.id}}" *ngIf="activeTabset === 'Check Validation'" class="btn btn-outline-success float-end">Add New Check Validation</button>
+      <button type="button" routerLink="/add-check-validation/{{bankInfo?.id}}" *ngIf="activeTabset === 'Check Validation'" class="btn btn-outline-success float-end">Add New Check Validation</button>
       <button type="button" (click)="addBatch(bankInfo?.id, $event)"  *ngIf="activeTabset === 'Batches'" class="btn btn-outline-primary float-end">Create New Batch</button>
   </div>
 </div>

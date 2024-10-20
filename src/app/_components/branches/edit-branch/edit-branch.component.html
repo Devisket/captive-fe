@@ -33,31 +33,35 @@
             </div>
             <div class="row">
                 <div class="col-6">
-                    <div class="mb-3 form-floating">
-                        <input type="text"
-                            class="form-control"
-                            name="mergingBranchId"
-                            [(ngModel)]="branch.mergingBranchId"
-                            placeholder="Merging To" />
-                        <label>Merging to</label>
-                    </div>
+                  <div class="mb-3 form-floating">
+                    <select class="form-control"
+                           name="mergingBranchId"
+                           [(ngModel)]="branch.mergingBranchId"
+                           placeholder="Merging To">
+                           <option value=""></option>
+                           @for (branch of branches; track $index) {
+                            <option value="{{branch.id}}">{{branch.branchName}}</option>
+                           }
+                    </select>
+                    <label>Merging to</label>
+                  </div>
                 </div>
                 <div class="col-6">
                     <div class="mb-3 form-floating">
                         <select class="form-control"
                             name="tagId"
-                            [(ngModel)]="branch.tagId"
+                            [(ngModel)]="branch.branchStatus"
                             placeholder="tagId">
-                            <option value=""></option>
-                            @for (tag of tags; track $index) {
-                                <option value="{{tag}}">{{tag}}</option>
+                            <option value="{{ branch.branchStatus }}">{{ branch.branchStatus }}</option>
+                            @for (status of statuses; track $index) {
+                                <option value="{{status}}">{{status}}</option>
                             }
                         </select>
-                        <label>Tag</label>
+                        <label>Status</label>
                     </div>
                 </div>
             </div>
-            
+
             <div class="mb-3 form-floating">
                 <input type="text"
                     class="form-control"
@@ -104,9 +108,9 @@
     </div>
     <div class="modal-footer">
         <div class="d-flex justify-content-between">
-            
+
             <button type="button" tabindex="-1" class="btn btn-default me-2 btn-sm" (click)="bsModalRef.hide()">Cancel</button>
-            <button type="submit" 
+            <button type="submit"
                 class="btn btn-success me-2 btn-sm"
                 [disabled]="!editBranchForm.dirty"
                 form="editBranchForm"

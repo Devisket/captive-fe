@@ -61,9 +61,11 @@ export class BankDetailComponent implements OnInit{
       class: 'modal-lg',
       id: this.bankInfo?.id,
       initialState: {
-        title: 'Add Branch'
+        title: 'Add Branch',
+        dataId: this.bankInfo?.id
       }
     }
+
     this.bsModalRef = this.modalService.show(AddBranchComponent, initialState);
   }
 

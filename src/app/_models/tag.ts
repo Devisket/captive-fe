@@ -1,4 +1,7 @@
+import { TagMapping } from "./tag-mapping";
+
 export interface Tag {
   id: string;
-  tagName: string;
+  name: string;
+  mapping: TagMapping[];
 }
