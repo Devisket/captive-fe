@@ -43,6 +43,9 @@ export class UploadOrderFilesComponent implements OnInit{
     this.loadBank();
     this.getBatch();
     this.getOrderFiles();
+    setInterval(() => {
+      this.getOrderFiles();
+    }, 5000);
   }
 
   loadBank() {
@@ -95,7 +98,6 @@ export class UploadOrderFilesComponent implements OnInit{
     let bankId = this.route.snapshot.paramMap.get("bankId");
     this.orderFileService.getOrderFiles(bankId, batchId).subscribe( data => {
       this.orderFiles = data.orderFiles.filter((orderFile: OrderFile) => orderFile.batchId === batchId);
-      console.log(batchId, this.orderFiles, data.orderFiles);
     })
   }
 

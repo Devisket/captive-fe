@@ -30,9 +30,9 @@ export class FormCheckListComponent implements OnInit{
   }
 
   getFormChecks() {
-    this.formCheckService.getFormChecks(this.productType().productTypeId, this.productType().productTypeId).subscribe(data => {
+    this.formCheckService.getFormChecks(this.productType().productTypeId).subscribe(data => {
       if(!data) return; 
-      this.formChecks = data.bankFormChecks;
+      this.formChecks = data.formChecks;
     });
   }
 

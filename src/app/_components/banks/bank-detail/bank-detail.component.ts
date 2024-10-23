@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Bank } from '../../../_models/bank';
 import { TabDirective, TabsModule } from 'ngx-bootstrap/tabs';
@@ -29,6 +29,8 @@ export class BankDetailComponent implements OnInit{
   private route = inject(ActivatedRoute);
   private batchService = inject(BatchesService);
   private toastr = inject(ToastrService);
+  
+  @ViewChild(BatchListComponent) private batchList!:BatchListComponent;
 
   bsModalRef: BsModalRef<AddBranchComponent> = new BsModalRef<AddBranchComponent>();
   modalService = inject(BsModalService);
@@ -84,6 +86,7 @@ export class BankDetailComponent implements OnInit{
         error: error => console.log(error),
         next: _ => {
           this.toastr.success("successfully added new batch.")
+          this.batchList?.getBatches();
         },
         complete: () => window.location.reload()
       }

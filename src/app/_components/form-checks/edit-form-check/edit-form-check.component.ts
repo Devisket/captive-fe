@@ -45,8 +45,10 @@ export class EditFormCheckComponent {
     let formCheckId = this.route.snapshot.paramMap.get("id");
     console.log(this.bankInfoId, formCheckId, productTypeId);
 
-    this.formCheckService.getFormChecks(productTypeId, productTypeId).subscribe( data => {
-      this.formCheck = data.bankFormChecks.find((formCheck: FormCheck) => formCheck.id === formCheckId);
+    this.formCheckService.getFormChecks(productTypeId).subscribe( data => {
+      if(data.formChecks){
+        this.formCheck = data.formChecks.find((formCheck: FormCheck) => formCheck.id === formCheckId);
+      }      
     })
   }
 

@@ -32,7 +32,7 @@
 
         <tbody>
           @for(orderFile of orderFiles; track $index){
-            <tr class="pl-2 order-files-row batch-{{ batch.batchName }}">
+            <tr class="pl-2 order-files-row batch-{{ batch.batchName }}" (click)="toggleBatchVisibility(orderFile.id)">
               <td title="File Name" colspan="2">{{ orderFile.fileName }}</td>
               <td title="File Path" colspan="3">{{ orderFile.filePath }}</td>
               <td title="Status">{{ orderFile.status }}</td>

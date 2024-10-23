@@ -114,8 +114,8 @@ export class AddTagMappingComponent {
     const selectedProductId = event.target.value;
     this.model.formCheckId = '';
     if(selectedProductId){
-      this.formCheckServices.getFormChecks(selectedProductId, this.bankId).subscribe(data => {
-        this.formChecks = data.bankFormChecks;
+      this.formCheckServices.getFormChecks(selectedProductId).subscribe(data => {
+        this.formChecks = data.formChecks;
       })
     }else{
       this.formChecks = [];

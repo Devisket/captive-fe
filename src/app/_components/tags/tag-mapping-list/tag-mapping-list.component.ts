@@ -101,8 +101,8 @@ export class TagMappingListComponent implements OnInit{
   }
 
   onInnitializedChange(selectedProductId: any) {
-    this.formCheckService.getFormChecks(selectedProductId, this.bankInfo().id).subscribe(data => {
-      this.formChecks = data.bankFormChecks;
+    this.formCheckService.getFormChecks(selectedProductId).subscribe(data => {
+      this.formChecks = data.formChecks;
       this.formChecks.forEach(formCheck => {
       this.formCheckLookup[formCheck.id] = formCheck.formType;
       });

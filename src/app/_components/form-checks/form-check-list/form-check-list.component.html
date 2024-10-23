@@ -4,8 +4,8 @@
             <tr>
                 <th>Check Type</th>
                 <th>Form Type</th>
-                <th>Product Type</th>
                 <th>Description</th>
+                <th>File Initial</th>
                 <th>Quantity</th>
                 <th class="text-center">Action</th>
             </tr>
@@ -14,8 +14,8 @@
             <tr *ngFor="let formCheck of formChecks">
                 <td>{{ formCheck.checkType }}</td>
                 <td>{{ formCheck.formType }}</td>
-                <td>{{ formCheck.productId }}</td>
                 <td>{{ formCheck.description }}</td>
+                <td>{{formCheck.fileInitial}}</td>
                 <td>{{ formCheck.quanitity }}</td>
                 <td class="text-center">
                     <div class="d-flex justify-content-center">
