@@ -1,4 +1,6 @@
-<h4>Internal server error</h4>
+<h4>Internal server error
+    <span class="float-end"><a  class="btn btn-sm btn-outline-primary" (click)="goBack()">Back to Previous Page</a></span>
+</h4>
 
 @if(error) {
     <h5 class="text-danger">Error: {{error.message}}</h5>

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-server-error',
@@ -11,9 +12,13 @@ import { Router } from '@angular/router';
 export class ServerErrorComponent {
   error: any;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private location: Location) {
     const navigation = this.router.getCurrentNavigation();
     this.error = navigation?.extras?.state?.['error'];
     console.log(this.error)
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

@@ -15,8 +15,8 @@ export class OrderFilesService {
     return this.http.post(this.commandUrl  + "OrderFile/upload", request);
   }
 
-  getOrderFiles(bankId: any, batchId: any): Observable<any>{
-    return this.http.get<any>(this.queryUrl + bankId + "/Batch/" + batchId);
+  getOrderFiles(bankId: any, batchId: any, headers: any): Observable<any>{
+    return this.http.get<any>(this.queryUrl + bankId + "/Batch/" + batchId, { headers });
   }
 
 }

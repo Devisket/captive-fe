@@ -28,7 +28,7 @@ import { AddCheckValidationComponent } from './_components/check-validation/add-
 import { EditCheckValidationComponent } from './_components/check-validation/edit-check-validation/edit-check-validation.component';
 
 export const routes: Routes = [
-    {path: '', component: HomeComponent},
+    {path: '', component: BankListComponent},
     {
         path: '',
         runGuardsAndResolvers: 'always',
@@ -64,7 +64,7 @@ export const routes: Routes = [
     {path: 'server-error', component: ServerErrorComponent},
     {
         path: '**', // Your specified path
-        component: HomeComponent,
+        component: BankListComponent,
         pathMatch: 'full',
     },
 

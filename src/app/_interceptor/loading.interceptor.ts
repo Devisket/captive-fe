@@ -6,12 +6,19 @@ import { delay, finalize } from 'rxjs';
 export const loadingInterceptor: HttpInterceptorFn = (req, next) => {
   const busyService = inject(BusyService);
 
-  busyService.busy();
+  // Check for the custom header
+  const skipSpinner = req.headers.has('X-Skip-Spinner');
+
+  if (!skipSpinner) {
+    busyService.busy();
+  }
 
   return next(req).pipe(
     delay(500),
     finalize(() => {
-      busyService.idle()
+      if (!skipSpinner) {
+        busyService.idle();
+      }
     })
   )
 };

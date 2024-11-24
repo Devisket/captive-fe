@@ -35,6 +35,7 @@ export class ViewConfigurationComponent implements OnInit, OnDestroy{
   jsonDoc: any;
   model: any = {};
   isExists = false;
+  isEditable = false;
 
   ngOnInit(): void {
     this.loadBank();
@@ -43,6 +44,7 @@ export class ViewConfigurationComponent implements OnInit, OnDestroy{
   }
 
   loadBank() {
+  
     let bankId = this.route.snapshot.paramMap.get("bankId");
     if (!bankId) return;
     this.bankService.getBanks().subscribe(data => {
@@ -62,28 +64,22 @@ export class ViewConfigurationComponent implements OnInit, OnDestroy{
     let productTypeId = this.route.snapshot.paramMap.get("productId");
     this.configurationService.getProductConfigurations(productTypeId).subscribe( data => {
       this.productConfiguration = data.productConfigurations.find((productConfig: ProductConfiguration) => productConfig.productId === productTypeId);
+
       if(!this.productConfiguration) return;
-      const jsonString = JSON.parse(this.productConfiguration?.configurationData);
-      // const jsonString = "dsd";
-      this.jsonDoc = jsonString;
-      if(this.jsonDoc.type === "doc"){
-        this.isExists = true;
-      }
-      // {
-      //   type: 'doc',
-      //   content: [
-      //     {
-      //       type: 'paragraph',
-      //       content: [
-      //         {
-      //           type: 'text',
-      //           text: jsonString
-      //         }
-      //       ]
-      //     }
-      //   ]
-      // };
+      this.isExists = true;
+      const jsonString = this.productConfiguration?.configurationData;
+      this.jsonDoc  = this.formatJson(jsonString);
     })
+  }
+
+  formatJson(jsonString: string): string {
+    try {
+      const jsonObject = JSON.parse(jsonString);
+      return '<pre>' + JSON.stringify(jsonObject, null, 2) + '</pre>'; // 2 spaces for indentation
+    } catch (error) {
+      console.error('Invalid JSON string', error);
+      return jsonString; // Return original string if invalid JSON
+    }
   }
 
   ngOnDestroy(): void {
@@ -92,5 +88,9 @@ export class ViewConfigurationComponent implements OnInit, OnDestroy{
 
   editProductConfiguration(){
     //
+  }
+
+  enableEditConfiguration(isTrue: boolean){
+    this.isEditable = (isTrue ? false : true);
   }
 }

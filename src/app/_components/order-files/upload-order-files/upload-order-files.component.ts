@@ -9,6 +9,7 @@ import { OrderFilesService } from '../../../_services/order-files.service';
 import { ToastrService } from 'ngx-toastr';
 import { DatePipe, NgFor, NgIf } from '@angular/common';
 import { OrderFile } from '../../../_models/order-file';
+import { HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-upload-order-files',
@@ -37,15 +38,14 @@ export class UploadOrderFilesComponent implements OnInit{
   selectedFiles: File[] = [];
   orderFiles: OrderFile[] = [];
   visibleBatches: Set<string> = new Set();
+  private refreshInterval: any;
 
   ngOnInit(): void {
     this.bankInfo;
     this.loadBank();
     this.getBatch();
     this.getOrderFiles();
-    setInterval(() => {
-      this.getOrderFiles();
-    }, 5000);
+    this.startRefreshing();
   }
 
   loadBank() {
@@ -93,12 +93,33 @@ export class UploadOrderFilesComponent implements OnInit{
     }
   }
 
-  getOrderFiles(){
-    let batchId = this.route.snapshot.paramMap.get("batchId");
-    let bankId = this.route.snapshot.paramMap.get("bankId");
-    this.orderFileService.getOrderFiles(bankId, batchId).subscribe( data => {
-      this.orderFiles = data.orderFiles.filter((orderFile: OrderFile) => orderFile.batchId === batchId);
-    })
+  startRefreshing() {
+    this.refreshInterval = setInterval(() => {
+      this.getOrderFiles();
+    }, 1000);
+  }
+  
+  refreshView() {
+    // Your logic to refresh the view
+    console.log('Refreshing view...');
+  }
+
+  getOrderFiles() {
+    const headers = new HttpHeaders().set('X-Skip-Spinner', 'true');
+      let batchId = this.route.snapshot.paramMap.get("batchId");
+      let bankId = this.route.snapshot.paramMap.get("bankId");
+      this.orderFileService.getOrderFiles(bankId, batchId, headers).subscribe( data => {
+        this.orderFiles = data.orderFiles.filter((orderFile: OrderFile) => {
+          orderFile.batchId === batchId;
+          if (orderFile.status === 'processing') {
+            // Refresh the page or update the view
+            this.refreshView();
+          } else {
+            // Stop the interval if the status is not 'processing'
+            clearInterval(this.refreshInterval);
+          }
+        });
+    });
   }
 
   toggleBatchVisibility(batchName: string): void {
