@@ -3,9 +3,10 @@
         <table class="table table-sm" width="100%">
             <thead>
                 <tr>
-                    <th>NAME</th>
-                    <th>BRSTN</th>
-                    <th>ADDRESS</th>
+                    <th>Branch Name</th>
+                    <th>BRSTN Code</th>
+                    <th>Branch Code</th>
+                    <th>Branch Address</th>
                     <th class="text-center">
                         Action
                     </th>
@@ -17,6 +18,7 @@
                     <tr>
                         <td>{{ branch.branchName }}</td>
                         <td>{{ branch.brstn }}</td>
+                        <td>{{ branch.branchCode }}</td>
                         <td>
                             <div dropdown class="dropdown" style="min-width: 300px;">
                                 <a dropdownToggle class="text-dark">{{branch.branchAddress1}}</a>

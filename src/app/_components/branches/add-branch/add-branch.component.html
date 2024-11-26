@@ -26,12 +26,22 @@
                            name="brstnCode"
                            [(ngModel)]="model.brstnCode"
                            placeholder="Complete Name" />
-                    <label>BRSTN CODE</label>
+                    <label>BRSTN Code</label>
                 </div>
             </div>
         </div>
         <div class="row">
-            <div class="col-6">
+            <div class="col-4">
+                <div class="mb-3 form-floating">
+                    <input type="text"
+                           class="form-control"
+                           name="branchCode"
+                           [(ngModel)]="model.branchCode"
+                           placeholder="Branch Code" />
+                    <label>Branch Code</label>
+                </div>
+            </div>
+            <div class="col-4">
                 <div class="mb-3 form-floating">
                     <select class="form-control"
                            name="mergingBranchId"
@@ -45,7 +55,7 @@
                     <label>Merging to</label>
                 </div>
             </div>
-            <div class="col-6">
+            <div class="col-4">
                 <div class="mb-3 form-floating">
                     <select class="form-control"
                            name="tagId"
