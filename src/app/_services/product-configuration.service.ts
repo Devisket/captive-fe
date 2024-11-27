@@ -15,7 +15,6 @@ export class ProductConfigurationService {
     return this.http.get<any>(this.queryUrl + "bankId/Product/" + poductTyeId + "/configuration");
   }
 
-
   addProductConfigurations(productTypeId: any, bankInfoId: any, productTypeConfiguration: any) {
     return this.http.post(this.commandUrl + "bank/" + bankInfoId + "/Product/" + productTypeId + "/configuration", productTypeConfiguration);
   }

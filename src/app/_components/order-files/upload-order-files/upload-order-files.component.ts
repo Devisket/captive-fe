@@ -108,17 +108,25 @@ export class UploadOrderFilesComponent implements OnInit{
     const headers = new HttpHeaders().set('X-Skip-Spinner', 'true');
       let batchId = this.route.snapshot.paramMap.get("batchId");
       let bankId = this.route.snapshot.paramMap.get("bankId");
+
       this.orderFileService.getOrderFiles(bankId, batchId, headers).subscribe( data => {
+        if(!data) return;
+        if(!data.orderFiles) return;
         this.orderFiles = data.orderFiles.filter((orderFile: OrderFile) => {
-          orderFile.batchId === batchId;
-          if (orderFile.status === 'processing') {
-            // Refresh the page or update the view
-            this.refreshView();
-          } else {
-            // Stop the interval if the status is not 'processing'
-            clearInterval(this.refreshInterval);
-          }
+          return orderFile.batchId === batchId;
         });
+
+        this.orderFiles.forEach((orderFile: OrderFile) => {
+            if (orderFile.status === 'Processing') {
+              // Refresh the page or update the view
+              this.refreshView();
+            } else {
+              // Stop the interval if the status is not 'processing'
+                clearInterval(this.refreshInterval);
+            }
+        });
+
+        // console.log(this.orderFiles)
     });
   }
 

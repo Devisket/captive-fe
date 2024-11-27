@@ -75,7 +75,7 @@ export class ViewConfigurationComponent implements OnInit, OnDestroy{
   formatJson(jsonString: string): string {
     try {
       const jsonObject = JSON.parse(jsonString);
-      return '<pre>' + JSON.stringify(jsonObject, null, 2) + '</pre>'; // 2 spaces for indentation
+      return JSON.stringify(jsonObject, null, 2); // 2 spaces for indentation
     } catch (error) {
       console.error('Invalid JSON string', error);
       return jsonString; // Return original string if invalid JSON

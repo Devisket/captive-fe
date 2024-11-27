@@ -66,15 +66,15 @@ export class AddConfigurationComponent implements OnInit, OnDestroy {
 
   addProductConfiguration() {
     const values = this.addProductConfigurationForm?.value;
-
-    const configurationData = JSON.stringify(values.configurationData)
+    const editorContent = JSON.parse(values.configurationData);
+    const configurationData = JSON.stringify(editorContent);
 
     const request = {
       "configurationData": configurationData,
       "fileName": values.fileName,
       "configurationType": values.configurationType,
     };
-
+    console.log(request);
     this.productConfigurationService.addProductConfigurations(this.productType?.productTypeId, this.bankInfo?.id, request).subscribe({
       next: _ => {
         this.toastr.success( this.productType?.productTypeName + " configuration has been added successsfully");

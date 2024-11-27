@@ -29,44 +29,42 @@
         </tr>
       </thead>
       <tbody>
-
-        <tbody>
-          @for(orderFile of orderFiles; track $index){
-            <tr class="pl-2 order-files-row batch-{{ batch.batchName }}" (click)="toggleBatchVisibility(orderFile.id)">
-              <td title="File Name" colspan="2">{{ orderFile.fileName }}</td>
-              <td title="File Path" colspan="3">{{ orderFile.filePath }}</td>
-              <td title="Status">{{ orderFile.status }}</td>
-              <td class="text-end">
-                <button type="button" class="btn btn-sm btn-outline-danger me-2 py-0"><i class="fa fa-trash"></i></button>
-                <button type="button" class="btn btn-sm btn-outline-primary me-2 py-0"><i class="fa fa-edit"></i></button>
-                <button type="button" class="btn btn-sm py-0 btn-outline-info me-2" (click)="toggleBatchVisibility(orderFile.id)">
-                  <i class="fa fa-arrow-down"></i>
-                </button>
-              </td>
-            </tr>
-            <tr class="text-center text-sm check-form-header batch-{{ orderFile.id }}" [hidden]="!isBatchVisible(orderFile.id)">
-              <th>Account No.</th>
-              <th>BRSTN</th>
-              <th>Account Name</th>
-              <th>Concode</th>
-              <th>Order Qty</th>
-              <th>Deliver To</th>
-              <th>Action</th>
-            </tr>
-            <tr class="text-center batch-{{ orderFile.id }}" [hidden]="!isBatchVisible(orderFile.id)">
-              <td >sample</td>
-              <td >dsds</td>
-              <td >dfs</td>
-              <td >sample</td>
-              <td >dsds</td>
-              <td >dfs</td>
-              <td class="text-end">
-                <button type="button" class="btn btn-sm btn-danger me-2 py-0"><i class="fa fa-trash"></i></button>
-                <button type="button" class="btn btn-sm btn-primary me-2 py-0"><i class="fa fa-edit"></i></button>
-              </td>
-            </tr>
-          }
-        </tbody>
+        @for(orderFile of orderFiles; track $index){
+          <tr class="pl-2 order-files-row batch-{{ batch.batchName }}" (click)="toggleBatchVisibility(orderFile.id)">
+            <td title="File Name" colspan="2">{{ orderFile.fileName }}</td>
+            <td title="File Path" colspan="3">{{ orderFile.filePath }}</td>
+            <td title="Status">{{ orderFile.status }}</td>
+            <td class="text-end">
+              <button type="button" class="btn btn-sm btn-outline-danger me-2 py-0"><i class="fa fa-trash"></i></button>
+              <button type="button" class="btn btn-sm btn-outline-primary me-2 py-0"><i class="fa fa-edit"></i></button>
+              <button type="button" class="btn btn-sm py-0 btn-outline-info me-2" (click)="toggleBatchVisibility(orderFile.id)">
+                <i class="fa fa-arrow-down"></i>
+              </button>
+            </td>
+          </tr>
+          <tr class="text-center text-sm check-form-header batch-{{ orderFile.id }}" [hidden]="!isBatchVisible(orderFile.id)">
+            <th>Account No.</th>
+            <th>BRSTN</th>
+            <th>Account Name</th>
+            <th>Concode</th>
+            <th>Order Qty</th>
+            <th>Deliver To</th>
+            <th>Action</th>
+          </tr>
+          <tr class="text-center batch-{{ orderFile.id }}" [hidden]="!isBatchVisible(orderFile.id)">
+            <td >sample</td>
+            <td >dsds</td>
+            <td >dfs</td>
+            <td >sample</td>
+            <td >dsds</td>
+            <td >dfs</td>
+            <td class="text-end">
+              <button type="button" class="btn btn-sm btn-danger me-2 py-0"><i class="fa fa-trash"></i></button>
+              <button type="button" class="btn btn-sm btn-primary me-2 py-0"><i class="fa fa-edit"></i></button>
+            </td>
+          </tr>
+        }
+      </tbody>
     </table>
   </div>
 }
