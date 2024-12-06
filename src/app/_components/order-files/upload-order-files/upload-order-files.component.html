@@ -1,70 +1,118 @@
 @if(batch){
-  <div class="row">
-    <div class="col-10">
-      <form id="uploadOrderFileForm" #uploadOrderFileForm="ngForm" autocomplete="off" (ngSubmit)="uploadOrderFile()">
-          <div class="mb-3">
-            <!-- <label for="formFileMultiple" class="form-label">Select multiple files..</label> -->
-            <div class="input-group-text">
-              <button type="submit" class="btn btn-success input-group-text me-3 py-1" id="basic-addon2">
-                <i class="fa fa-upload"></i> UPLOAD NEW ORDER FILES
-              </button>
-              <input class="form-control form-control-sm" type="file" id="formFileMultiple" (change)="onFileSelected($event)" multiple>
-            </div>
-          </div>
-        </form>
-    </div>
-    <div class="col-2">
-      <button type="button" class="btn btn-sm py-1 float-end btn-primary" routerLink="/banks/{{bankInfo?.id}}">Back to {{ bankInfo?.bankName }}</button>
-    </div>
+<div class="row">
+  <div class="col-10">
+    <form
+      id="uploadOrderFileForm"
+      #uploadOrderFileForm="ngForm"
+      autocomplete="off"
+      (ngSubmit)="uploadOrderFile()"
+    >
+      <div class="mb-3">
+        <!-- <label for="formFileMultiple" class="form-label">Select multiple files..</label> -->
+        <div class="input-group-text">
+          <button
+            type="submit"
+            class="btn btn-success input-group-text me-3 py-1"
+            id="basic-addon2"
+          >
+            <i class="fa fa-upload"></i> UPLOAD NEW ORDER FILES
+          </button>
+          <input
+            class="form-control form-control-sm"
+            type="file"
+            id="formFileMultiple"
+            (change)="onFileSelected($event)"
+            multiple
+          />
+        </div>
+      </div>
+    </form>
   </div>
+  <div class="col-2">
+    <button
+      type="button"
+      class="btn btn-sm py-1 float-end btn-primary"
+      routerLink="/banks/{{ bankInfo?.id }}"
+    >
+      Back to {{ bankInfo?.bankName }}
+    </button>
+  </div>
+</div>
 
-  <div class="table-responsive">
-    <table class="table table-sm" width="100%">
-      <thead>
-        <tr>
-          <th colspan="2">File Name</th>
-          <th colspan="3">File Path</th>
-          <th>Status</th>
-          <th class="text-center">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for(orderFile of orderFiles; track $index){
-          <tr class="pl-2 order-files-row batch-{{ batch.batchName }}" (click)="toggleBatchVisibility(orderFile.id)">
-            <td title="File Name" colspan="2">{{ orderFile.fileName }}</td>
-            <td title="File Path" colspan="3">{{ orderFile.filePath }}</td>
-            <td title="Status">{{ orderFile.status }}</td>
-            <td class="text-end">
-              <button type="button" class="btn btn-sm btn-outline-danger me-2 py-0"><i class="fa fa-trash"></i></button>
-              <button type="button" class="btn btn-sm btn-outline-primary me-2 py-0"><i class="fa fa-edit"></i></button>
-              <button type="button" class="btn btn-sm py-0 btn-outline-info me-2" (click)="toggleBatchVisibility(orderFile.id)">
-                <i class="fa fa-arrow-down"></i>
-              </button>
-            </td>
-          </tr>
-          <tr class="text-center text-sm check-form-header batch-{{ orderFile.id }}" [hidden]="!isBatchVisible(orderFile.id)">
-            <th>Account No.</th>
-            <th>BRSTN</th>
-            <th>Account Name</th>
-            <th>Concode</th>
-            <th>Order Qty</th>
-            <th>Deliver To</th>
-            <th>Action</th>
-          </tr>
-          <tr class="text-center batch-{{ orderFile.id }}" [hidden]="!isBatchVisible(orderFile.id)">
-            <td >sample</td>
-            <td >dsds</td>
-            <td >dfs</td>
-            <td >sample</td>
-            <td >dsds</td>
-            <td >dfs</td>
-            <td class="text-end">
-              <button type="button" class="btn btn-sm btn-danger me-2 py-0"><i class="fa fa-trash"></i></button>
-              <button type="button" class="btn btn-sm btn-primary me-2 py-0"><i class="fa fa-edit"></i></button>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
+<div class="table-responsive">
+  <table class="table table-sm" width="100%">
+    <thead>
+      <tr>
+        <th colspan="2">File Name</th>
+        <th colspan="3">File Path</th>
+        <th>Status</th>
+        <th class="text-center">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for(orderFile of orderFiles; track $index){
+      <tr
+        class="pl-2 order-files-row batch-{{ batch.batchName }}"
+        (click)="toggleBatchVisibility(orderFile.id)"
+      >
+        <td title="File Name" colspan="2">{{ orderFile.fileName }}</td>
+        <td title="File Path" colspan="3">{{ orderFile.filePath }}</td>
+        <td title="Status">{{ orderFile.status }}</td>
+        <td class="text-end">
+          <button type="button" class="btn btn-sm btn-outline-danger me-2 py-0">
+            <i class="fa fa-trash"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-primary me-2 py-0"
+          >
+            <i class="fa fa-edit"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm py-0 btn-outline-info me-2"
+            (click)="toggleBatchVisibility(orderFile.id)"
+          >
+            <i class="fa fa-arrow-down"></i>
+          </button>
+        </td>
+      </tr>
+      <tr
+        class="text-center text-sm check-form-header batch-{{ orderFile.id }}"
+        [hidden]="!isBatchVisible(orderFile.id)"
+      >
+        <th>Account No.</th>
+        <th>BRSTN</th>
+        <th>Account Name</th>
+        <th>Concode</th>
+        <th>Order Qty</th>
+        <th>Deliver To</th>
+        <th>is Valid</th>
+        <th style="display: none">Action</th>
+      </tr>
+      @for(checkOrder of orderFile.checkOrders; track $index){
+      <tr
+        class="text-center batch-{{ orderFile.id }}"
+        [hidden]="!isBatchVisible(orderFile.id)"
+      >
+        <td>{{ checkOrder.accountNumber }}</td>
+        <td>{{ checkOrder.brstn }}</td>
+        <td>{{ checkOrder.mainAccountName }}</td>
+        <td>{{ checkOrder.concode }}</td>
+        <td>{{ checkOrder.quantity }}</td>
+        <td>{{checkOrder.deliverTo}}</td>
+        <td>{{ checkOrder.isValid }}</td>
+        <td class="text-end" style="display: none">
+          <button type="button" class="btn btn-sm btn-danger me-2 py-0">
+            <i class="fa fa-trash"></i>
+          </button>
+          <button type="button" class="btn btn-sm btn-primary me-2 py-0">
+            <i class="fa fa-edit"></i>
+          </button>
+        </td>
+      </tr>
+      } }
+    </tbody>
+  </table>
+</div>
 }

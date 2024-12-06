@@ -32,6 +32,7 @@ export class AddFormCheckComponent {
   bankInfo?: Bank;
   productType?: ProductType;
   model: any = {};
+  productId:string = ""
 
   ngOnInit(): void {
     this.getProductType();
@@ -47,15 +48,15 @@ export class AddFormCheckComponent {
   }
 
   getProductType(){
-    let productTypeId = this.route.snapshot.paramMap.get("id");
+    this.productId = this.route.snapshot.paramMap.get("id") ?? '';
     let bankId = this.route.snapshot.paramMap.get("bankId");
     this.productTypeService.getProductTypes(bankId).subscribe( data => {
-      this.productType = data.productTypes.find((product: ProductType) => product.productTypeId === productTypeId);
+      this.productType = data.productTypes.find((product: ProductType) => product.productTypeId === this.productId);
     })
   }
 
   addFormCheck() {
-    this.formCheckService.addFormCheck(this.addFormCheckForm?.value, this.bankInfo?.id).subscribe({
+    this.formCheckService.addFormCheck(this.addFormCheckForm?.value,this.productId).subscribe({
       next: _ => {
         this.toastr.success( this.bankInfo?.bankName + " product type has been added successsfully");
         this.router.navigateByUrl('/banks/' + this.bankInfo?.id);

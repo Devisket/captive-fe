@@ -101,7 +101,6 @@ export class UploadOrderFilesComponent implements OnInit{
   
   refreshView() {
     // Your logic to refresh the view
-    console.log('Refreshing view...');
   }
 
   getOrderFiles() {
@@ -115,7 +114,7 @@ export class UploadOrderFilesComponent implements OnInit{
         this.orderFiles = data.orderFiles.filter((orderFile: OrderFile) => {
           return orderFile.batchId === batchId;
         });
-
+        
         this.orderFiles.forEach((orderFile: OrderFile) => {
             if (orderFile.status === 'Processing') {
               // Refresh the page or update the view

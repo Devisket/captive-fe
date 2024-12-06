@@ -30,22 +30,21 @@ export class EditFormCheckComponent {
   bankService = inject(BanksService);
   productTypeService = inject(ProductTypeService);
   formCheckService = inject(FormCheckService);
-  productType?: ProductType;
   formCheck?: FormCheck;
   location = inject(Location);
   model: any = {};
   bankInfoId = this.route.snapshot.paramMap.get("bankId");
+  productId = '';
 
   ngOnInit(): void {
     this.getFormCheck();
   }
   
   getFormCheck(){
-    let productTypeId = this.route.snapshot.paramMap.get("productId");
+    this.productId = this.route.snapshot.paramMap.get("productId") ?? '';
     let formCheckId = this.route.snapshot.paramMap.get("id");
-    console.log(this.bankInfoId, formCheckId, productTypeId);
 
-    this.formCheckService.getFormChecks(productTypeId).subscribe( data => {
+    this.formCheckService.getFormChecks(this.productId).subscribe( data => {
       if(data.formChecks){
         this.formCheck = data.formChecks.find((formCheck: FormCheck) => formCheck.id === formCheckId);
       }      
@@ -54,10 +53,8 @@ export class EditFormCheckComponent {
 
 
   editFormCheck() {
-    if(!this.bankInfoId) return;
-    let bankId = this.bankInfoId;
     if(!this.formCheck) return;
-    this.formCheckService.updateFormCheck(this.editFormCheckForm?.value, bankId , this.formCheck?.id).subscribe({
+    this.formCheckService.updateFormCheck(this.editFormCheckForm?.value, this.productId).subscribe({
       next: _ => {
         this.toastr.success(" Form check has been added successsfully");
         this.router.navigateByUrl('/banks/' + this.bankInfoId);

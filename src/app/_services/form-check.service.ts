@@ -15,15 +15,15 @@ export class FormCheckService {
     return this.http.get<any>(this.queryUrl + `FormChecks?productId=${productTypeId}`);
   }
 
-  addFormCheck(formCheck: any, bankInfoId: any) {
-    return this.http.post(this.commandUrl + "FormChecks/Bank/" + bankInfoId, formCheck);
+  addFormCheck(formCheck: any, productId:string) {
+    return this.http.post(this.commandUrl + productId + "/FormChecks", formCheck);
   }
 
-  updateFormCheck(formCheck: any, bankInfoId: string, formCheckId: string) {
-    return this.http.put(this.commandUrl + "FormChecks/Bank/" + bankInfoId + '/' + formCheckId, formCheck);
+  updateFormCheck(formCheckValue: any, productId:string) {
+    return this.http.put(this.commandUrl + productId +  "/FormChecks" , formCheckValue);
   }
 
-  deleteFormCheck(bankInfoId: string, formCheckId: string) {
-    return this.http.delete(this.commandUrl + "FormChecks/Bank/" + bankInfoId + '/' + formCheckId);
+  deleteFormCheck(productId:string, formCheckId: string) {
+    return this.http.delete(this.commandUrl + productId + "/FormChecks/" + formCheckId);
   }
 }
