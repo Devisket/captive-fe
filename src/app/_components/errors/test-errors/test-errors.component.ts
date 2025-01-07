@@ -7,7 +7,7 @@ import { environment } from '../../../../environments/environment';
   standalone: true,
   imports: [],
   templateUrl: './test-errors.component.html',
-  styleUrl: './test-errors.component.css'
+  styleUrl: './test-errors.component.scss'
 })
 export class TestErrorsComponent {
   baseUrl = environment.apiUrl;

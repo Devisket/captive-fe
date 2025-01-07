@@ -21,7 +21,7 @@ import { CheckValidationListComponent } from '../../check-validation/check-valid
   standalone: true,
   imports: [TabsModule, NgFor, RouterLink, DatePipe, BranchListComponent, NgIf, ProductTypeListComponent, FormCheckListComponent, AddBatchComponent, BatchListComponent, CheckValidationListComponent],
   templateUrl: './bank-detail.component.html',
-  styleUrl: './bank-detail.component.css'
+  styleUrl: './bank-detail.component.scss'
 })
 export class BankDetailComponent implements OnInit{
 

@@ -11,7 +11,7 @@ import { ToastrService } from 'ngx-toastr';
   standalone: true,
   imports: [RouterLink, NgFor, FormsModule, LowerCasePipe],
   templateUrl: './bank-list.component.html',
-  styleUrl: './bank-list.component.css'
+  styleUrl: './bank-list.component.scss'
 })
 export class BankListComponent implements OnInit {
   bankService = inject(BanksService);

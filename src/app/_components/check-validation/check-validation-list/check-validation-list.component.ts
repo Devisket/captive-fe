@@ -10,7 +10,7 @@ import { EnumsService } from '../../../_services/enums.service';
   standalone: true,
   imports: [RouterLink],
   templateUrl: './check-validation-list.component.html',
-  styleUrl: './check-validation-list.component.css'
+  styleUrl: './check-validation-list.component.scss'
 })
 export class CheckValidationListComponent implements OnInit{
   bankInfo = input.required<Bank>();

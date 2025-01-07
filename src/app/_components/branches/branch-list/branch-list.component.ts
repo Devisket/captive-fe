@@ -13,7 +13,7 @@ import { EditBranchComponent } from '../edit-branch/edit-branch.component';
   standalone: true,
   imports: [AddBranchComponent, BsDropdownModule],
   templateUrl: './branch-list.component.html',
-  styleUrl: './branch-list.component.css'
+  styleUrl: './branch-list.component.scss'
 })
 export class BranchListComponent implements OnInit{
   private branchServices = inject(BranchService);

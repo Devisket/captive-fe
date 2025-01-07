@@ -13,7 +13,7 @@ import { ProductConfigurationService } from '../../../_services/product-configur
   standalone: true,
   imports: [FormsModule, UpperCasePipe, RouterLink],
   templateUrl: './add-product-type.component.html',
-  styleUrl: './add-product-type.component.css'
+  styleUrl: './add-product-type.component.scss'
 })
 export class AddProductTypeComponent implements OnInit{
 

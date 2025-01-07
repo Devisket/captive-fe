@@ -18,7 +18,7 @@ import { EditFormCheckComponent } from './_components/form-checks/edit-form-chec
 import { AddBatchComponent } from './_components/batches/add-batch/add-batch.component';
 import { AddConfigurationComponent } from './_components/product-configurations/add-configuration/add-configuration.component';
 import { ViewConfigurationComponent } from './_components/product-configurations/view-configuration/view-configuration.component';
-import { UploadOrderFilesComponent } from './_components/order-files/upload-order-files/upload-order-files.component';
+import { UploadOrderFilesComponent } from './_components/order-files/upload-order-files/order-files-list.component';
 import { TagListComponent } from './_components/tags/tag-list/tag-list.component';
 import { CheckValidationListComponent } from './_components/check-validation/check-validation-list/check-validation-list.component';
 import { AddTagComponent } from './_components/tags/add-tag/add-tag.component';

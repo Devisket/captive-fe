@@ -12,11 +12,11 @@ import { OrderFile } from '../../../_models/order-file';
 import { HttpHeaders } from '@angular/common/http';
 
 @Component({
-  selector: 'app-upload-order-files',
+  selector: 'app-order-file-list',
   standalone: true,
   imports: [FormsModule, DatePipe, NgFor, NgIf, RouterLink],
-  templateUrl: './upload-order-files.component.html',
-  styleUrl: './upload-order-files.component.css'
+  templateUrl: './order-files-list.component.html',
+  styleUrl: './order-files-list.component.scss'
 })
 export class UploadOrderFilesComponent implements OnInit{
 

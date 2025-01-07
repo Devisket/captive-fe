@@ -7,7 +7,7 @@ import { UsersService } from '../../../_services/users.service';
   standalone: true,
   imports: [TitleCasePipe, DatePipe],
   templateUrl: './user-list.component.html',
-  styleUrl: './user-list.component.css'
+  styleUrl: './user-list.component.scss'
 })
 export class UserListComponent implements OnInit {
   userService = inject(UsersService);

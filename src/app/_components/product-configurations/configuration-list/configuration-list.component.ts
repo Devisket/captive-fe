@@ -15,7 +15,7 @@ import { BanksService } from '../../../_services/banks.service';
   standalone: true,
   imports: [FormsModule, NgxEditorModule, RouterLink],
   templateUrl: './configuration-list.component.html',
-  styleUrl: './configuration-list.component.css'
+  styleUrl: './configuration-list.component.scss'
 })
 export class ConfigurationListComponent implements OnInit {
 

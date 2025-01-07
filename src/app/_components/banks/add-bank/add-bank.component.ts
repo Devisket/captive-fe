@@ -9,7 +9,7 @@ import { BanksService } from '../../../_services/banks.service';
   standalone: true,
   imports: [FormsModule, RouterLink],
   templateUrl: './add-bank.component.html',
-  styleUrl: './add-bank.component.css'
+  styleUrl: './add-bank.component.scss'
 })
 export class AddBankComponent {
   @ViewChild('addBankForm') addBankForm?: NgForm;

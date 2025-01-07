@@ -15,7 +15,7 @@ import { Location } from '@angular/common';
   standalone: true,
   imports: [FormsModule],
   templateUrl: './edit-form-check.component.html',
-  styleUrl: './edit-form-check.component.css'
+  styleUrl: './edit-form-check.component.scss'
 })
 export class EditFormCheckComponent {
   @ViewChild('editFormCheckForm') editFormCheckForm?: NgForm;

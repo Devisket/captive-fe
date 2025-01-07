@@ -12,7 +12,7 @@ import { ToastrService } from 'ngx-toastr';
   standalone: true,
   imports: [FormsModule, RouterLink],
   templateUrl: './add-check-validation.component.html',
-  styleUrl: './add-check-validation.component.css'
+  styleUrl: './add-check-validation.component.scss'
 })
 export class AddCheckValidationComponent implements OnInit{
   @ViewChild('addCheckValidationForm') addCheckValidationForm?: NgForm;

@@ -10,7 +10,7 @@ import { BanksService } from '../../../_services/banks.service';
   standalone: true,
   imports: [FormsModule, RouterLink],
   templateUrl: './edit-bank.component.html',
-  styleUrl: './edit-bank.component.css'
+  styleUrl: './edit-bank.component.scss'
 })
 export class EditBankComponent implements OnInit{
   @ViewChild('editBankForm') editBankForm?: NgForm;

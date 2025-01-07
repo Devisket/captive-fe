@@ -7,7 +7,7 @@ import { CarouselModule } from 'ngx-bootstrap/carousel';
   standalone: true,
   imports: [RegisterComponent, CarouselModule],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
+  styleUrl: './home.component.scss'
 })
 export class HomeComponent{
   itemsPerSlide = 5;
