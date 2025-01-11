@@ -19,4 +19,8 @@ export class OrderFilesService {
     return this.http.get<any>(this.queryUrl + bankId + "/Batch/" + batchId, { headers });
   }
 
+  deleteOrderFile(id:string){
+    return this.http.delete(this.commandUrl + "orderfile/" + id);
+  }
+
 }

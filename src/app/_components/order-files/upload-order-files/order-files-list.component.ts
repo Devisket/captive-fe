@@ -1,4 +1,4 @@
-import { Component, HostListener, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Bank } from '../../../_models/bank';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BanksService } from '../../../_services/banks.service';
@@ -10,15 +10,34 @@ import { ToastrService } from 'ngx-toastr';
 import { DatePipe, NgFor, NgIf } from '@angular/common';
 import { OrderFile } from '../../../_models/order-file';
 import { HttpHeaders } from '@angular/common/http';
+import {MatExpansionModule} from '@angular/material/expansion'
+import {MatTableModule} from '@angular/material/table';
+import {MatIconModule} from '@angular/material/icon';
+import {MatInputModule} from '@angular/material/input';
+import {MatButtonModule} from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   selector: 'app-order-file-list',
   standalone: true,
-  imports: [FormsModule, DatePipe, NgFor, NgIf, RouterLink],
+  imports: [
+    FormsModule, 
+    DatePipe, 
+    NgFor, 
+    NgIf, 
+    RouterLink, 
+    MatExpansionModule,
+    MatTableModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatButtonModule
+  ],
   templateUrl: './order-files-list.component.html',
   styleUrl: './order-files-list.component.scss'
 })
-export class UploadOrderFilesComponent implements OnInit{
+export class UploadOrderFilesComponent implements OnInit, OnDestroy{
+  
 
   @ViewChild('uploadOrderFileForm') uploadOrderFileForm?: NgForm;
   @HostListener('window:beforeunload', ['$event']) notify($event:any) {
@@ -26,6 +45,8 @@ export class UploadOrderFilesComponent implements OnInit{
       $event.returnValue = true;
     }
   }
+
+  displayedColumns = ['accountNumber', 'brstn', 'quantity', 'deliverTo'];
 
   route = inject(ActivatedRoute);
   bankService = inject(BanksService);
@@ -48,6 +69,10 @@ export class UploadOrderFilesComponent implements OnInit{
     this.startRefreshing();
   }
 
+  ngOnDestroy(): void {
+    clearInterval(this.refreshInterval);
+  }
+
   loadBank() {
     let bankId = this.route.snapshot.paramMap.get("bankId");
     if (!bankId) return;
@@ -64,6 +89,25 @@ export class UploadOrderFilesComponent implements OnInit{
     })
   }
 
+
+  onValidate(orderFileId:string):void{
+
+  }
+
+  onProcess(orderFileId:string):void{
+
+  }
+
+  onDelete(orderFileId:string) : void 
+  {
+    this.orderFileService.deleteOrderFile(orderFileId).subscribe({
+      next : _ => {
+        this.toastr.success("Successfully deleted order file");
+      },
+      error: error => this.toastr.error(`Error on deletion: ${error}`),
+      complete: () => window.location.reload()
+    });
+  }
 
   onFileSelected(event: any): void {
     this.selectedFiles = Array.from(event.target.files);
