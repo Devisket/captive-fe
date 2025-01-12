@@ -14,7 +14,7 @@ import { ToastrService } from 'ngx-toastr';
   standalone: true,
   imports: [FormsModule, NgxEditorModule],
   templateUrl: './add-configuration.component.html',
-  styleUrl: './add-configuration.component.css'
+  styleUrl: './add-configuration.component.scss'
 })
 export class AddConfigurationComponent implements OnInit, OnDestroy {
 

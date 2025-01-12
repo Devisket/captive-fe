@@ -13,7 +13,7 @@ import { FormCheckService } from '../../../_services/form-check.service';
   standalone: true,
   imports: [FormsModule, RouterLink],
   templateUrl: './add-form-check.component.html',
-  styleUrl: './add-form-check.component.css'
+  styleUrl: './add-form-check.component.scss'
 })
 export class AddFormCheckComponent {
   @ViewChild('addFormCheckForm') addFormCheckForm?: NgForm;

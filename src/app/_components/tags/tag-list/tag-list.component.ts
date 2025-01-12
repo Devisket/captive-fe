@@ -15,7 +15,7 @@ import { ToastrService } from 'ngx-toastr';
   standalone: true,
   imports: [NgIf, RouterLink, TagMappingListComponent, UpperCasePipe],
   templateUrl: './tag-list.component.html',
-  styleUrl: './tag-list.component.css'
+  styleUrl: './tag-list.component.scss'
 })
 export class TagListComponent implements OnInit{
   route = inject(ActivatedRoute);

@@ -13,7 +13,7 @@ import { Bank } from '../../../_models/bank';
   standalone: true,
   imports: [NgFor, FormsModule, RouterLink],
   templateUrl: './form-check-list.component.html',
-  styleUrl: './form-check-list.component.css'
+  styleUrl: './form-check-list.component.scss'
 })
 export class FormCheckListComponent implements OnInit{
 

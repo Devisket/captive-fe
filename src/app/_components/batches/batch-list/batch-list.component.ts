@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [DatePipe, RouterLink, FormsModule],
   templateUrl: './batch-list.component.html',
-  styleUrl: './batch-list.component.css'
+  styleUrl: './batch-list.component.scss'
 })
 export class BatchListComponent implements OnInit{
 

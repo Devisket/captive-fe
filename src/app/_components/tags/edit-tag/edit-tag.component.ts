@@ -13,7 +13,7 @@ import { Tag } from '../../../_models/tag';
   standalone: true,
   imports: [FormsModule, RouterLink],
   templateUrl: './edit-tag.component.html',
-  styleUrl: './edit-tag.component.css'
+  styleUrl: './edit-tag.component.scss'
 })
 export class EditTagComponent {
   @ViewChild('editTagForm') editTagForm?: NgForm;

@@ -14,7 +14,7 @@ import { FormCheckService } from '../../../_services/form-check.service';
   standalone: true,
   imports: [RouterLink, NgIf, FormsModule, NgFor, FormCheckListComponent, UpperCasePipe],
   templateUrl: './product-type-list.component.html',
-  styleUrl: './product-type-list.component.css'
+  styleUrl: './product-type-list.component.scss'
 })
 export class ProductTypeListComponent implements OnInit{
   visibleProductTypes: { [key: string]: boolean } = {};

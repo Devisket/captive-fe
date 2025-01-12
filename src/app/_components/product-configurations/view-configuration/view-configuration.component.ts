@@ -18,7 +18,7 @@ import { ProductConfiguration } from '../../../_models/product-configuration';
   standalone: true,
   imports: [ConfigurationListComponent, NgIf, EditConfigurationComponent, FormsModule, NgxEditorModule, RouterLink],
   templateUrl: './view-configuration.component.html',
-  styleUrl: './view-configuration.component.css'
+  styleUrl: './view-configuration.component.scss'
 })
 export class ViewConfigurationComponent implements OnInit, OnDestroy{
   toastr = inject(ToastrService);

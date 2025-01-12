@@ -12,7 +12,7 @@ import { BankBranch } from '../../../_models/bank-branch';
   standalone: true,
   imports: [FormsModule],
   templateUrl: './edit-branch.component.html',
-  styleUrl: './edit-branch.component.css'
+  styleUrl: './edit-branch.component.scss'
 })
 export class EditBranchComponent {
   @ViewChild('editBranchForm') editBranchForm?: NgForm;

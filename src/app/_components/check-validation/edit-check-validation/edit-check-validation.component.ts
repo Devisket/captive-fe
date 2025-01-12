@@ -13,7 +13,7 @@ import { CheckValidation } from '../../../_models/check-validation';
   standalone: true,
   imports: [FormsModule, RouterLink],
   templateUrl: './edit-check-validation.component.html',
-  styleUrl: './edit-check-validation.component.css'
+  styleUrl: './edit-check-validation.component.scss'
 })
 export class EditCheckValidationComponent {
   @ViewChild('editCheckValidationForm') editCheckValidationForm?: NgForm;

@@ -20,7 +20,7 @@ import { ProductTypeService } from '../../../_services/product-type.service';
   standalone: true,
   imports: [FormsModule, RouterLink],
   templateUrl: './add-tag-mapping.component.html',
-  styleUrl: './add-tag-mapping.component.css'
+  styleUrl: './add-tag-mapping.component.scss'
 })
 export class AddTagMappingComponent {
 

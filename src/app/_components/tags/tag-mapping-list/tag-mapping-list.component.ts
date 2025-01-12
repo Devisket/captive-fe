@@ -17,7 +17,7 @@ import { FormCheck } from '../../../_models/form-check';
   standalone: true,
   imports: [],
   templateUrl: './tag-mapping-list.component.html',
-  styleUrl: './tag-mapping-list.component.css'
+  styleUrl: './tag-mapping-list.component.scss'
 })
 export class TagMappingListComponent implements OnInit{
 

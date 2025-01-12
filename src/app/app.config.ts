@@ -10,6 +10,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { loadingInterceptor } from './_interceptor/loading.interceptor';
 import { errorInterceptor } from './_interceptor/error.interceptor';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,6 +20,6 @@ export const appConfig: ApplicationConfig = {
     provideToastr({
       positionClass: 'toast-bottom-full-width'
     }),
-    importProvidersFrom(NgxSpinnerModule, ModalModule.forRoot())
+    importProvidersFrom(NgxSpinnerModule, ModalModule.forRoot()), provideAnimationsAsync()
   ]
 };

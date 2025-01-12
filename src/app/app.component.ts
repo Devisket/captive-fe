@@ -11,7 +11,7 @@ import { NavComponent } from './_components/layouts/nav/nav.component';
   standalone: true,
   imports: [RouterOutlet, NavComponent, HomeComponent, FooterComponent, NgxSpinnerComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
+  styleUrl: './app.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 export class AppComponent implements OnInit{

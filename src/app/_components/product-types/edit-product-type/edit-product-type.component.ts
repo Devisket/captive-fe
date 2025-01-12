@@ -12,7 +12,7 @@ import { ProductType } from '../../../_models/product-type';
   standalone: true,
   imports: [FormsModule, RouterLink],
   templateUrl: './edit-product-type.component.html',
-  styleUrl: './edit-product-type.component.css'
+  styleUrl: './edit-product-type.component.scss'
 })
 export class EditProductTypeComponent implements OnInit {
 

@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './branch-modal.component.html',
-  styleUrl: './branch-modal.component.css'
+  styleUrl: './branch-modal.component.scss'
 })
 export class BranchModalComponent {
 

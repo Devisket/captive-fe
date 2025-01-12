@@ -13,7 +13,7 @@ import { CheckValidationService } from '../../../_services/check-validation.serv
   standalone: true,
   imports: [FormsModule, RouterLink],
   templateUrl: './add-tag.component.html',
-  styleUrl: './add-tag.component.css'
+  styleUrl: './add-tag.component.scss'
 })
 export class AddTagComponent implements OnInit{
   @ViewChild('addTagForm') addTagForm?: NgForm;

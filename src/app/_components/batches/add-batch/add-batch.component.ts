@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './add-batch.component.html',
-  styleUrl: './add-batch.component.css'
+  styleUrl: './add-batch.component.scss'
 })
 export class AddBatchComponent {
     

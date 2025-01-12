@@ -10,7 +10,7 @@ import { ToastrService } from 'ngx-toastr';
   standalone: true,
   imports: [FormsModule],
   templateUrl: './edit-profile.component.html',
-  styleUrl: './edit-profile.component.css'
+  styleUrl: './edit-profile.component.scss'
 })
 export class EditProfileComponent implements OnInit{
   @ViewChild('editForm') editForm?: NgForm;
