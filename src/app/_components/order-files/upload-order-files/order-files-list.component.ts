@@ -46,7 +46,7 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy{
     }
   }
 
-  displayedColumns = ['accountNumber', 'brstn', 'quantity', 'deliverTo'];
+  displayedColumns = ['accountNumber', 'brstn', 'quantity', 'deliverTo', 'error'];
 
   route = inject(ActivatedRoute);
   bankService = inject(BanksService);
@@ -62,6 +62,11 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy{
   private refreshInterval: any;
 
   ngOnInit(): void {
+    const batchId = this.route.snapshot.paramMap.get("batchId")!;
+    
+    this.orderFileService.startConnection();
+    this.batchService.startConnection(batchId);
+
     this.bankInfo;
     this.loadBank();
     this.getBatch();
@@ -91,11 +96,15 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy{
 
 
   onValidate(orderFileId:string):void{
-
+    this.orderFileService.validateOrderFile(orderFileId).subscribe(_ => {
+      this.getOrderFiles();
+    })
   }
 
   onProcess(orderFileId:string):void{
-
+    this.orderFileService.processOrderFile(orderFileId).subscribe(_ =>{
+      this.toastr.success("Process successfully.");
+    })
   }
 
   onDelete(orderFileId:string) : void 
@@ -164,12 +173,9 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy{
               // Refresh the page or update the view
               this.refreshView();
             } else {
-              // Stop the interval if the status is not 'processing'
                 clearInterval(this.refreshInterval);
             }
         });
-
-        // console.log(this.orderFiles)
     });
   }
 
@@ -179,6 +185,10 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy{
     } else {
       this.visibleBatches.add(batchName);
     }
+  }
+
+  canBeProcess(orderFile:OrderFile):boolean{
+    return orderFile.checkOrders.some(x=> !x.isValid);
   }
 
   isBatchVisible(batchName: string): boolean {
