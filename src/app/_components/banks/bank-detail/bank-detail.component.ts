@@ -15,11 +15,20 @@ import { AddBatchComponent } from "../../batches/add-batch/add-batch.component";
 import { BatchListComponent } from "../../batches/batch-list/batch-list.component";
 import { TagListComponent } from "../../tags/tag-list/tag-list.component";
 import { CheckValidationListComponent } from '../../check-validation/check-validation-list/check-validation-list.component';
+import { CheckInventoryListComponent } from '../../check-inventory/check-inventory-list/check-inventory-list.component';
 
 @Component({
   selector: 'app-bank-detail',
   standalone: true,
-  imports: [TabsModule, NgFor, RouterLink, DatePipe, BranchListComponent, NgIf, ProductTypeListComponent, FormCheckListComponent, AddBatchComponent, BatchListComponent, CheckValidationListComponent],
+  imports: [
+    TabsModule, NgFor, RouterLink, 
+    DatePipe, BranchListComponent, NgIf, 
+    ProductTypeListComponent, 
+    FormCheckListComponent, 
+    AddBatchComponent, 
+    BatchListComponent, 
+    CheckValidationListComponent,
+    CheckInventoryListComponent],
   templateUrl: './bank-detail.component.html',
   styleUrl: './bank-detail.component.scss'
 })

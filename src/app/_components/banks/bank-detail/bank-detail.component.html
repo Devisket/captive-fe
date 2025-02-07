@@ -22,21 +22,7 @@
             <tab heading="Check Inventory"
               [active]="activeTabset === 'Check Inventory'"
               (selectTab)="onTabChange($event)">
-              <div class="table-responsive mt-3">
-                <table class="table table-sm" width="100%">
-                  <thead>
-                    <tr>
-                      <th>Starting File</th>
-                      <th>Ending File</th>
-                      <th>Check Orders</th>
-                      <th>Status</th>
-                      <th class="text-center">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                  </tbody>
-                </table>
-              </div>
+              <check-inventory-list *ngIf="bankInfo"></check-inventory-list>
             </tab>
             <tab heading="Branches"
                 [active]="activeTabset === 'Branches'"

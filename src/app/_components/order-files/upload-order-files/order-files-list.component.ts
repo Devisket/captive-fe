@@ -1,4 +1,11 @@
-import { Component, HostListener, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  inject,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { Bank } from '../../../_models/bank';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BanksService } from '../../../_services/banks.service';
@@ -10,43 +17,48 @@ import { ToastrService } from 'ngx-toastr';
 import { DatePipe, NgFor, NgIf } from '@angular/common';
 import { OrderFile } from '../../../_models/order-file';
 import { HttpHeaders } from '@angular/common/http';
-import {MatExpansionModule} from '@angular/material/expansion'
-import {MatTableModule} from '@angular/material/table';
-import {MatIconModule} from '@angular/material/icon';
-import {MatInputModule} from '@angular/material/input';
-import {MatButtonModule} from '@angular/material/button';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTableModule } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { ValidateOrderFileResponse } from '../../../_models/type';
 
 @Component({
   selector: 'app-order-file-list',
   standalone: true,
   imports: [
-    FormsModule, 
-    DatePipe, 
-    NgFor, 
-    NgIf, 
-    RouterLink, 
+    FormsModule,
+    DatePipe,
+    NgFor,
+    NgIf,
+    RouterLink,
     MatExpansionModule,
     MatTableModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
   ],
   templateUrl: './order-files-list.component.html',
-  styleUrl: './order-files-list.component.scss'
+  styleUrl: './order-files-list.component.scss',
 })
-export class UploadOrderFilesComponent implements OnInit, OnDestroy{
-  
-
+export class UploadOrderFilesComponent implements OnInit, OnDestroy {
   @ViewChild('uploadOrderFileForm') uploadOrderFileForm?: NgForm;
-  @HostListener('window:beforeunload', ['$event']) notify($event:any) {
+  @HostListener('window:beforeunload', ['$event']) notify($event: any) {
     if (this.uploadOrderFileForm?.dirty) {
       $event.returnValue = true;
     }
   }
 
-  displayedColumns = ['accountNumber', 'brstn', 'quantity', 'deliverTo', 'error'];
+  displayedColumns = [
+    'accountNumber',
+    'brstn',
+    'quantity',
+    'deliverTo',
+    'error',
+  ];
 
   route = inject(ActivatedRoute);
   bankService = inject(BanksService);
@@ -62,8 +74,8 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy{
   private refreshInterval: any;
 
   ngOnInit(): void {
-    const batchId = this.route.snapshot.paramMap.get("batchId")!;
-    
+    const batchId = this.route.snapshot.paramMap.get('batchId')!;
+
     this.orderFileService.startConnection();
     this.batchService.startConnection(batchId);
 
@@ -79,42 +91,49 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy{
   }
 
   loadBank() {
-    let bankId = this.route.snapshot.paramMap.get("bankId");
+    let bankId = this.route.snapshot.paramMap.get('bankId');
     if (!bankId) return;
-    this.bankService.getBanks().subscribe(data => {
+    this.bankService.getBanks().subscribe((data) => {
       this.bankInfo = data.bankInfos.find((bank: Bank) => bank.id === bankId);
     });
   }
 
-  getBatch(){
-    let batchId = this.route.snapshot.paramMap.get("batchId");
-    let bankId = this.route.snapshot.paramMap.get("bankId");
-    this.batchService.getBatches(bankId).subscribe( data => {
+  getBatch() {
+    let batchId = this.route.snapshot.paramMap.get('batchId');
+    let bankId = this.route.snapshot.paramMap.get('bankId');
+    this.batchService.getBatches(bankId).subscribe((data) => {
       this.batch = data.batchFiles.find((batch: Batch) => batch.id === batchId);
-    })
+    });
   }
 
+  onValidate(orderFileId: string): void {
+    this.orderFileService
+      .validateOrderFile(orderFileId)
+      .subscribe((val: any) => {
+        this.getOrderFiles();
 
-  onValidate(orderFileId:string):void{
-    this.orderFileService.validateOrderFile(orderFileId).subscribe(_ => {
-      this.getOrderFiles();
-    })
+        const { personalQuantity, commercialQuantity } = val;
+
+        var orderFile = this.orderFiles.find(x => x.id == orderFileId);
+
+        orderFile!.personalQty = personalQuantity;
+        orderFile!.commercialQty = commercialQuantity;
+      });
   }
 
-  onProcess(orderFileId:string):void{
-    this.orderFileService.processOrderFile(orderFileId).subscribe(_ =>{
-      this.toastr.success("Process successfully.");
-    })
+  onProcess(orderFileId: string): void {
+    this.orderFileService.processOrderFile(orderFileId).subscribe((_) => {
+      this.toastr.success('Process successfully.');
+    });
   }
 
-  onDelete(orderFileId:string) : void 
-  {
+  onDelete(orderFileId: string): void {
     this.orderFileService.deleteOrderFile(orderFileId).subscribe({
-      next : _ => {
-        this.toastr.success("Successfully deleted order file");
+      next: (_) => {
+        this.toastr.success('Successfully deleted order file');
       },
-      error: error => this.toastr.error(`Error on deletion: ${error}`),
-      complete: () => window.location.reload()
+      error: (error) => this.toastr.error(`Error on deletion: ${error}`),
+      complete: () => window.location.reload(),
     });
   }
 
@@ -124,24 +143,23 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy{
 
   uploadOrderFile(): void {
     if (this.selectedFiles.length > 0) {
-
       const formData: FormData = new FormData();
-      this.selectedFiles.forEach(file => {
+      this.selectedFiles.forEach((file) => {
         formData.append('files', file, file.name);
       });
-      if(this.bankInfo){
+      if (this.bankInfo) {
         formData.append('bankId', this.bankInfo?.id);
       }
-      if(this.batch){
+      if (this.batch) {
         formData.append('batchId', this.batch?.id);
       }
 
       this.orderFileService.uploadOrderFiles(formData).subscribe({
-        next: _ => {
-          this.toastr.success("Successfulyy uploaded new order files.");
+        next: (_) => {
+          this.toastr.success('Successfulyy uploaded new order files.');
         },
-        error: error => this.toastr.error("Not saved"),
-        complete: () => window.location.reload()
+        error: (error) => this.toastr.error('Not saved'),
+        complete: () => window.location.reload(),
       });
     }
   }
@@ -151,32 +169,34 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy{
       this.getOrderFiles();
     }, 1000);
   }
-  
+
   refreshView() {
     // Your logic to refresh the view
   }
 
   getOrderFiles() {
     const headers = new HttpHeaders().set('X-Skip-Spinner', 'true');
-      let batchId = this.route.snapshot.paramMap.get("batchId");
-      let bankId = this.route.snapshot.paramMap.get("bankId");
+    let batchId = this.route.snapshot.paramMap.get('batchId');
+    let bankId = this.route.snapshot.paramMap.get('bankId');
 
-      this.orderFileService.getOrderFiles(bankId, batchId, headers).subscribe( data => {
-        if(!data) return;
-        if(!data.orderFiles) return;
+    this.orderFileService
+      .getOrderFiles(bankId, batchId, headers)
+      .subscribe((data) => {
+        if (!data) return;
+        if (!data.orderFiles) return;
         this.orderFiles = data.orderFiles.filter((orderFile: OrderFile) => {
           return orderFile.batchId === batchId;
         });
-        
+
         this.orderFiles.forEach((orderFile: OrderFile) => {
-            if (orderFile.status === 'Processing') {
-              // Refresh the page or update the view
-              this.refreshView();
-            } else {
-                clearInterval(this.refreshInterval);
-            }
+          if (orderFile.status === 'Processing') {
+            // Refresh the page or update the view
+            this.refreshView();
+          } else {
+            clearInterval(this.refreshInterval);
+          }
         });
-    });
+      });
   }
 
   toggleBatchVisibility(batchName: string): void {
@@ -187,8 +207,8 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy{
     }
   }
 
-  canBeProcess(orderFile:OrderFile):boolean{
-    return orderFile.checkOrders.some(x=> !x.isValid);
+  canBeProcess(orderFile: OrderFile): boolean {
+    return orderFile.checkOrders.some((x) => !x.isValid);
   }
 
   isBatchVisible(batchName: string): boolean {
