@@ -1,95 +1,120 @@
 <div class="file-container">
   @if(batch){
-    <div class="row">
-      <div class="col-10">
-        <form
-          id="uploadOrderFileForm"
-          #uploadOrderFileForm="ngForm"
-          autocomplete="off"
-          (ngSubmit)="uploadOrderFile()"
-        >
-          <div class="mb-3">
-            <!-- <label for="formFileMultiple" class="form-label">Select multiple files..</label> -->
-            <div class="input-group-text">
-              <button
-                type="submit"
-                class="btn btn-success input-group-text me-3 py-1"
-                id="basic-addon2"
-              >
-                <i class="fa fa-upload"></i> UPLOAD NEW ORDER FILES
-              </button>
-              <input
-                class="form-control form-control-sm"
-                type="file"
-                id="formFileMultiple"
-                (change)="onFileSelected($event)"
-                multiple
-              />
-            </div>
+  <div class="row">
+    <div class="col-6">
+      <form
+        id="uploadOrderFileForm"
+        #uploadOrderFileForm="ngForm"
+        autocomplete="off"
+        (ngSubmit)="uploadOrderFile()"
+      >
+        <div class="mb-3">
+          <!-- <label for="formFileMultiple" class="form-label">Select multiple files..</label> -->
+          <div class="input-group-text">
+            <button
+              type="submit"
+              class="btn btn-success input-group-text me-3 py-1"
+              id="basic-addon2"
+            >
+              <i class="fa fa-upload"></i> UPLOAD NEW ORDER FILES
+            </button>
+            <input
+              class="form-control form-control-sm"
+              type="file"
+              id="formFileMultiple"
+              (change)="onFileSelected($event)"
+              multiple
+            />
           </div>
-        </form>
-      </div>
-      <div class="col-2">
-        <button
-          type="button"
-          class="btn btn-sm py-1 float-end btn-primary"
-          routerLink="/banks/{{ bankInfo?.id }}"
-        >
-          Back to {{ bankInfo?.bankName }}
-        </button>
-      </div>
+        </div>
+      </form>
     </div>
-    
-    <div class="filetable">
-      @for(orderFile of orderFiles; track $index){
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title> {{ orderFile.fileName }} </mat-panel-title>
-          <mat-panel-description>
-            {{ orderFile.status }}
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-    
-        <table mat-table [dataSource]="orderFile.checkOrders">
-          <ng-container matColumnDef="accountNumber">
-            <th mat-header-cell *matHeaderCellDef>Account Number</th>
-            <td mat-cell *matCellDef="let chkOrder">
-              {{ chkOrder.accountNumber }}
-            </td>
-          </ng-container>
-    
-          <ng-container matColumnDef="brstn">
-            <th mat-header-cell *matHeaderCellDef>BRSTN</th>
-            <td mat-cell *matCellDef="let chkOrder">{{ chkOrder.brstn }}</td>
-          </ng-container>
-    
-          <ng-container matColumnDef="quantity">
-            <th mat-header-cell *matHeaderCellDef>Quantity</th>
-            <td mat-cell *matCellDef="let chkOrder">{{ chkOrder.quantity }}</td>
-          </ng-container>
-    
-          <ng-container matColumnDef="deliverTo">
-            <th mat-header-cell *matHeaderCellDef>Deliver To</th>
-            <td mat-cell *matCellDef="let chkOrder">{{ chkOrder.deliverTo }}</td>
-          </ng-container>
-    
-          <ng-container matColumnDef="error">
-            <th mat-header-cell *matHeaderCellDef>Error</th>
-            <td mat-cell *matCellDef="let chkOrder">{{ chkOrder.errorMessage }}</td>
-          </ng-container>
-    
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-        </table>
-        
-        <mat-action-row>
-          <button mat-raised-button (click)="onDelete(orderFile.id)">Delete</button>
-          <button mat-raised-button (click)="onValidate(orderFile.id)">Validate</button>
-          <button class="mx-4" [disabled]="canBeProcess(orderFile)" mat-raised-button (click)="onProcess(orderFile.id)">Process</button>
-        </mat-action-row>
-      </mat-expansion-panel>
-      }
+    <div class="col-6">
+      <button
+        type="button"
+        class="btn btn-sm py-1 float-end btn-primary"
+        routerLink="/banks/{{ bankInfo?.id }}"
+      >
+        Back to {{ bankInfo?.bankName }}
+      </button>
     </div>
-    }
-</div>
+  </div>
 
+  <div class="filetable">
+    @for(orderFile of orderFiles; track $index){
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title> {{ orderFile.fileName }} </mat-panel-title>
+        <mat-panel-description>
+          {{ orderFile.status }}
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <table mat-table [dataSource]="orderFile.checkOrders">
+        <ng-container matColumnDef="accountNumber">
+          <th mat-header-cell *matHeaderCellDef>Account Number</th>
+          <td mat-cell *matCellDef="let chkOrder">
+            {{ chkOrder.accountNumber }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="brstn">
+          <th mat-header-cell *matHeaderCellDef>BRSTN</th>
+          <td mat-cell *matCellDef="let chkOrder">{{ chkOrder.brstn }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="quantity">
+          <th mat-header-cell *matHeaderCellDef>Quantity</th>
+          <td mat-cell *matCellDef="let chkOrder">{{ chkOrder.quantity }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="deliverTo">
+          <th mat-header-cell *matHeaderCellDef>Deliver To</th>
+          <td mat-cell *matCellDef="let chkOrder">{{ chkOrder.deliverTo }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="error">
+          <th mat-header-cell *matHeaderCellDef>Error</th>
+          <td mat-cell *matCellDef="let chkOrder">
+            {{ chkOrder.errorMessage }}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+
+      <mat-action-row>
+        <div class="w-100">
+          <div *ngIf="!canBeProcess(orderFile)" style="float: left;">
+            <p style="display: inline; margin-right: 5px;">Personal: {{orderFile.personalQty}}</p>
+            <p style="display: inline-block;">Commercial: {{orderFile.commercialQty}}</p>
+          </div>
+          <div style="float: right;">
+            <button mat-raised-button (click)="onDelete(orderFile.id)">
+              Delete
+            </button>
+            <button mat-raised-button (click)="onValidate(orderFile.id)">
+              Validate
+            </button>
+            <button
+              class="mx-4"
+              [disabled]="canBeProcess(orderFile)"
+              mat-raised-button
+              (click)="onProcess(orderFile.id)"
+            >
+              Process
+            </button>
+          </div>         
+        </div>
+      </mat-action-row>
+    </mat-expansion-panel>
+    }
+  </div>
+
+  <div class="my-5">
+    <button class="mx-3" mat-raised-button>Validate All</button>
+    <button mat-raised-button>Process All</button>
+  </div>
+  }
+</div>

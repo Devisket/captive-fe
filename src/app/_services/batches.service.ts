@@ -55,4 +55,9 @@ export class BatchesService {
   getBatches(bankId: any): Observable<any> {
     return this.http.get<any>(this.queryUrl + bankId + '/Batch');
   }
+
+  deleteBatch(bankId:any, batchId:any) :Observable<any> 
+  {
+    return this.http.delete<any>(this.commandUrl +  `${bankId}/Batch/${batchId}`);
+  }
 }

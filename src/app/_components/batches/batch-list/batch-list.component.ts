@@ -21,23 +21,25 @@ export class BatchListComponent implements OnInit{
   batches: Batch[] = [];
   batch?: Batch;
   toastr = inject(ToastrService);
-
-  ngOnInit(): void {
+  bankId = ""
+  ngOnInit(): void 
+  {
     this.bankInfo;
-    this.getBatches();
+    this.bankId = this.bankInfo().id;
+    this.getBatches();    
   }
 
-  getBatches(){
-    const bankId = this.bankInfo().id;
-    this.batchServices.getBatches(bankId).subscribe(data => {
+  getBatches(){    
+    this.batchServices.getBatches(this.bankId).subscribe(data => {
       if(!data) return;
       this.batches = data.batchFiles;
     });
   }
 
-  uploadOrderFile()
+  onDeleteBatch(batchId:string) 
   {
-    //
+    this.batchServices.deleteBatch(this.bankId, batchId).subscribe(data => {
+      this.getBatches();
+    })
   }
-
 }

@@ -30,7 +30,8 @@
                     </td>
                   <td>
                       <div class="d-flex justify-content-center">
-                          <button type="button" [routerLink]="['/upload-order-files', batch.id, 'bank', bankInfo().id]"  class="btn btn-sm btn-outline-info me-2"><i class="fa fa-file"></i> View Order Files</button>
+                          <button type="button" [routerLink]="['/upload-order-files', batch.id, 'bank', bankInfo().id]"  class="btn btn-sm btn-outline-info me-2"><i class="fa fa-file mx-1"></i>View </button>
+                          <button type="button" (click)="onDeleteBatch(batch.id)" class="btn btn-sm btn-outline-danger me-2"><i class="fa fa-trash-o mx-1"></i>Delete</button>
                       </div>
                   </td>
               </tr>
