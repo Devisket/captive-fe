@@ -87,10 +87,11 @@
       <mat-action-row>
         <div class="w-100">
           <div *ngIf="!canBeProcess(orderFile)" style="float: left;">
-            <p style="display: inline; margin-right: 5px;">Personal: {{orderFile.personalQty}}</p>
-            <p style="display: inline-block;">Commercial: {{orderFile.commercialQty}}</p>
+            <h3 class="d-inline mx-2">Total:</h3>
+            <p style="display: inline; margin-right: 5px;">Personal: {{orderFile.personalQuantity}}</p>
+            <p style="display: inline-block;">Commercial: {{orderFile.commercialQuantity}}</p>
           </div>
-          <div style="float: right;">
+          <div style="float: right;" *ngIf="!isOrderFileCompleted(orderFile)">
             <button mat-raised-button (click)="onDelete(orderFile.id)">
               Delete
             </button>
@@ -98,7 +99,7 @@
               Validate
             </button>
             <button
-              class="mx-4"
+              class="mx-4 btn-success"
               [disabled]="canBeProcess(orderFile)"
               mat-raised-button
               (click)="onProcess(orderFile.id)"

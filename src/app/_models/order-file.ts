@@ -6,7 +6,7 @@ export interface OrderFile {
   fileName: string
   filePath: string
   status: string
-  personalQty:number
-  commercialQty:number
+  personalQuantity:number
+  commercialQuantity:number
   checkOrders:CheckOrders[]
 }

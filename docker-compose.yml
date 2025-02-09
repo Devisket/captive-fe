@@ -1,5 +1,5 @@
 services:
-  ordering:
+  captive-fe:
     container_name: orderingcontainer
     build: .
     image: ordering:v1

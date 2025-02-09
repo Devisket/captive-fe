@@ -24,6 +24,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ValidateOrderFileResponse } from '../../../_models/type';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-order-file-list',
@@ -72,6 +73,7 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
   orderFiles: OrderFile[] = [];
   visibleBatches: Set<string> = new Set();
   private refreshInterval: any;
+  $subscription = new Subscription();
 
   ngOnInit(): void {
     const batchId = this.route.snapshot.paramMap.get('batchId')!;
@@ -93,48 +95,40 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
   loadBank() {
     let bankId = this.route.snapshot.paramMap.get('bankId');
     if (!bankId) return;
-    this.bankService.getBanks().subscribe((data) => {
+    this.$subscription.add(this.bankService.getBanks().subscribe((data) => {
       this.bankInfo = data.bankInfos.find((bank: Bank) => bank.id === bankId);
-    });
+    }));
   }
 
   getBatch() {
     let batchId = this.route.snapshot.paramMap.get('batchId');
     let bankId = this.route.snapshot.paramMap.get('bankId');
-    this.batchService.getBatches(bankId).subscribe((data) => {
+    this.$subscription.add(this.batchService.getBatches(bankId).subscribe((data) => {
       this.batch = data.batchFiles.find((batch: Batch) => batch.id === batchId);
-    });
+    }));
   }
 
   onValidate(orderFileId: string): void {
-    this.orderFileService
-      .validateOrderFile(orderFileId)
-      .subscribe((val: any) => {
-        this.getOrderFiles();
-
-        const { personalQuantity, commercialQuantity } = val;
-
-        var orderFile = this.orderFiles.find(x => x.id == orderFileId);
-
-        orderFile!.personalQty = personalQuantity;
-        orderFile!.commercialQty = commercialQuantity;
-      });
+    this.$subscription.add(this.orderFileService.validateOrderFile(orderFileId).subscribe((_) => {
+      this.getOrderFiles();
+    }));
   }
 
   onProcess(orderFileId: string): void {
     this.orderFileService.processOrderFile(orderFileId).subscribe((_) => {
       this.toastr.success('Process successfully.');
+      this.getOrderFiles();
     });
   }
 
   onDelete(orderFileId: string): void {
-    this.orderFileService.deleteOrderFile(orderFileId).subscribe({
+    this.$subscription.add(this.orderFileService.deleteOrderFile(orderFileId).subscribe({
       next: (_) => {
         this.toastr.success('Successfully deleted order file');
       },
       error: (error) => this.toastr.error(`Error on deletion: ${error}`),
       complete: () => window.location.reload(),
-    });
+    }));
   }
 
   onFileSelected(event: any): void {
@@ -209,6 +203,11 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
 
   canBeProcess(orderFile: OrderFile): boolean {
     return orderFile.checkOrders.some((x) => !x.isValid);
+  }
+
+  isOrderFileCompleted(orderFile:OrderFile) 
+  {
+    return orderFile.status === 'Completed'
   }
 
   isBatchVisible(batchName: string): boolean {

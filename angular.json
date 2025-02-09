@@ -4,6 +4,12 @@
   "newProjectRoot": "projects",
   "projects": {
     "ordering": {
+      "serve":{
+        "options":{
+          "sslKey":"./localhost-key.pem",
+          "sslCert":"./localhost.crt"
+        }
+      },
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
