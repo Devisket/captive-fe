@@ -16,14 +16,14 @@ export class ProductTypeService {
   }
 
   addProductType(productType: any, bankInfoId: any) {
-    return this.http.post(this.commandUrl + "ProductType/bank/" + bankInfoId, productType);
+    return this.http.post(this.commandUrl + `bank/${bankInfoId}/product`, productType);
   }
 
-  updateProductType(productType: any, bankInfoId: string, productTypeId: string) {
-    return this.http.put(this.commandUrl + "ProductType/bank/" + bankInfoId + '/' + productTypeId, productType);
+  updateProductType(productType: any, bankInfoId: string, productId: string) {
+    return this.http.put(this.commandUrl + `bank/${bankInfoId}/product/${productId}`, productType);
   }
 
-  deleteProductType(bankInfoId: string, productTypeId: string) {
-    return this.http.delete(this.commandUrl + "ProductType/bank/" + bankInfoId + '/' + productTypeId);
+  deleteProductType(bankInfoId: string, productId: string) {
+    return this.http.delete(this.commandUrl + `bank/${bankInfoId}/product/${productId}`);
   }
 }

@@ -32,7 +32,7 @@
             <tab heading="Products"
                 [active]="activeTabset === 'Products'"
                 (selectTab)="onTabChange($event)">
-                <app-product-type-list *ngIf="bankInfo" [bankInfo]="bankInfo"></app-product-type-list>
+                <app-product-list *ngIf="bankInfo" [bankInfo]="bankInfo"></app-product-list>
             </tab>
             <tab heading="Check Validation"
               [active]="activeTabset === 'Check Validation'"

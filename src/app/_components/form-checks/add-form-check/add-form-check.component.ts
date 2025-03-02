@@ -5,7 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { BanksService } from '../../../_services/banks.service';
 import { ProductTypeService } from '../../../_services/product-type.service';
 import { Bank } from '../../../_models/bank';
-import { ProductType } from '../../../_models/product-type';
+import { Product } from '../../../_models/product';
 import { FormCheckService } from '../../../_services/form-check.service';
 
 @Component({
@@ -30,7 +30,7 @@ export class AddFormCheckComponent {
   formCheckService = inject(FormCheckService);
   bankInfos: Bank[] = [];
   bankInfo?: Bank;
-  productType?: ProductType;
+  productType?: Product;
   model: any = {};
   productId:string = ""
 
@@ -51,7 +51,7 @@ export class AddFormCheckComponent {
     this.productId = this.route.snapshot.paramMap.get("id") ?? '';
     let bankId = this.route.snapshot.paramMap.get("bankId");
     this.productTypeService.getProductTypes(bankId).subscribe( data => {
-      this.productType = data.productTypes.find((product: ProductType) => product.productTypeId === this.productId);
+      this.productType = data.productTypes.find((product: Product) => product.productTypeId === this.productId);
     })
   }
 

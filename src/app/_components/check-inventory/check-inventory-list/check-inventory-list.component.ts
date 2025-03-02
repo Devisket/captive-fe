@@ -1,18 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CheckInventory } from '../../../_models/check-inventory';
-import { MatTableModule } from '@angular/material/table';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
-
+import { TableModule } from 'primeng/table';
 @Component({
   selector: 'check-inventory-list',
   standalone: true,
   imports: [
-    MatTableModule,
-    MatFormFieldModule,
-    MatButtonModule,
-    MatInputModule,
+    TableModule
   ],
   templateUrl: './check-inventory-list.component.html',
   styleUrl: './check-inventory-list.component.scss',

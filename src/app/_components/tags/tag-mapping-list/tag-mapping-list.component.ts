@@ -5,7 +5,7 @@ import { FormCheckService } from '../../../_services/form-check.service';
 import { ProductTypeService } from '../../../_services/product-type.service';
 import { Bank } from '../../../_models/bank';
 import { BankBranch } from '../../../_models/bank-branch';
-import { ProductType } from '../../../_models/product-type';
+import { Product } from '../../../_models/product';
 import { TagMappingService } from '../../../_services/tag-mapping.service';
 import { ToastrService } from 'ngx-toastr';
 import { Tag } from '../../../_models/tag';
@@ -31,7 +31,7 @@ export class TagMappingListComponent implements OnInit{
   bankInfo = input.required<Bank>();
   tag = input.required<Tag>();
   branches: BankBranch[] = [];
-  products: ProductType[] = [];
+  products: Product[] = [];
   formChecks: FormCheck[] = [];
 
   maps: TagMapping[] = [];

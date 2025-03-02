@@ -10,7 +10,7 @@ import { Tag } from '../../../_models/tag';
 import { TagMappingService } from '../../../_services/tag-mapping.service';
 import { BranchService } from '../../../_services/branch.service';
 import { BankBranch } from '../../../_models/bank-branch';
-import { ProductType } from '../../../_models/product-type';
+import { Product } from '../../../_models/product';
 import { FormCheck } from '../../../_models/form-check';
 import { FormCheckService } from '../../../_services/form-check.service';
 import { ProductTypeService } from '../../../_services/product-type.service';
@@ -49,7 +49,7 @@ export class AddTagMappingComponent {
 
   branches: BankBranch[] = [];
   formChecks: FormCheck[] = [];
-  products: ProductType[] = [];
+  products: Product[] = [];
 
   ngOnInit(): void {
     this.loadBank();

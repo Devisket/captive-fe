@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BanksService } from '../../../_services/banks.service';
 import { Bank } from '../../../_models/bank';
 import { ProductTypeService } from '../../../_services/product-type.service';
-import { ProductType } from '../../../_models/product-type';
+import { Product } from '../../../_models/product';
 import { Editor, NgxEditorModule } from 'ngx-editor';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ProductConfigurationService } from '../../../_services/product-configuration.service';
@@ -32,7 +32,7 @@ export class AddConfigurationComponent implements OnInit, OnDestroy {
   toastr = inject(ToastrService);
   router = inject(Router);
   bankInfo?: Bank;
-  productType?: ProductType;
+  productType?: Product;
   editor: Editor  = new Editor();
   model: any = {
     "configurationType": 0
@@ -56,7 +56,7 @@ export class AddConfigurationComponent implements OnInit, OnDestroy {
     let productTypeId = this.route.snapshot.paramMap.get("productId");
     let bankId = this.route.snapshot.paramMap.get("bankId");
     this.productTypeService.getProductTypes(bankId).subscribe( data => {
-      this.productType = data.productTypes.find((product: ProductType) => product.productTypeId === productTypeId);
+      this.productType = data.productTypes.find((product: Product) => product.productTypeId === productTypeId);
     })
   }
 

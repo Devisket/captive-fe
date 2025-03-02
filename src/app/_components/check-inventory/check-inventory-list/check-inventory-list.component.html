@@ -1,52 +1,30 @@
-<div>
-  <table mat-table [dataSource]="checkInventories" class="mat-elevation-z8 ">
-    <ng-container matColumnDef="seriesPattern">
-      <th mat-header-cell *matHeaderCellDef>Series pattern</th>
-      <td mat-cell *matCellDef="let checkInventory">
-        {{ checkInventory.seriesPattern }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="warningSeries">
-      <th mat-header-cell *matHeaderCellDef>Warning series</th>
-      <td mat-cell *matCellDef="let checkInventory">
-        {{ checkInventory.warningSeries }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="numberOfPadding">
-      <th mat-header-cell *matHeaderCellDef>Number of padding</th>
-      <td mat-cell *matCellDef="let checkInventory">
-        {{ checkInventory.numberOfPadding }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="startingSeries">
-      <th mat-header-cell *matHeaderCellDef>Starting series</th>
-      <td mat-cell *matCellDef="let checkInventory">
-        {{ checkInventory.startingSeries }}
-      </td>
-    </ng-container>
+<p-table
+  [rowHover]="true"
+  [value]="checkInventories"
+  class="p-datatable-sm"
+  [tableStyle]="{ 'min-width': '50rem' }"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Series Pattern</th>
+      <th>Warning Series</th>
+      <th>Number of Padding</th>
+      <th>Starting Series</th>
+      <th>Is Repeating</th>
+      <th>Product</th>
+      <th>Tag</th>
+    </tr>
+  </ng-template>
 
-    <ng-container matColumnDef="isRepeating">
-      <th mat-header-cell *matHeaderCellDef>Is repeating</th>
-      <td mat-cell *matCellDef="let checkInventory">
-        {{ checkInventory.isRepeating }}
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="product">
-      <th mat-header-cell *matHeaderCellDef>Product</th>
-      <td mat-cell *matCellDef="let checkInventory">
-        {{ checkInventory.product }}
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="tag">
-      <th mat-header-cell *matHeaderCellDef>Tag</th>
-      <td mat-cell *matCellDef="let checkInventory">
-        {{ checkInventory.tag }}
-      </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  </table>
-</div>
+  <ng-template pTemplate="body" let-checkInventory>
+    <tr >
+      <td>{{ checkInventory.seriesPattern }}</td>
+      <td>{{ checkInventory.warningSeries }}</td>
+      <td>{{ checkInventory.numberOfPadding }}</td>
+      <td>{{ checkInventory.startingSeries }}</td>
+      <td>{{ checkInventory.isRepeating }}</td>
+      <td>{{ checkInventory.product }}</td>
+      <td>{{ checkInventory.tag }}</td>
+    </tr>
+  </ng-template>
+</p-table>

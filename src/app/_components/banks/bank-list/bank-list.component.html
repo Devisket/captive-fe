@@ -1,36 +1,33 @@
 <div class="row">
-    <div class="d-flex my-3 justify-content-between">
-        <h2>Client Bank List</h2>
-        <button routerLink="/register-bank" class="btn btn-outline-primary"><i class="fa fa-plus"></i> Register New Bank</button>
-    </div>
-
-    <!-- <div class="container my-3">
-        <form class="d-flex" role="search">
-            <input class="form-control me-2" type="search" placeholder="Type to start searching bank" aria-label="Search">
-        </form>
-    </div> -->
-
-    @for (bank of bankInfos; track $index ) {
-    <div class="col-2">
-        <div class="card mb-4">
-            <div class="card-img-wrapper">
-                <img routerLink="/banks/{{bank.id}}" src="./../../../../assets/images/banks/{{bank.bankShortName | lowercase }}.png" alt="{{bank.bankShortName}}" class="card-img-top p-2">
-                <ul class="list-inline member-icons animate text-center">
-                    <li class="list-inline-item">
-                        <button routerLink="/banks/{{bank.id}}/edit" class="btn btn-info"><i class="fa fa-edit"></i></button>
-                    </li>
-                    <li class="list-inline-item">
-                        <button class="btn btn-danger" (click)="deleteBank(bank.id, $event)">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                    </li>
-                </ul>
-            </div>
-            <div class="card-body p-1">
-                <h6 class="card-title text-center">{{ bank.bankName }}</h6>
-            </div>
-        </div>
-    </div>
-    }
-
+  <div class="d-flex mb-2 justify-content-between">
+    <h2>Bank List</h2>
+    <button routerLink="/register-bank" class="btn btn-outline-primary">
+      <i class="fa fa-plus"></i> Register New Bank
+    </button>
+  </div>
 </div>
+
+<p-table
+  [rowHover]="true"
+  [value]="bankInfos"
+  class="p-datatable-sm"
+  [tableStyle]="{ 'min-width': '50rem' }"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Bank Name</th>
+      <th>Short Name</th>
+      <th>Description</th>
+      <th>Created Date</th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-bank>
+    <tr style="cursor: pointer" (click)="navigateToBank(bank)">
+      <td>{{ bank.bankName }}</td>
+      <td>{{ bank.bankShortName }}</td>
+      <td>{{ bank.bankDescription }}</td>
+      <td>{{ bank.createdDate }}</td>
+    </tr>
+  </ng-template>
+</p-table>

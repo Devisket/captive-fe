@@ -1,8 +1,8 @@
 services:
   captive-fe:
-    container_name: orderingcontainer
+    container_name: captive-fe
     build: .
-    image: ordering:v1
+    image: captive-fe:v1
     ports:
       - 80:80
     expose:

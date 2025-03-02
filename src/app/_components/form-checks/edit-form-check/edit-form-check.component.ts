@@ -6,7 +6,7 @@ import { BanksService } from '../../../_services/banks.service';
 import { ProductTypeService } from '../../../_services/product-type.service';
 import { FormCheckService } from '../../../_services/form-check.service';
 import { Bank } from '../../../_models/bank';
-import { ProductType } from '../../../_models/product-type';
+import { Product } from '../../../_models/product';
 import { FormCheck } from '../../../_models/form-check';
 import { Location } from '@angular/common';
 

@@ -1,5 +1,5 @@
 import { Component, inject, input, OnDestroy, OnInit } from '@angular/core';
-import { ProductType } from '../../../_models/product-type';
+import { Product } from '../../../_models/product';
 import { ProductConfigurationService } from '../../../_services/product-configuration.service';
 import { ToastrService } from 'ngx-toastr';
 import { ProductConfiguration } from '../../../_models/product-configuration';
@@ -24,7 +24,7 @@ export class ConfigurationListComponent implements OnInit {
   productConfigurationService = inject(ProductConfigurationService);
   productTypeService = inject(ProductTypeService);
   bankService = inject(BanksService);
-  productType?: ProductType;
+  productType?: Product;
   bankInfo?: Bank;
   toastr = inject(ToastrService);
   productConfigurations: ProductConfiguration[] = [];
@@ -57,7 +57,7 @@ export class ConfigurationListComponent implements OnInit {
     let productTypeId = this.route.snapshot.paramMap.get("productId");
     let bankId = this.route.snapshot.paramMap.get("bankId");
     this.productTypeService.getProductTypes(bankId).subscribe( data => {
-      this.productType = data.productTypes.find((product: ProductType) => product.productTypeId === productTypeId);
+      this.productType = data.productTypes.find((product: Product) => product.productTypeId === productTypeId);
     })
   }
 

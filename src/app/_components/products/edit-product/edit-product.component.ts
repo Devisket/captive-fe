@@ -5,16 +5,16 @@ import { ToastrService } from 'ngx-toastr';
 import { BanksService } from '../../../_services/banks.service';
 import { ProductTypeService } from '../../../_services/product-type.service';
 import { Bank } from '../../../_models/bank';
-import { ProductType } from '../../../_models/product-type';
+import { Product } from '../../../_models/product';
 
 @Component({
-  selector: 'app-edit-product-type',
+  selector: 'app-edit-product',
   standalone: true,
   imports: [FormsModule, RouterLink],
-  templateUrl: './edit-product-type.component.html',
-  styleUrl: './edit-product-type.component.scss'
+  templateUrl: './edit-product.component.html',
+  styleUrl: './edit-product.component.scss'
 })
-export class EditProductTypeComponent implements OnInit {
+export class EditProductComponent implements OnInit {
 
   @ViewChild('editProductTypeForm') editProductTypeForm?: NgForm;
   @HostListener('window:beforeunload', ['$event']) notify($event:any) {
@@ -30,7 +30,7 @@ export class EditProductTypeComponent implements OnInit {
   productTypeService = inject(ProductTypeService);
   bankInfos: Bank[] = [];
   bankInfo?: Bank;
-  productType?: ProductType;
+  productType?: Product;
 
   ngOnInit(): void {
     this.loadBank();
@@ -49,7 +49,7 @@ export class EditProductTypeComponent implements OnInit {
     let productTypeId = this.route.snapshot.paramMap.get("id");
     let bankId = this.route.snapshot.paramMap.get("bankId");
     this.productTypeService.getProductTypes(bankId).subscribe( data => {
-      this.productType = data.productTypes.find((product: ProductType) => product.productTypeId === productTypeId);
+      this.productType = data.productTypes.find((product: Product) => product.productTypeId === productTypeId);
     })
   }
 

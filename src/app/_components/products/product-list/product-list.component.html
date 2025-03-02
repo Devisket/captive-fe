@@ -1,0 +1,65 @@
+<p-table
+  [value]="products"
+  [tableStyle]="{ 'min-width': '50rem' }"
+  styleClass="p-datatable-sm"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th class="text-center">Product</th>
+      <th class="text-center">Actions</th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-product>
+    <tr>
+      <td class="text-center">{{ product.productTypeName }}</td>
+      <td class="p-0">
+        <div class="d-flex justify-content-center align-items-center gap-2">
+          <button
+            type="button"
+            [routerLink]="[
+              '/add-form-check',
+              product.productTypeId,
+              'bank',
+              bankInfo().id
+            ]"
+            class="btn btn-info btn-sm"
+          >
+            <i class="fa fa-plus"></i> ADD FORM CHECK
+          </button>
+          <button
+            type="button"
+            [routerLink]="[
+              '/view-configuration',
+              product.productTypeId,
+              'bank',
+              bankInfo().id
+            ]"
+            class="btn btn-success btn-sm"
+          >
+            <i class="fa fa-eye"></i> CONFIGURATION
+          </button>
+          <button
+            type="button"
+            [routerLink]="[
+              '/edit-product',
+              product.productTypeId,
+              'bank',
+              bankInfo().id
+            ]"
+            class="btn btn-warning btn-sm"
+          >
+            <i class="fa fa-edit"></i> EDIT
+          </button>
+          <button
+            type="button"
+            (click)="deleteProductType(product.productTypeId, $event)"
+            class="btn btn-danger btn-sm"
+          >
+            <i class="fa fa-trash"></i> DELETE
+          </button>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './_components/home/home.component';
 import { authGuard } from './_guards/auth.guard';
 import { BankDetailComponent } from './_components/banks/bank-detail/bank-detail.component';
 import { EditBankComponent } from './_components/banks/edit-bank/edit-bank.component';
@@ -11,8 +10,8 @@ import { TestErrorsComponent } from './_components/errors/test-errors/test-error
 import { NotFoundComponent } from './_components/errors/not-found/not-found.component';
 import { ServerErrorComponent } from './_components/errors/server-error/server-error.component';
 import { BankListComponent } from './_components/banks/bank-list/bank-list.component';
-import { AddProductTypeComponent } from './_components/product-types/add-product-type/add-product-type.component';
-import { EditProductTypeComponent } from './_components/product-types/edit-product-type/edit-product-type.component';
+import { AddProductComponent } from './_components/products/add-product/add-product.component';
+import { EditProductComponent } from './_components/products/edit-product/edit-product.component';
 import { AddFormCheckComponent } from './_components/form-checks/add-form-check/add-form-check.component';
 import { EditFormCheckComponent } from './_components/form-checks/edit-form-check/edit-form-check.component';
 import { AddBatchComponent } from './_components/batches/add-batch/add-batch.component';
@@ -48,9 +47,9 @@ export const routes: Routes = [
             { path: 'add-tag/:checkValidationId/bank/:bankId', component: AddTagComponent },
             { path: 'add-tag-mapping/:tagId/checkValidation/:checkValidationId/bank/:bankId', component: AddTagMappingComponent },
             { path: 'edit-tag/:tagId/checkValidation/:checkValidationId/bank/:bankId', component: EditTagComponent },
-            { path: 'add-product-type/:id', component: AddProductTypeComponent },
+            { path: 'add-product-type/:id', component: AddProductComponent },
             { path: 'check-validation-list/:id', component: CheckValidationListComponent },
-            { path: 'edit-product-type/:id/bank/:bankId', component: EditProductTypeComponent },
+            { path: 'edit-product/:id/bank/:bankId', component: EditProductComponent },
             { path: 'add-form-check/:id/bank/:bankId', component: AddFormCheckComponent },
             { path: 'edit-form-check/:id/product/:productId/bank/:bankId', component: EditFormCheckComponent },
             { path: 'add-configuration/:productId/bank/:bankId', component: AddConfigurationComponent },

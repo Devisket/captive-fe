@@ -17,14 +17,8 @@ import { ToastrService } from 'ngx-toastr';
 import { DatePipe, NgFor, NgIf } from '@angular/common';
 import { OrderFile } from '../../../_models/order-file';
 import { HttpHeaders } from '@angular/common/http';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatTableModule } from '@angular/material/table';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { ValidateOrderFileResponse } from '../../../_models/type';
 import { Subscription } from 'rxjs';
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-order-file-list',
@@ -35,12 +29,7 @@ import { Subscription } from 'rxjs';
     NgFor,
     NgIf,
     RouterLink,
-    MatExpansionModule,
-    MatTableModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatButtonModule,
+    TableModule,
   ],
   templateUrl: './order-files-list.component.html',
   styleUrl: './order-files-list.component.scss',
@@ -52,6 +41,11 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
       $event.returnValue = true;
     }
   }
+
+  orderFileCols = [
+    'File Name',
+    'Status',
+  ]
 
   displayedColumns = [
     'accountNumber',

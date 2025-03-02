@@ -1,0 +1,18 @@
+:host ::ng-deep {
+    .p-datatable {
+        .p-datatable-header {
+            border: 1px solid #dee2e6;
+        }
+        
+        .p-datatable-thead > tr > th {
+            border: 1px solid #dee2e6;
+            background: #f8f9fa;
+            padding: 1rem;
+        }
+
+        .p-datatable-tbody > tr > td {
+            border: 1px solid #dee2e6;
+            padding: 1rem;
+        }
+    }
+}
