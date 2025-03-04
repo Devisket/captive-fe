@@ -3,6 +3,5 @@ export const environment = {
     baseCommandUri:'',
     apiUrl: 'api/',
     queryUrl: 'api/',
-    queryUrl2: 'api',
     commandUrl: 'api/',
 };

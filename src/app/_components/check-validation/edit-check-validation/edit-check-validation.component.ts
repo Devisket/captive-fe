@@ -37,7 +37,7 @@ export class EditCheckValidationComponent {
 
   ngOnInit(): void {
     this.loadBank();
-    this.loadCheckValidation();
+    //this.loadCheckValidation();
   }
 
   loadBank() {
@@ -46,20 +46,20 @@ export class EditCheckValidationComponent {
     });
   }
 
-  loadCheckValidation() {
-    this.checkValidationServices.getCheckValidation(this.checkValidationId, this.bankId).subscribe(data => {
-      this.checkValidation = data;
-    });
-  }
+  // loadCheckValidation() {
+  //   this.checkValidationServices.getCheckValidation(this.checkValidationId, this.bankId).subscribe(data => {
+  //     this.checkValidation = data;
+  //   });
+  // }
 
 
-  updateCheckValidation(){
-    this.checkValidationServices.updateCheckValidation(this.bankId, this.checkValidationId, this.editCheckValidationForm?.value).subscribe({
-      next: _ => {
-        this.toastr.success("Successfully updated check validation");
-        this.router.navigateByUrl('/banks/' + this.bankInfo?.id);
-      },
-      error: error => this.toastr.error(error, "Error"),
-    })
-  }
+  // updateCheckValidation(){
+  //   this.checkValidationServices.updateCheckValidation(this.bankId, this.checkValidationId, this.editCheckValidationForm?.value).subscribe({
+  //     next: _ => {
+  //       this.toastr.success("Successfully updated check validation");
+  //       this.router.navigateByUrl('/banks/' + this.bankInfo?.id);
+  //     },
+  //     error: error => this.toastr.error(error, "Error"),
+  //   })
+  // }
 }

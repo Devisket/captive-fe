@@ -7,7 +7,7 @@ import { BanksService } from '../../../_services/banks.service';
 import { BranchListComponent } from '../../branches/branch-list/branch-list.component';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { AddBranchComponent } from '../../branches/add-branch/add-branch.component';
-import { ProductTypeListComponent } from "../../product-types/product-type-list/product-type-list.component";
+import { ProductListComponent } from "../../products/product-list/product-list.component";
 import { FormCheckListComponent } from "../../form-checks/form-check-list/form-check-list.component";
 import { BatchesService } from '../../../_services/batches.service';
 import { ToastrService } from 'ngx-toastr';
@@ -23,7 +23,7 @@ import { CheckInventoryListComponent } from '../../check-inventory/check-invento
   imports: [
     TabsModule, NgFor, RouterLink, 
     DatePipe, BranchListComponent, NgIf, 
-    ProductTypeListComponent, 
+    ProductListComponent, 
     FormCheckListComponent, 
     AddBatchComponent, 
     BatchListComponent, 

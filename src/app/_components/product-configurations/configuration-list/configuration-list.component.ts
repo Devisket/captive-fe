@@ -1,12 +1,12 @@
 import { Component, inject, input, OnDestroy, OnInit } from '@angular/core';
-import { ProductType } from '../../../_models/product-type';
+import { Product } from '../../../_models/product';
 import { ProductConfigurationService } from '../../../_services/product-configuration.service';
 import { ToastrService } from 'ngx-toastr';
 import { ProductConfiguration } from '../../../_models/product-configuration';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Editor, NgxEditorModule } from 'ngx-editor';
 import { FormsModule } from '@angular/forms';
-import { ProductTypeService } from '../../../_services/product-type.service';
+import { ProductService } from '../../../_services/product.service';
 import { Bank } from '../../../_models/bank';
 import { BanksService } from '../../../_services/banks.service';
 
@@ -22,9 +22,9 @@ export class ConfigurationListComponent implements OnInit {
   configurationData:string = ""
   route = inject(ActivatedRoute);
   productConfigurationService = inject(ProductConfigurationService);
-  productTypeService = inject(ProductTypeService);
+  productTypeService = inject(ProductService);
   bankService = inject(BanksService);
-  productType?: ProductType;
+  productType?: Product;
   bankInfo?: Bank;
   toastr = inject(ToastrService);
   productConfigurations: ProductConfiguration[] = [];
@@ -56,8 +56,8 @@ export class ConfigurationListComponent implements OnInit {
   getProductType(){
     let productTypeId = this.route.snapshot.paramMap.get("productId");
     let bankId = this.route.snapshot.paramMap.get("bankId");
-    this.productTypeService.getProductTypes(bankId).subscribe( data => {
-      this.productType = data.productTypes.find((product: ProductType) => product.productTypeId === productTypeId);
+    this.productTypeService.getAllProducts(bankId).subscribe( data => {
+      this.productType = data.productTypes.find((product: Product) => product.productTypeId === productTypeId);
     })
   }
 

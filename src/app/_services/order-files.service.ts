@@ -51,6 +51,14 @@ export class OrderFilesService {
     return this.http.post(this.commandUrl + 'orderfile/' + id + '/process',null)
   }
 
+  validateAllOrderFiles(bankId: string, batchId: string) {
+    return this.http.post(this.commandUrl +  `${bankId}/batch/${batchId}/validate`, null);
+  }
+
+  processAllOrderFiles(bankId: string) {
+    return this.http.post(this.commandUrl + 'orderfile/processAll', {bankId});
+  }
+
   getOrderFiles(bankId: any, batchId: any, headers: any): Observable<any> {
     return this.http.get<any>(this.queryUrl + bankId + '/Batch/' + batchId, {
       headers,

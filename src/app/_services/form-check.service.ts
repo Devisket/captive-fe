@@ -11,9 +11,16 @@ export class FormCheckService {
   commandUrl = environment.commandUrl;
   queryUrl = environment.queryUrl;
 
-  getFormChecks(productTypeId: any): Observable<any> {
-    return this.http.get<any>(this.queryUrl + `FormChecks?productId=${productTypeId}`);
+  getFormCheckByProductId(bankInfoId: any, productId: any): Observable<any> {
+    return this.http.get<any>(this.queryUrl + `${bankInfoId}/product/${productId}/formChecks`);
   }
+
+
+  getAllFormChecks(bankInfoId: any): Observable<any> {
+    return this.http.get<any>(this.queryUrl + `${bankInfoId}/formChecks`);
+  }
+
+
 
   addFormCheck(formCheck: any, productId:string) {
     return this.http.post(this.commandUrl + productId + "/FormChecks", formCheck);

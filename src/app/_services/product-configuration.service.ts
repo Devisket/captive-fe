@@ -11,11 +11,15 @@ export class ProductConfigurationService {
   commandUrl = environment.commandUrl;
   queryUrl = environment.queryUrl;
 
-  getProductConfigurations(poductTyeId: any): Observable<any> {
-    return this.http.get<any>(this.queryUrl + "bankId/Product/" + poductTyeId + "/configuration");
+  getProductConfigurations(productId: any): Observable<any> {
+    return this.http.get<any>(this.queryUrl + "bankId/Product/" + productId + "/configuration");
   }
 
-  addProductConfigurations(productTypeId: any, bankInfoId: any, productTypeConfiguration: any) {
-    return this.http.post(this.commandUrl + "bank/" + bankInfoId + "/Product/" + productTypeId + "/configuration", productTypeConfiguration);
+  addProductConfigurations(productId: any, bankInfoId: any, productTypeConfiguration: any) {
+    return this.http.post(this.commandUrl + "bank/" + bankInfoId + "/product/" + productId + "/configuration", productTypeConfiguration);
+  }
+
+  updateProductConfigurations(productId: any, bankInfoId: any, productConfigurationId: any, productTypeConfiguration: any) {
+    return this.http.put(this.commandUrl + "bank/" + bankInfoId + "/product/" + productId + "/configuration/" + productConfigurationId, productTypeConfiguration);
   }
 }

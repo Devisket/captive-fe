@@ -3,7 +3,7 @@ import { FormCheckService } from '../../../_services/form-check.service';
 import { ToastrService } from 'ngx-toastr';
 import { FormCheck } from '../../../_models/form-check';
 import { NgFor } from '@angular/common';
-import { ProductType } from '../../../_models/product-type';
+import { Product } from '../../../_models/product';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Bank } from '../../../_models/bank';
@@ -17,7 +17,7 @@ import { Bank } from '../../../_models/bank';
 })
 export class FormCheckListComponent implements OnInit{
 
-  productType = input.required<ProductType>();
+  productType = input.required<Product>();
   bankInfo = input.required<Bank>();
 
   formCheckService = inject(FormCheckService);
@@ -26,11 +26,11 @@ export class FormCheckListComponent implements OnInit{
   ngOnInit(): void {
     this.productType;
     this.bankInfo;
-    this.getFormChecks()
+    this.getFormCheckByProductId()
   }
 
-  getFormChecks() {
-    this.formCheckService.getFormChecks(this.productType().productTypeId).subscribe(data => {
+  getFormCheckByProductId() {
+    this.formCheckService.getFormCheckByProductId(this.bankInfo().id, this.productType().productTypeId).subscribe(data => {
       if(!data) return; 
       this.formChecks = data.formChecks;
     });

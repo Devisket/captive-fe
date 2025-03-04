@@ -4,18 +4,17 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BanksService } from '../../../_services/banks.service';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { ProductTypeService } from '../../../_services/product-type.service';
+import { ProductService } from '../../../_services/product.service';
 import { UpperCasePipe } from '@angular/common';
-import { ProductConfigurationService } from '../../../_services/product-configuration.service';
 
 @Component({
-  selector: 'app-add-product-type',
+  selector: 'app-add-product',
   standalone: true,
   imports: [FormsModule, UpperCasePipe, RouterLink],
-  templateUrl: './add-product-type.component.html',
-  styleUrl: './add-product-type.component.scss'
+  templateUrl: './add-product.component.html',
+  styleUrl: './add-product.component.scss'
 })
-export class AddProductTypeComponent implements OnInit{
+export class AddProductComponent implements OnInit{
 
   @ViewChild('addProductTypeForm') addProductTypeForm?: NgForm;
   @HostListener('window:beforeunload', ['$event']) notify($event:any) {
@@ -28,7 +27,7 @@ export class AddProductTypeComponent implements OnInit{
   route = inject(ActivatedRoute);
   router = inject(Router);
   bankService = inject(BanksService);
-  productTypeService = inject(ProductTypeService);
+  productTypeService = inject(ProductService);
   bankInfos: Bank[] = [];
   bankInfo?: Bank;
   model: any = {};
