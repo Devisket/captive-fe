@@ -30,7 +30,7 @@ export class TagListComponent implements OnInit{
 
   ngOnInit(): void {
     this.loadBank();
-    this.getCheckValidations();
+    //this.getCheckValidations();
   }
 
   toggletagMappingVisibility(tagId: string): void {
@@ -53,31 +53,31 @@ export class TagListComponent implements OnInit{
     });
   }
 
-  getCheckValidations(){
-    let bankId = this.route.snapshot.paramMap.get("bankId");
-    let checkValidationId = this.route.snapshot.paramMap.get("checkValidationId");
-    this.checkValidationService.getCheckValidations(bankId).subscribe(data => {
-      this.checkValidation = data.checkValidations.find((checkVal: CheckValidation) => checkVal.id === checkValidationId);
-      if(!this.checkValidation) return;
-      this.tags = this.checkValidation.tags;
-    });
-  }
+  // getCheckValidations(){
+  //   let bankId = this.route.snapshot.paramMap.get("bankId");
+  //   let checkValidationId = this.route.snapshot.paramMap.get("checkValidationId");
+  //   this.checkValidationService.getCheckValidations(bankId).subscribe(data => {
+  //     this.checkValidation = data.checkValidations.find((checkVal: CheckValidation) => checkVal.id === checkValidationId);
+  //     if(!this.checkValidation) return;
+  //     this.tags = this.checkValidation.tags;
+  //   });
+  // }
 
 
-  deleteTag(tagId: any, event: Event) {
-    if (!confirm('Confirm Deletion!')) {
-      event.preventDefault();
-      return;
-    }
-    this.tagsService.deleteTag(this.bankInfo?.id, tagId).subscribe({
-      error: (error) => {
-        this.toastr.error(error.error);
-        console.log(error.error);
-      },
-      next: (response) => {
-        this.toastr.success('Successfully deleted bank.');
-        this.tags = this.tags.filter(tag => tag.id !== tagId);
-      },
-    });
-  }
+  // deleteTag(tagId: any, event: Event) {
+  //   if (!confirm('Confirm Deletion!')) {
+  //     event.preventDefault();
+  //     return;
+  //   }
+  //   this.tagsService.deleteTag(this.bankInfo?.id, tagId).subscribe({
+  //     error: (error) => {
+  //       this.toastr.error(error.error);
+  //       console.log(error.error);
+  //     },
+  //     next: (response) => {
+  //       this.toastr.success('Successfully deleted bank.');
+  //       this.tags = this.tags.filter(tag => tag.id !== tagId);
+  //     },
+  //   });
+  // }
 }

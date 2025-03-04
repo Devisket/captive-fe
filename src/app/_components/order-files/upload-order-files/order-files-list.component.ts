@@ -14,22 +14,27 @@ import { Batch } from '../../../_models/batch';
 import { FormsModule, NgForm } from '@angular/forms';
 import { OrderFilesService } from '../../../_services/order-files.service';
 import { ToastrService } from 'ngx-toastr';
-import { DatePipe, NgFor, NgIf } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import { OrderFile } from '../../../_models/order-file';
 import { HttpHeaders } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { CheckOrders } from '../../../_models/check-order';
+import { DialogModule } from 'primeng/dialog';
+import { LogType } from '../../../_models/constants';
 
 @Component({
   selector: 'app-order-file-list',
   standalone: true,
   imports: [
     FormsModule,
-    DatePipe,
     NgFor,
     NgIf,
     RouterLink,
     TableModule,
+    ButtonModule,
+    DialogModule,
   ],
   templateUrl: './order-files-list.component.html',
   styleUrl: './order-files-list.component.scss',
@@ -42,10 +47,30 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
     }
   }
 
-  orderFileCols = [
-    'File Name',
-    'Status',
-  ]
+  orderFileCols = ['', 'File Name', 'Status', 'Personal Quantity', 'Commercial Quantity', 'Action'];
+
+  checkOrderCols = [
+    {
+      columnName: 'Account Number',
+      value: 'accountNumber',
+    },
+    {
+      columnName: 'BRSTN',
+      value: 'brstn',
+    },
+    {
+      columnName: 'Name',
+      value: 'mainAccountName',
+    },
+    {
+      columnName: 'Deliver To',
+      value: 'deliverTo',
+    },
+    {
+      columnName: 'Error Message',
+      value: 'errorMessage',
+    },
+  ];
 
   displayedColumns = [
     'accountNumber',
@@ -54,6 +79,12 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
     'deliverTo',
     'error',
   ];
+
+  dialogData = {
+    dialogTitle: 'Warning',
+    dialogType: LogType.Warning,
+    dialogMessage: 'This is a warning message',
+  }
 
   route = inject(ActivatedRoute);
   bankService = inject(BanksService);
@@ -68,6 +99,8 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
   visibleBatches: Set<string> = new Set();
   private refreshInterval: any;
   $subscription = new Subscription();
+
+  visibleDialog: boolean = false;
 
   ngOnInit(): void {
     const batchId = this.route.snapshot.paramMap.get('batchId')!;
@@ -89,40 +122,62 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
   loadBank() {
     let bankId = this.route.snapshot.paramMap.get('bankId');
     if (!bankId) return;
-    this.$subscription.add(this.bankService.getBanks().subscribe((data) => {
-      this.bankInfo = data.bankInfos.find((bank: Bank) => bank.id === bankId);
-    }));
+    this.$subscription.add(
+      this.bankService.getBanks().subscribe((data) => {
+        this.bankInfo = data.bankInfos.find((bank: Bank) => bank.id === bankId);
+      })
+    );
   }
 
   getBatch() {
     let batchId = this.route.snapshot.paramMap.get('batchId');
     let bankId = this.route.snapshot.paramMap.get('bankId');
-    this.$subscription.add(this.batchService.getBatches(bankId).subscribe((data) => {
-      this.batch = data.batchFiles.find((batch: Batch) => batch.id === batchId);
-    }));
+    this.$subscription.add(
+      this.batchService.getBatches(bankId).subscribe((data) => {
+        this.batch = data.batchFiles.find(
+          (batch: Batch) => batch.id === batchId
+        );
+      })
+    );
   }
 
   onValidate(orderFileId: string): void {
-    this.$subscription.add(this.orderFileService.validateOrderFile(orderFileId).subscribe((_) => {
-      this.getOrderFiles();
-    }));
+    this.$subscription.add(
+      this.orderFileService.validateOrderFile(orderFileId).subscribe((_) => {
+        this.getOrderFiles();
+      })
+    );
   }
 
   onProcess(orderFileId: string): void {
-    this.orderFileService.processOrderFile(orderFileId).subscribe((_) => {
-      this.toastr.success('Process successfully.');
-      this.getOrderFiles();
+    this.orderFileService.processOrderFile(orderFileId).subscribe({
+      next: (returnLog: any) => {
+        this.toastr.success('Process successfully.');
+        this.getOrderFiles();
+        if(returnLog.logMessage !== ''){
+          this.dialogData.dialogType = LogType.Warning;
+          this.dialogData.dialogMessage = returnLog.logMessage;
+          this.visibleDialog = true;
+        }
+      },
+      error: (err) => {
+        this.dialogData.dialogType = LogType.Error;
+        this.dialogData.dialogMessage = err.error.message;
+        this.visibleDialog = true;
+      }
     });
   }
 
   onDelete(orderFileId: string): void {
-    this.$subscription.add(this.orderFileService.deleteOrderFile(orderFileId).subscribe({
-      next: (_) => {
-        this.toastr.success('Successfully deleted order file');
-      },
-      error: (error) => this.toastr.error(`Error on deletion: ${error}`),
-      complete: () => window.location.reload(),
-    }));
+    this.$subscription.add(
+      this.orderFileService.deleteOrderFile(orderFileId).subscribe({
+        next: (_) => {
+          this.toastr.success('Successfully deleted order file');
+        },
+        error: (error) => this.toastr.error(`Error on deletion: ${error}`),
+        complete: () => window.location.reload(),
+      })
+    );
   }
 
   onFileSelected(event: any): void {
@@ -183,6 +238,16 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
           } else {
             clearInterval(this.refreshInterval);
           }
+
+          if(orderFile.status === "Pending"){
+            const invalidCheckOrders = orderFile.checkOrders.filter((checkOrder: CheckOrders) => !checkOrder.isValid && checkOrder.errorMessage !== '');
+            console.log(invalidCheckOrders);
+            invalidCheckOrders.forEach((invalidCheckOrder: CheckOrders) => {
+              this.dialogData.dialogType = LogType.Error;
+              this.dialogData.dialogMessage = invalidCheckOrder.errorMessage;
+              this.visibleDialog = true;
+            });
+          }
         });
       });
   }
@@ -196,15 +261,42 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
   }
 
   canBeProcess(orderFile: OrderFile): boolean {
+    if(!orderFile.checkOrders)
+      return false;
+
     return orderFile.checkOrders.some((x) => !x.isValid);
   }
 
-  isOrderFileCompleted(orderFile:OrderFile) 
-  {
-    return orderFile.status === 'Completed'
+  isOrderFileCompleted(orderFile: OrderFile) {
+    return orderFile.status === 'Completed';
   }
 
   isBatchVisible(batchName: string): boolean {
     return this.visibleBatches.has(batchName);
+  }
+
+  isCheckOrderHasError(checkOrder: CheckOrders): boolean {
+    return !checkOrder.isValid;
+  }
+
+  showDialog() {
+    this.visibleDialog = true;
+  }
+
+  processAll(){
+    // this.orderFileService.processAllOrderFiles(this.bankInfo?.id).subscribe({
+    //   next: (_) => {
+    //     this.toastr.success('Successfully processed all order files.');
+    //   }
+    // });
+  }
+
+  validateAll(){
+    this.orderFileService.validateAllOrderFiles(this.bankInfo!.id, this.batch!.id).subscribe({
+      next: (data) => {
+
+        this.getOrderFiles()
+      }
+    });
   }
 }

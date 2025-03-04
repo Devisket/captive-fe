@@ -6,12 +6,12 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class ProductTypeService {
+export class ProductService {
   private http = inject(HttpClient);
   commandUrl = environment.commandUrl;
   queryUrl = environment.queryUrl;
 
-  getProductTypes(bankInfoId: any): Observable<any> {
+  getAllProducts(bankInfoId: any): Observable<any> {
     return this.http.get<any>(this.queryUrl + bankInfoId + "/Product");
   }
 

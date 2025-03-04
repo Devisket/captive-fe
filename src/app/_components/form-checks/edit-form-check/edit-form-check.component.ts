@@ -3,7 +3,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { BanksService } from '../../../_services/banks.service';
-import { ProductTypeService } from '../../../_services/product-type.service';
+import { ProductService } from '../../../_services/product.service';
 import { FormCheckService } from '../../../_services/form-check.service';
 import { Bank } from '../../../_models/bank';
 import { Product } from '../../../_models/product';
@@ -28,7 +28,7 @@ export class EditFormCheckComponent {
   route = inject(ActivatedRoute);
   router = inject(Router);
   bankService = inject(BanksService);
-  productTypeService = inject(ProductTypeService);
+  productTypeService = inject(ProductService);
   formCheckService = inject(FormCheckService);
   formCheck?: FormCheck;
   location = inject(Location);
@@ -44,7 +44,7 @@ export class EditFormCheckComponent {
     this.productId = this.route.snapshot.paramMap.get("productId") ?? '';
     let formCheckId = this.route.snapshot.paramMap.get("id");
 
-    this.formCheckService.getFormChecks(this.productId).subscribe( data => {
+    this.formCheckService.getFormCheckByProductId(this.bankInfoId, this.productId).subscribe( data => {
       if(data.formChecks){
         this.formCheck = data.formChecks.find((formCheck: FormCheck) => formCheck.id === formCheckId);
       }      

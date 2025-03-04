@@ -1,6 +1,6 @@
 import { Component, inject, input, OnInit, ViewChild } from '@angular/core';
 import { Bank } from '../../../_models/bank';
-import { ProductTypeService } from '../../../_services/product-type.service';
+import { ProductService } from '../../../_services/product.service';
 import { Product } from '../../../_models/product';
 import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -35,7 +35,7 @@ export class ProductListComponent implements OnInit {
   }
 
   bankInfo = input.required<Bank>();
-  productTypeService = inject(ProductTypeService);
+  productTypeService = inject(ProductService);
   formCheckService = inject(FormCheckService);
   toastr = inject(ToastrService);
   products: Product[] = [];
@@ -47,7 +47,7 @@ export class ProductListComponent implements OnInit {
 
   getProducts() {
     const bankInfoId = this.bankInfo().id;
-    this.productTypeService.getProductTypes(bankInfoId).subscribe((data) => {
+    this.productTypeService.getAllProducts(bankInfoId).subscribe((data) => {
       if (!data) return;
       this.products = data.productTypes;
     });

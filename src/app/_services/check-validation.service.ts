@@ -10,21 +10,25 @@ export class CheckValidationService {
 
   private http = inject(HttpClient);
   commandUrl = environment.commandUrl;
-  queryUrl = environment.queryUrl2;
+  queryUrl = environment.queryUrl;
 
-  getCheckValidations(bankInfoId: any): Observable<any> {
-    return this.http.get<any>(this.queryUrl + bankInfoId + '/CheckValidation');
+  getAllTagAndMapping(bankInfoId: any): Observable<any> {
+    return this.http.get<any>(this.queryUrl + bankInfoId + '/tag');
   }
 
-  getCheckValidation(checkValidationId: any, bankInfoId: any): Observable<any> {
-    return this.http.get<any>(this.queryUrl + bankInfoId + '/CheckValidation/' + checkValidationId);
-  }
+  // getCheckValidations(bankInfoId: any): Observable<any> {
+  //   return this.http.get<any>(this.queryUrl + bankInfoId + '/CheckValidation');
+  // }
 
-  addCheckValidation(bankInfoId: any, formData: any) {
-    return this.http.post(this.commandUrl + bankInfoId + "/CheckValidation", formData);
-  }
+  // getCheckValidation(checkValidationId: any, bankInfoId: any): Observable<any> {
+  //   return this.http.get<any>(this.queryUrl + bankInfoId + '/CheckValidation/' + checkValidationId);
+  // }
 
-  updateCheckValidation(bankInfoId: any, checkValidationId: any, formData: any) {
-    return this.http.put(this.commandUrl + bankInfoId + "/CheckValidation/" + checkValidationId, formData);
-  }
+  // addCheckValidation(bankInfoId: any, formData: any) {
+  //   return this.http.post(this.commandUrl + bankInfoId + "/CheckValidation", formData);
+  // }
+
+  // updateCheckValidation(bankInfoId: any, checkValidationId: any, formData: any) {
+  //   return this.http.put(this.commandUrl + bankInfoId + "/CheckValidation/" + checkValidationId, formData);
+  // }
 }

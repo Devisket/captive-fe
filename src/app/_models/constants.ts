@@ -3,3 +3,9 @@ export const enum ConfigurationType {
   ExcelConfiguration,
   MdbConfiguration,
 }
+
+export const enum LogType {
+  Info,
+  Warning,
+  Error
+}

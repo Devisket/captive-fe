@@ -3,7 +3,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { BanksService } from '../../../_services/banks.service';
-import { ProductTypeService } from '../../../_services/product-type.service';
+import { ProductService } from '../../../_services/product.service';
 import { Bank } from '../../../_models/bank';
 import { Product } from '../../../_models/product';
 
@@ -27,7 +27,7 @@ export class EditProductComponent implements OnInit {
   route = inject(ActivatedRoute);
   router = inject(Router);
   bankService = inject(BanksService);
-  productTypeService = inject(ProductTypeService);
+  productTypeService = inject(ProductService);
   bankInfos: Bank[] = [];
   bankInfo?: Bank;
   productType?: Product;
@@ -48,7 +48,7 @@ export class EditProductComponent implements OnInit {
   getProductType(){
     let productTypeId = this.route.snapshot.paramMap.get("id");
     let bankId = this.route.snapshot.paramMap.get("bankId");
-    this.productTypeService.getProductTypes(bankId).subscribe( data => {
+    this.productTypeService.getAllProducts(bankId).subscribe( data => {
       this.productType = data.productTypes.find((product: Product) => product.productTypeId === productTypeId);
     })
   }

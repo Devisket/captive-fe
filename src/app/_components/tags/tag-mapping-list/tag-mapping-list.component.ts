@@ -2,7 +2,7 @@ import { Component, inject, Input, input, OnInit } from '@angular/core';
 import { TagMapping } from '../../../_models/tag-mapping';
 import { BranchService } from '../../../_services/branch.service';
 import { FormCheckService } from '../../../_services/form-check.service';
-import { ProductTypeService } from '../../../_services/product-type.service';
+import { ProductService } from '../../../_services/product.service';
 import { Bank } from '../../../_models/bank';
 import { BankBranch } from '../../../_models/bank-branch';
 import { Product } from '../../../_models/product';
@@ -22,7 +22,7 @@ import { FormCheck } from '../../../_models/form-check';
 export class TagMappingListComponent implements OnInit{
 
   branchService = inject(BranchService);
-  productServices = inject(ProductTypeService);
+  productServices = inject(ProductService);
   formCheckService = inject(FormCheckService);
   route = inject(ActivatedRoute);
   mapping = input.required<TagMapping[]>();
@@ -53,7 +53,7 @@ export class TagMappingListComponent implements OnInit{
   }
 
   loadProducts(){
-    this.productServices.getProductTypes(this.bankInfo().id).subscribe(data => {
+    this.productServices.getAllProducts(this.bankInfo().id).subscribe(data => {
       this.products = data.productTypes;
       this.initializeLookups();
     })
@@ -101,7 +101,7 @@ export class TagMappingListComponent implements OnInit{
   }
 
   onInnitializedChange(selectedProductId: any) {
-    this.formCheckService.getFormChecks(selectedProductId).subscribe(data => {
+    this.formCheckService.getFormCheckByProductId(this.bankInfo().id, selectedProductId).subscribe(data => {
       this.formChecks = data.formChecks;
       this.formChecks.forEach(formCheck => {
       this.formCheckLookup[formCheck.id] = formCheck.formType;

@@ -2,7 +2,7 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { BanksService } from '../../../_services/banks.service';
-import { ProductTypeService } from '../../../_services/product-type.service';
+import { ProductService } from '../../../_services/product.service';
 import { Bank } from '../../../_models/bank';
 import { Product } from '../../../_models/product';
 import { Editor, NgxEditorModule } from 'ngx-editor';
@@ -37,7 +37,7 @@ export class ViewConfigurationComponent implements OnInit, OnDestroy {
   route = inject(ActivatedRoute);
   router = inject(Router);
   bankService = inject(BanksService);
-  productTypeService = inject(ProductTypeService);
+  productTypeService = inject(ProductService);
   configurationService = inject(ProductConfigurationService);
   productType?: Product;
   productConfiguration?: ProductConfiguration;
@@ -87,7 +87,7 @@ export class ViewConfigurationComponent implements OnInit, OnDestroy {
     this.formGroup.disable();
     let productTypeId = this.route.snapshot.paramMap.get('productId');
     let bankId = this.route.snapshot.paramMap.get('bankId');
-    this.productTypeService.getProductTypes(bankId).subscribe((data) => {
+    this.productTypeService.getAllProducts(bankId).subscribe((data) => {
       this.productType = data.productTypes.find(
         (product: Product) => product.productTypeId === productTypeId
       );

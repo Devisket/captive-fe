@@ -26,11 +26,11 @@ export class FormCheckListComponent implements OnInit{
   ngOnInit(): void {
     this.productType;
     this.bankInfo;
-    this.getFormChecks()
+    this.getFormCheckByProductId()
   }
 
-  getFormChecks() {
-    this.formCheckService.getFormChecks(this.productType().productTypeId).subscribe(data => {
+  getFormCheckByProductId() {
+    this.formCheckService.getFormCheckByProductId(this.bankInfo().id, this.productType().productTypeId).subscribe(data => {
       if(!data) return; 
       this.formChecks = data.formChecks;
     });

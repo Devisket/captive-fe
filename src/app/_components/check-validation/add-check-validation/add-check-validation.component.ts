@@ -33,23 +33,23 @@ export class AddCheckValidationComponent implements OnInit{
   model: any = {};
 
   ngOnInit(): void {
-    this.loadBank();
+    //this.loadBank();
   }
 
-  loadBank() {
-    this.bankService.getBanks().subscribe(data => {
-      this.bankInfo = data.bankInfos.find((bank: Bank) => bank.id === this.bankId);
-    });
-  }
+  // loadBank() {
+  //   this.bankService.getBanks().subscribe(data => {
+  //     this.bankInfo = data.bankInfos.find((bank: Bank) => bank.id === this.bankId);
+  //   });
+  // }
 
-  addCheckValidation(){
-    this.checkValidationServices.addCheckValidation(this.bankId, this.addCheckValidationForm?.value).subscribe({
-      next: _ => {
-        this.toastr.success("Successfully added new check validation");
-        this.router.navigateByUrl('/banks/' + this.bankInfo?.id);
-      },
-      error: error => this.toastr.error(error, "Error"),
-    })
-  }
+  // addCheckValidation(){
+  //   this.checkValidationServices.addCheckValidation(this.bankId, this.addCheckValidationForm?.value).subscribe({
+  //     next: _ => {
+  //       this.toastr.success("Successfully added new check validation");
+  //       this.router.navigateByUrl('/banks/' + this.bankInfo?.id);
+  //     },
+  //     error: error => this.toastr.error(error, "Error"),
+  //   })
+  // }
 
 }

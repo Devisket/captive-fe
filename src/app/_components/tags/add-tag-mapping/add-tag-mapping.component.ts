@@ -13,7 +13,7 @@ import { BankBranch } from '../../../_models/bank-branch';
 import { Product } from '../../../_models/product';
 import { FormCheck } from '../../../_models/form-check';
 import { FormCheckService } from '../../../_services/form-check.service';
-import { ProductTypeService } from '../../../_services/product-type.service';
+import { ProductService } from '../../../_services/product.service';
 
 @Component({
   selector: 'app-add-tag-mapping',
@@ -35,7 +35,7 @@ export class AddTagMappingComponent {
   tagMappingServices = inject(TagMappingService);
   branchService = inject(BranchService);
   formCheckServices = inject(FormCheckService);
-  productServices = inject(ProductTypeService);
+  productServices = inject(ProductService);
   bankService = inject(BanksService);
   toastr = inject(ToastrService);
   route = inject(ActivatedRoute);
@@ -71,7 +71,7 @@ export class AddTagMappingComponent {
   }
 
   loadProducts(){
-    this.productServices.getProductTypes(this.bankId).subscribe(data => {
+    this.productServices.getAllProducts(this.bankId).subscribe(data => {
       this.products = data.productTypes;
     })
   }
@@ -114,7 +114,7 @@ export class AddTagMappingComponent {
     const selectedProductId = event.target.value;
     this.model.formCheckId = '';
     if(selectedProductId){
-      this.formCheckServices.getFormChecks(selectedProductId).subscribe(data => {
+      this.formCheckServices.getFormCheckByProductId(this.bankInfo?.id, selectedProductId).subscribe(data => {
         this.formChecks = data.formChecks;
       })
     }else{
