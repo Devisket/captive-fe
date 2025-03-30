@@ -71,9 +71,9 @@ export class AddTagMappingComponent {
   }
 
   loadProducts(){
-    this.productServices.getAllProducts(this.bankId).subscribe(data => {
-      this.products = data.productTypes;
-    })
+    // this.productServices.getAllProducts(this.bankId).subscribe(data => {
+    //   this.products = data.productTypes;
+    // })
   }
 
   loadTag() {

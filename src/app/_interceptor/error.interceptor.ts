@@ -3,10 +3,11 @@ import { inject } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { catchError } from 'rxjs';
+import { MessageService } from 'primeng/api';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
-  const toastr = inject(ToastrService);
+  const messageService = inject(MessageService);
 
   return next(req).pipe(
     catchError(error => {
@@ -22,11 +23,11 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
               }
               throw modalStateErrors.flat();
             } else {
-              toastr.error(error.error, error.status)
+              messageService.add({severity:'error', summary: 'Validation Errors', detail: error.error});
             }
             break;
           case 401:
-            toastr.error('Unauthorised', error.status)
+            messageService.add({severity:'error', summary: 'Unauthorised', detail: error.status})
             break;
           case 404:
             router.navigateByUrl('/not-found');
@@ -36,7 +37,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             router.navigateByUrl('/server-error', navigationExtras);
             break;
           default:
-            toastr.error('Something unexpected went wrong');
+            messageService.add({severity:'error', summary: 'Something unexpected went wrong'});
             break;
         }
       }

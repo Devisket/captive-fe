@@ -16,8 +16,8 @@ export class FormCheckService {
   }
 
 
-  getAllFormChecks(bankInfoId: any): Observable<any> {
-    return this.http.get<any>(this.queryUrl + `${bankInfoId}/formChecks`);
+  getAllFormChecks(bankInfoId: string, productId: string): Observable<any> {
+    return this.http.get<any>(this.queryUrl + `${bankInfoId}/formChecks/${productId}`);
   }
 
 

@@ -20,7 +20,7 @@
                 <td class="text-center">
                     <div class="d-flex justify-content-center">
                         @if(productType()){
-                            <button type="button" [routerLink]="['/edit-form-check',formCheck.id,'product', productType().productTypeId , 'bank', bankInfo().id]" class="btn text-primary btn-sm me-3">
+                            <button type="button" [routerLink]="['/edit-form-check',formCheck.id,'product', productType().productId , 'bank', bankInfo().id]" class="btn text-primary btn-sm me-3">
                                 <i class="fa fa-edit"></i> EDIT
                             </button>
                         }

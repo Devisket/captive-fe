@@ -46,17 +46,17 @@ export class EditProductComponent implements OnInit {
   }
 
   getProductType(){
-    let productTypeId = this.route.snapshot.paramMap.get("id");
+    let productId = this.route.snapshot.paramMap.get("id");
     let bankId = this.route.snapshot.paramMap.get("bankId");
-    this.productTypeService.getAllProducts(bankId).subscribe( data => {
-      this.productType = data.productTypes.find((product: Product) => product.productTypeId === productTypeId);
+    this.productTypeService.getAllProducts(bankId!).subscribe( data => {
+      this.productType = data.productTypes.find((product: Product) => product.productId === productId);
     })
   }
 
-  editProductType(productTypeId: string) {
+  editProductType(productId: string) {
     let bankId = this.route.snapshot.paramMap.get("bankId");
     if(bankId == null) return;
-    this.productTypeService.updateProductType(this.editProductTypeForm?.value, bankId, productTypeId).subscribe({
+    this.productTypeService.updateProductType(this.editProductTypeForm?.value, bankId, productId).subscribe({
       next: _ => {
         this.toastr.success( this.bankInfo?.bankName + " product type has been added successsfully");
         this.router.navigateByUrl('/banks/' + this.bankInfo?.id);

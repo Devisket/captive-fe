@@ -6,6 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { Bank } from '../../../_models/bank';
 import { ToastrService } from 'ngx-toastr';
 import { TableModule } from 'primeng/table';
+import { Store } from '@ngrx/store';
+import { setSelectedBankInfoId } from '../../../_store/shared/shared.actions';
 @Component({
   selector: 'app-bank-list',
   standalone: true,
@@ -18,6 +20,8 @@ export class BankListComponent implements OnInit {
   router = inject(Router);
   private toastr = inject(ToastrService);
   bankInfos: Bank[] = [];
+
+  constructor(private store: Store) {}
 
   ngOnInit(): void {
     this.getBanks();
@@ -49,5 +53,6 @@ export class BankListComponent implements OnInit {
 
   navigateToBank(bank:Bank){
     this.router.navigate(['banks', bank.id]);
+    this.store.dispatch(setSelectedBankInfoId({ selectedBankInfoId: bank.id }));
   }
 }

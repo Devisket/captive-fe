@@ -39,25 +39,27 @@
     <div class="col-6">
       <button
         type="button"
-        class="btn btn-sm py-1 float-end btn-primary text-white"
+        class="btn btn-sm py-1 float-end btn-primary text-white mx-3"
         routerLink="/banks/{{ bankInfo?.id }}"
       >
         Back to {{ bankInfo?.bankName }}
       </button>
+
       <button
-      type="button"
-      class="btn btn-sm py-1 float-end btn-primary text-white"
-      (click)="validateAll()"
-    >
-      Validate All
-    </button>
-    <button
-    type="button"
-    class="btn btn-sm py-1 float-end btn-primary text-white"
-    (click)="processAll()"
-  >
-    Process
-  </button>
+        type="button"
+        class="btn btn-sm py-1 float-end btn-primary text-white me-2"
+        (click)="processAll()"
+      >
+        Process Batch
+      </button>
+      <button
+        type="button"
+        class="btn btn-sm py-1 float-end btn-primary text-white me-2"
+        (click)="validateAll()"
+        [disabled]="!canBeValidateByBatch(orderFiles)"
+      >
+        Validate Batch
+      </button>
     </div>
   </div>
 
@@ -106,6 +108,7 @@
             icon="pi pi-check-circle"
             severity="info"
             (click)="onValidate(orderFile.id)"
+            [disabled]="!canBeValidate(orderFile)"
             styleClass="p-button-rounded p-button-raised p-button-sm custom-small-btn mx-1"
           >
           </p-button>
@@ -113,7 +116,7 @@
             label="Process"
             icon="pi pi-play"
             severity="success"
-            [disabled]="canBeProcess(orderFile)"
+            [disabled]="!canOrderFileBeProcess(orderFile)"
             (click)="onProcess(orderFile.id)"
             styleClass="p-button-rounded p-button-raised p-button-sm custom-small-btn ms-1"
           >

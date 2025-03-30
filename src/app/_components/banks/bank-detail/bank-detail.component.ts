@@ -16,7 +16,8 @@ import { BatchListComponent } from "../../batches/batch-list/batch-list.componen
 import { TagListComponent } from "../../tags/tag-list/tag-list.component";
 import { CheckValidationListComponent } from '../../check-validation/check-validation-list/check-validation-list.component';
 import { CheckInventoryListComponent } from '../../check-inventory/check-inventory-list/check-inventory-list.component';
-
+import { Store } from '@ngrx/store';
+import { getSelectedBankInfoId } from '../../../_store/shared/shared.selectors';
 @Component({
   selector: 'app-bank-detail',
   standalone: true,
@@ -53,9 +54,16 @@ export class BankDetailComponent implements OnInit{
   selectedBank: any = {};
   bankInfo?: Bank;
 
+
+  constructor(private store: Store) {}
+
   ngOnInit(): void {
     this.loadBank();
     this.activeTabset = localStorage.getItem('activeTabset') || 'Branches'; //
+
+    this.store.select(getSelectedBankInfoId).subscribe(bankId => {
+      console.log(bankId);
+    })
   }
 
   loadBank() {

@@ -50,8 +50,8 @@ export class AddFormCheckComponent {
   getProductType(){
     this.productId = this.route.snapshot.paramMap.get("id") ?? '';
     let bankId = this.route.snapshot.paramMap.get("bankId");
-    this.productTypeService.getAllProducts(bankId).subscribe( data => {
-      this.productType = data.productTypes.find((product: Product) => product.productTypeId === this.productId);
+    this.productTypeService.getAllProducts(bankId!).subscribe( data => {
+      this.productType = data.productTypes.find((product: Product) => product.productId === this.productId);
     })
   }
 

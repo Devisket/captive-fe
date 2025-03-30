@@ -47,7 +47,14 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
     }
   }
 
-  orderFileCols = ['', 'File Name', 'Status', 'Personal Quantity', 'Commercial Quantity', 'Action'];
+  orderFileCols = [
+    '',
+    'File Name',
+    'Status',
+    'Personal Quantity',
+    'Commercial Quantity',
+    'Action',
+  ];
 
   checkOrderCols = [
     {
@@ -84,7 +91,7 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
     dialogTitle: 'Warning',
     dialogType: LogType.Warning,
     dialogMessage: 'This is a warning message',
-  }
+  };
 
   route = inject(ActivatedRoute);
   bankService = inject(BanksService);
@@ -154,7 +161,7 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
       next: (returnLog: any) => {
         this.toastr.success('Process successfully.');
         this.getOrderFiles();
-        if(returnLog.logMessage !== ''){
+        if (returnLog.logMessage !== '') {
           this.dialogData.dialogType = LogType.Warning;
           this.dialogData.dialogMessage = returnLog.logMessage;
           this.visibleDialog = true;
@@ -164,7 +171,7 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
         this.dialogData.dialogType = LogType.Error;
         this.dialogData.dialogMessage = err.error.message;
         this.visibleDialog = true;
-      }
+      },
     });
   }
 
@@ -239,8 +246,11 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
             clearInterval(this.refreshInterval);
           }
 
-          if(orderFile.status === "Pending"){
-            const invalidCheckOrders = orderFile.checkOrders.filter((checkOrder: CheckOrders) => !checkOrder.isValid && checkOrder.errorMessage !== '');
+          if (orderFile.status === 'Pending') {
+            const invalidCheckOrders = orderFile.checkOrders.filter(
+              (checkOrder: CheckOrders) =>
+                !checkOrder.isValid && checkOrder.errorMessage !== ''
+            );
             console.log(invalidCheckOrders);
             invalidCheckOrders.forEach((invalidCheckOrder: CheckOrders) => {
               this.dialogData.dialogType = LogType.Error;
@@ -261,8 +271,7 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
   }
 
   canBeProcess(orderFile: OrderFile): boolean {
-    if(!orderFile.checkOrders)
-      return false;
+    if (!orderFile.checkOrders) return false;
 
     return orderFile.checkOrders.some((x) => !x.isValid);
   }
@@ -283,7 +292,7 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
     this.visibleDialog = true;
   }
 
-  processAll(){
+  processAll() {
     // this.orderFileService.processAllOrderFiles(this.bankInfo?.id).subscribe({
     //   next: (_) => {
     //     this.toastr.success('Successfully processed all order files.');
@@ -291,12 +300,32 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
     // });
   }
 
-  validateAll(){
-    this.orderFileService.validateAllOrderFiles(this.bankInfo!.id, this.batch!.id).subscribe({
-      next: (data) => {
+  validateAll() {
+    this.orderFileService
+      .validateAllOrderFiles(this.bankInfo!.id, this.batch!.id)
+      .subscribe({
+        next: (data) => {
+          this.getOrderFiles();
+        },
+      });
+  }
+  canBeValidateByBatch(orderFiles: OrderFile[]): boolean {
+    return orderFiles.filter(x => x.status !== 'Valid' && x.status !== 'Completed').length > 0;
+  }
+  canBeProcessByBatch(orderFiles: OrderFile[]): boolean {
+    return orderFiles.filter(x => x.status !== 'Valid' && x.status !== 'Completed').length > 0;
+  }
 
-        this.getOrderFiles()
-      }
-    });
+
+  canBeValidate(orderFile: OrderFile): boolean {
+    return orderFile.status !== 'Valid' && orderFile.status !== 'Completed';
+  }
+
+  canOrderFileBeProcess(orderFile: OrderFile): boolean {
+    return orderFile.status === 'Valid';
+  }
+
+  orderFileIsValid(orderFile: OrderFile): boolean {
+    return orderFile.status === 'Completed';
   }
 }

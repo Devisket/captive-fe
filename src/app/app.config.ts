@@ -11,15 +11,27 @@ import { loadingInterceptor } from './_interceptor/loading.interceptor';
 import { errorInterceptor } from './_interceptor/error.interceptor';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { MessageService } from 'primeng/api';
+import { provideStore } from '@ngrx/store';
+import { provideEffects } from '@ngrx/effects';
+import { ProductsEffects } from './_components/products/products.effects';
+import { sharedReducer } from './_store/shared/shared.reducer';
+import { productsFeature } from './_components/products/products.reducer';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    MessageService,
     provideRouter(routes),
     provideHttpClient(withInterceptors([jwtInterceptor, loadingInterceptor, errorInterceptor])),
     provideAnimations(),
     provideToastr({
-      positionClass: 'toast-bottom-full-width'
+        positionClass: 'toast-bottom-full-width'
     }),
-    importProvidersFrom(NgxSpinnerModule, ModalModule.forRoot()), provideAnimationsAsync()
-  ]
+    importProvidersFrom(NgxSpinnerModule, ModalModule.forRoot()), provideAnimationsAsync(),
+    provideStore({
+      shared: sharedReducer,
+      products: productsFeature.reducer
+    }),
+    provideEffects([ProductsEffects])
+]
 };

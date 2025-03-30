@@ -1,8 +1,8 @@
 @if (bankInfo) {
 <div class="row d-flex justify-content-center">
   <div class="col-4">
-    <form id="addProductTypeForm" #addProductTypeForm="ngForm" autocomplete="off" (ngSubmit)="addProductType()">
-      <h2 class="text-center"> Add Product Type</h2>
+    <form [formGroup]="fg" autocomplete="off" (ngSubmit)="onSubmit()">
+      <h2 class="text-center">Add Product Type</h2>
       <hr />
       <div class="mb-3 form-floating">
         <input
@@ -14,27 +14,19 @@
         />
         <label>Bank Name</label>
       </div>
-      <div class="mb-3 form-floating">
-        <input
-          type="text"
-          class="form-control"
-          name="productName"
-          [(ngModel)]="model.productName"
-          placeholder="Product Type Name"
-        />
-        <label>Product Type Name</label>
+      <div class="mt-4 mb-2">
+        <p-floatLabel>
+          <input
+            id="productName"
+            pInputText
+            type="text"
+            name="productName"
+            formControlName="productName"
+          />
+          <label for="productName">Product Type Name</label>
+        </p-floatLabel>
       </div>
-      <div class="mb-3 form-floating">
-        <select class="form-control" 
-            [(ngModel)]="model.tagId"
-            name="tagId">
-            <option value=""></option>
-            <option value="0">Tag 1</option>
-            <option value="1">Tag 2</option>
-            <option value="2">Tag 3</option>
-        </select>
-        <label>Tag Name</label>
-      </div>
+
       <div class="d-flex justify-content-between">
         <button
           class="btn btn-outline-secondary me-2 btn-sm"
@@ -46,7 +38,7 @@
         </button>
         <button
           class="btn btn-success me-2 btn-sm"
-          [disabled]="!addProductTypeForm.dirty"
+          [disabled]="!fg.dirty"
           type="submit"
         >
           <i class="fa fa-save"></i>
@@ -56,7 +48,7 @@
     </form>
   </div>
 </div>
-@if(addProductTypeForm.dirty){
+@if(fg.dirty){
 <div class="row">
   <div class="col-4 mt-3 offset-4 text-center text-sm">
     <div class="alert alert-warning pb-0">

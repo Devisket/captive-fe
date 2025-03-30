@@ -30,7 +30,7 @@ export class FormCheckListComponent implements OnInit{
   }
 
   getFormCheckByProductId() {
-    this.formCheckService.getFormCheckByProductId(this.bankInfo().id, this.productType().productTypeId).subscribe(data => {
+    this.formCheckService.getFormCheckByProductId(this.bankInfo().id, this.productType().productId).subscribe(data => {
       if(!data) return; 
       this.formChecks = data.formChecks;
     });
@@ -38,13 +38,13 @@ export class FormCheckListComponent implements OnInit{
 
   deleteFormCheck(formCheckId: string, event: Event){
 
-    const productTypeId = this.productType().productTypeId; 
-    console.log(formCheckId, productTypeId);
+    const productId = this.productType().productId; 
+    console.log(formCheckId, productId);
     if (!confirm('Confirm Deletion!')) {
       event.preventDefault();
       return;
     }
-    this.formCheckService.deleteFormCheck(productTypeId, formCheckId).subscribe({
+    this.formCheckService.deleteFormCheck(productId, formCheckId).subscribe({
       error: error => this.toastr.error(error),
       next: _ => {
         this.toastr.success("Successfully deleted bank form check");

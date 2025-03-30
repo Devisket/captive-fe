@@ -65,8 +65,8 @@ export class TagMappingListComponent implements OnInit{
 
     });
     this.products.forEach(product => {
-      this.productLookup[product.productTypeId] = product.productTypeName;
-      this.onInnitializedChange(product.productTypeId);
+      this.productLookup[product.productId] = product.productName;
+      this.onInnitializedChange(product.productId);
     });
 
   }

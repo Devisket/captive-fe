@@ -61,13 +61,13 @@ export class CheckValidationListComponent implements OnInit{
     });
   }
 
-  loadFormChecks(){
-    this.formCheckService.getAllFormChecks(this.bankInfo().id).subscribe({
-      next: (res) => {
-        this.formChecks = res;
-      }
-    });
-  }
+  // loadFormChecks(){
+  //   this.formCheckService.getAllFormChecks(this.bankInfo().id, this.productId).subscribe({
+  //     next: (res) => {
+  //       this.formChecks = res;
+  //     }
+  //   });
+  // }
 
 
   getAllTagAndMapping(){
@@ -78,7 +78,7 @@ export class CheckValidationListComponent implements OnInit{
 
         await this.loadProducts();
         await this.loadBranches();
-        await this.loadFormChecks();
+        // await this.loadFormChecks();
 
 
 
@@ -86,7 +86,7 @@ export class CheckValidationListComponent implements OnInit{
 
           tag.mapping.map((mapping)=>{
             mapping.formCheckName = this.formChecks.find((formCheck)=>formCheck.id === mapping.formCheckId)?.checkType ?? '';
-            mapping.productName = this.products.find((product)=>product.id === mapping.productId)?.productTypeName ?? '';
+            mapping.productName = this.products.find((product)=>product.productId === mapping.productId)?.productName ?? '';
             mapping.branchName = this.branches.find((branch)=>branch.id === mapping.branchId)?.branchName ?? '';
           })
         })

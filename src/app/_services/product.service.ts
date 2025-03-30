@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
+import { Product } from '../_models/product';
+
 
 @Injectable({
   providedIn: 'root'
@@ -11,12 +13,12 @@ export class ProductService {
   commandUrl = environment.commandUrl;
   queryUrl = environment.queryUrl;
 
-  getAllProducts(bankInfoId: any): Observable<any> {
-    return this.http.get<any>(this.queryUrl + bankInfoId + "/Product");
+  getAllProducts(bankInfoId: string): Observable<any> {
+    return this.http.get(this.queryUrl + bankInfoId + "/Product");
   }
 
-  addProductType(productType: any, bankInfoId: any) {
-    return this.http.post(this.commandUrl + `bank/${bankInfoId}/product`, productType);
+  addProductType(bankInfoId: string, productName: string) {
+    return this.http.post(this.commandUrl + `bank/${bankInfoId}/product`, { productName });
   }
 
   updateProductType(productType: any, bankInfoId: string, productId: string) {

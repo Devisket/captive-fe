@@ -1,7 +1,7 @@
 @if(productType){
     <div class="row d-flex justify-content-center">
       <div class="col-4">
-        <form id="editProductTypeForm" #editProductTypeForm="ngForm" autocomplete="off" (ngSubmit)="editProductType(productType.productTypeId)">
+        <form id="editProductTypeForm" #editProductTypeForm="ngForm" autocomplete="off" (ngSubmit)="editProductType(productType.productId)">
           <h2 class="text-center"> Edit Product Type</h2>
           <hr />
           <div class="mb-3 form-floating">
@@ -19,7 +19,7 @@
               type="text"
               class="form-control"
               name="productName"
-              [(ngModel)]="productType.productTypeName"
+              [(ngModel)]="productType.productName"
               placeholder="Product Type Name"
             />
             <label>Product Type Name</label>

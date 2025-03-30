@@ -85,19 +85,19 @@ export class ViewConfigurationComponent implements OnInit, OnDestroy {
 
   private getProductType() {
     this.formGroup.disable();
-    let productTypeId = this.route.snapshot.paramMap.get('productId');
+    let productId = this.route.snapshot.paramMap.get('productId');
     let bankId = this.route.snapshot.paramMap.get('bankId');
-    this.productTypeService.getAllProducts(bankId).subscribe((data) => {
+    this.productTypeService.getAllProducts(bankId!).subscribe((data) => {
       this.productType = data.productTypes.find(
-        (product: Product) => product.productTypeId === productTypeId
+        (product: Product) => product.productId === productId
       );
     });
   }
 
   private getProductConfiguration() {
-    let productTypeId = this.route.snapshot.paramMap.get('productId');
+    let productId = this.route.snapshot.paramMap.get('productId');
     this.configurationService
-      .getProductConfigurations(productTypeId)
+      .getProductConfigurations(productId)
       .subscribe((data) => {
         this.productConfiguration = data.productConfiguration;
 

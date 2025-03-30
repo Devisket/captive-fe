@@ -12,13 +12,13 @@
                 disabled/>
             </div>
             @if (productType) {
-                <input type="hidden" name="productTypeId" [(ngModel)]="productType.productTypeId"/>
+                <input type="hidden" name="productId" [(ngModel)]="productType.productId"/>
             }
             <div class="mb-3">
                 <input
                 type="text"
                 class="form-control"
-                value="{{ productType?.productTypeName }}"
+                value="{{ productType?.productName }}"
                 disabled/>
             </div>
             <div class="mb-3 form-floating">

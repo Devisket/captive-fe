@@ -12,16 +12,16 @@
 
   <ng-template pTemplate="body" let-product>
     <tr>
-      <td class="text-center">{{ product.productTypeName }}</td>
+      <td class="text-center">{{ product.productName }}</td>
       <td class="p-0">
         <div class="d-flex justify-content-center align-items-center gap-2">
           <button
             type="button"
             [routerLink]="[
               '/add-form-check',
-              product.productTypeId,
+              product.productId,
               'bank',
-              bankInfo().id
+              bankId
             ]"
             class="btn btn-info btn-sm"
           >
@@ -31,9 +31,9 @@
             type="button"
             [routerLink]="[
               '/view-configuration',
-              product.productTypeId,
+              product.productId,
               'bank',
-              bankInfo().id
+              bankId
             ]"
             class="btn btn-success btn-sm"
           >
@@ -41,19 +41,14 @@
           </button>
           <button
             type="button"
-            [routerLink]="[
-              '/edit-product',
-              product.productTypeId,
-              'bank',
-              bankInfo().id
-            ]"
+            [routerLink]="['/edit-product', product.productId, 'bank', bankId]"
             class="btn btn-warning btn-sm"
           >
             <i class="fa fa-edit"></i> EDIT
           </button>
           <button
             type="button"
-            (click)="deleteProductType(product.productTypeId, $event)"
+            (click)="deleteProductType(product.productId, $event)"
             class="btn btn-danger btn-sm"
           >
             <i class="fa fa-trash"></i> DELETE

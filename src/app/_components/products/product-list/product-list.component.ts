@@ -1,74 +1,73 @@
-import { Component, inject, input, OnInit, ViewChild } from '@angular/core';
-import { Bank } from '../../../_models/bank';
+import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../../../_services/product.service';
 import { Product } from '../../../_models/product';
 import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { NgFor, NgIf, UpperCasePipe } from '@angular/common';
-import { FormCheckListComponent } from '../../form-checks/form-check-list/form-check-list.component';
-import { FormsModule, NgForm } from '@angular/forms';
-import { FormCheckService } from '../../../_services/form-check.service';
-import { Table, TableModule } from 'primeng/table';
+import { AsyncPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
+import { Store } from '@ngrx/store';
+import { getSelectedBankInfoId } from '../../../_store/shared/shared.selectors';
+import { Observable, map } from 'rxjs';
+import { getAllStateProducts } from '../products.selector';
+import { getAllProducts, deleteProduct } from '../products.actions';
+
 @Component({
   selector: 'app-product-list',
   standalone: true,
   imports: [
     RouterLink,
-    NgIf,
     FormsModule,
-    NgFor,
-    FormCheckListComponent,
-    UpperCasePipe,
     TableModule,
     ButtonModule,
+    AsyncPipe,
   ],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.scss',
 })
 export class ProductListComponent implements OnInit {
   visibleProductTypes: { [key: string]: boolean } = {};
+  bankId: string | undefined = undefined;
+  products$: Observable<Product[]>;
 
-  toggleFormCheckList(productTypeId: string): void {
-    this.visibleProductTypes[productTypeId] =
-      !this.visibleProductTypes[productTypeId];
-  }
-
-  bankInfo = input.required<Bank>();
-  productTypeService = inject(ProductService);
-  formCheckService = inject(FormCheckService);
-  toastr = inject(ToastrService);
   products: Product[] = [];
 
-  ngOnInit(): void {
-    this.bankInfo;
-    this.getProducts();
+  constructor(
+    private store: Store,
+    private productService: ProductService,
+    private toastr: ToastrService
+  ) {
+    this.products$ = this.store.select(getAllStateProducts);
   }
 
-  getProducts() {
-    const bankInfoId = this.bankInfo().id;
-    this.productTypeService.getAllProducts(bankInfoId).subscribe((data) => {
-      if (!data) return;
-      this.products = data.productTypes;
+  ngOnInit(): void {
+
+    this.products$.subscribe((products) => {
+      this.products = products;
+      console.log(this.products);
+    });
+
+    this.store.select(getSelectedBankInfoId).subscribe((bankId) => {
+      console.log("Bank ID", bankId);
+      this.bankId = bankId!;
+      if (this.bankId) {
+        console.log("Bank ID", this.bankId);  
+        this.loadProducts();
+      }
     });
   }
 
-  deleteProductType(productTypeId: string, event: Event) {
-    const bankInfoId = this.bankInfo().id;
+
+  loadProducts() {
+    this.store.dispatch(getAllProducts({ bankInfoId: this.bankId! }));
+  }
+
+  deleteProductType(productId: string, event: Event) {
+    event.preventDefault();
     if (!confirm('Confirm Deletion!')) {
-      event.preventDefault();
       return;
     }
-    this.productTypeService
-      .deleteProductType(bankInfoId, productTypeId)
-      .subscribe({
-        error: (error) => this.toastr.error(error),
-        next: (_) => {
-          this.toastr.success('Successfully deleted product type');
-          this.products = this.products.filter(
-            (products) => products.productTypeId !== productTypeId
-          );
-        },
-      });
+    this.store.dispatch(deleteProduct({ id: productId }));
   }
 }

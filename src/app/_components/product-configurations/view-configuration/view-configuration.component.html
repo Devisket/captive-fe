@@ -2,7 +2,7 @@
   <div class="col-12 p-3 rounded mb-5" style="border: 1px solid blue">
     <div class="d-flex justify-content-between mb-3">
       <h3 class="text-center text-primary">
-        {{ productType?.productTypeName }} Configurations
+        {{ productType?.productName }} Configurations
       </h3>
       <div class="d-flex justify-content-end" title="Ongoing development">
         <button
@@ -16,7 +16,7 @@
           type="button"
           [routerLink]="[
             '/add-configuration',
-            productType?.productTypeId,
+            productType?.productId,
             'bank',
             bankInfo?.id
           ]"

@@ -53,10 +53,10 @@ export class AddConfigurationComponent implements OnInit, OnDestroy {
 
 
   getProductType(){
-    let productTypeId = this.route.snapshot.paramMap.get("productId");
+    let productId = this.route.snapshot.paramMap.get("productId");
     let bankId = this.route.snapshot.paramMap.get("bankId");
-    this.productTypeService.getAllProducts(bankId).subscribe( data => {
-      this.productType = data.productTypes.find((product: Product) => product.productTypeId === productTypeId);
+    this.productTypeService.getAllProducts(bankId!).subscribe( data => {
+      this.productType = data.productTypes.find((product: Product) => product.productId === productId);
     })
   }
 
@@ -75,9 +75,9 @@ export class AddConfigurationComponent implements OnInit, OnDestroy {
       "configurationType": values.configurationType,
     };
     console.log(request);
-    this.productConfigurationService.addProductConfigurations(this.productType?.productTypeId, this.bankInfo?.id, request).subscribe({
+    this.productConfigurationService.addProductConfigurations(this.productType?.productId, this.bankInfo?.id, request).subscribe({
       next: _ => {
-        this.toastr.success( this.productType?.productTypeName + " configuration has been added successsfully");
+        this.toastr.success( this.productType?.productName + " configuration has been added successsfully");
         this.router.navigateByUrl('/banks/' + this.bankInfo?.id);
       },
       error: error => this.toastr.error("Not saved")

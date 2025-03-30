@@ -46,18 +46,18 @@ export class ConfigurationListComponent implements OnInit {
   }
 
   getProductConfigurations(){
-    let productTypeId = this.route.snapshot.paramMap.get("productId");
-      this.productConfigurationService.getProductConfigurations(productTypeId).subscribe(data => {
+    let productId = this.route.snapshot.paramMap.get("productId");
+      this.productConfigurationService.getProductConfigurations(productId).subscribe(data => {
         if(!data) return;
         this.productConfigurations = data.productConfigurations;
       });
   }
 
   getProductType(){
-    let productTypeId = this.route.snapshot.paramMap.get("productId");
+    let productId = this.route.snapshot.paramMap.get("productId");
     let bankId = this.route.snapshot.paramMap.get("bankId");
     this.productTypeService.getAllProducts(bankId).subscribe( data => {
-      this.productType = data.productTypes.find((product: Product) => product.productTypeId === productTypeId);
+      this.productType = data.productTypes.find((product: Product) => product.productId === productId);
     })
   }
 
