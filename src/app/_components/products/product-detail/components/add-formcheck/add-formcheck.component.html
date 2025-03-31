@@ -1,0 +1,12 @@
+<form [formGroup]="sampleFormGroup" (ngSubmit)="onSubmit()">
+  <div class="flex mt-5 justify-content-evenly">
+    <p-floatLabel>
+      <input pInputText id="formType" formControlName="formType" />
+      <label for="formType">FormType</label>
+    </p-floatLabel>
+    <p-floatLabel>
+        <input pInputText id="checkType" formControlName="checkType" />
+        <label for="checkType">Check Type</label>
+      </p-floatLabel>
+  </div>
+</form>

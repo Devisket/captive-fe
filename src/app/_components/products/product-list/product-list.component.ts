@@ -10,8 +10,8 @@ import { ButtonModule } from 'primeng/button';
 import { Store } from '@ngrx/store';
 import { getSelectedBankInfoId } from '../../../_store/shared/shared.selectors';
 import { Observable, map } from 'rxjs';
-import { getAllStateProducts } from '../products.selector';
-import { getAllProducts, deleteProduct } from '../products.actions';
+import { getAllStateProducts } from '../_store/products/products.selector';
+import { getAllProducts, deleteProduct } from '../_store/products/products.actions';
 
 @Component({
   selector: 'app-product-list',

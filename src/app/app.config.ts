@@ -14,9 +14,9 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { MessageService } from 'primeng/api';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
-import { ProductsEffects } from './_components/products/products.effects';
 import { sharedReducer } from './_store/shared/shared.reducer';
-import { productsFeature } from './_components/products/products.reducer';
+import { ProductsFeature } from './_components/products/_store/products/products.reducer';
+import { ProductsEffects } from './_components/products/_store/products/products.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -30,7 +30,7 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(NgxSpinnerModule, ModalModule.forRoot()), provideAnimationsAsync(),
     provideStore({
       shared: sharedReducer,
-      products: productsFeature.reducer
+      products: ProductsFeature.reducer
     }),
     provideEffects([ProductsEffects])
 ]

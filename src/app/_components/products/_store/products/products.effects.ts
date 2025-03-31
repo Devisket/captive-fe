@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { ProductService } from '../../_services/product.service';
+import { ProductService } from '../../../../_services/product.service';
 import {
   getAllProductsSuccess,
   getAllProducts,
@@ -15,7 +15,7 @@ import { exhaustMap, map, catchError, mergeMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { getSelectedBankInfoId } from '../../_store/shared/shared.selectors';
+import { getSelectedBankInfoId } from '../../../../_store/shared/shared.selectors';
 
 @Injectable()
 export class ProductsEffects {

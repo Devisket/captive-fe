@@ -25,6 +25,7 @@ import { EditTagComponent } from './_components/tags/edit-tag/edit-tag.component
 import { AddTagMappingComponent } from './_components/tags/add-tag-mapping/add-tag-mapping.component';
 import { AddCheckValidationComponent } from './_components/check-validation/add-check-validation/add-check-validation.component';
 import { EditCheckValidationComponent } from './_components/check-validation/edit-check-validation/edit-check-validation.component';
+import { ProductDetailComponent } from './_components/products/product-detail/product-detail.component';
 
 export const routes: Routes = [
     {path: '', component: BankListComponent},
@@ -55,7 +56,8 @@ export const routes: Routes = [
             { path: 'add-configuration/:productId/bank/:bankId', component: AddConfigurationComponent },
             { path: 'view-configuration/:productId/bank/:bankId', component: ViewConfigurationComponent },
             { path: 'upload-order-files/:batchId/bank/:bankId', component: UploadOrderFilesComponent },
-            { path: 'add-batch/:bankId', component: AddBatchComponent }
+            { path: 'add-batch/:bankId', component: AddBatchComponent },
+            { path: 'product-detail/:productId/bank/:bankId', component: ProductDetailComponent }
         ]
     },
     {path: 'errors', component: TestErrorsComponent},

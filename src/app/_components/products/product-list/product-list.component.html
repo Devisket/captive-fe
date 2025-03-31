@@ -12,7 +12,14 @@
 
   <ng-template pTemplate="body" let-product>
     <tr>
-      <td class="text-center">{{ product.productName }}</td>
+      <td class="text-center">
+        <a 
+          [routerLink]="['/product-detail', product.productId, 'bank', bankId]"
+          class="text-decoration-none"
+        >
+          {{ product.productName }}
+        </a>
+      </td>
       <td class="p-0">
         <div class="d-flex justify-content-center align-items-center gap-2">
           <button

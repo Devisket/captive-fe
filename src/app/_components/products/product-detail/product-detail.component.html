@@ -1,3 +1,195 @@
-<p-panel header="Product Detail">
-    {{productName}}
-</p-panel>
+<div class="container-fluid">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h2>Product Details</h2>
+    <div *ngIf="product$ | async as product">
+      <h3>{{ product.productName }}</h3>
+    </div>
+  </div>
+
+  <!-- Form Checks Section -->
+  <div class="section-card">
+    <div class="section-header">
+      <h4>Form Checks</h4>
+      <button
+        type="button"
+        (click)="openAddFormCheckDialog()"
+        class="btn btn-primary"
+      >
+        <i class="fa fa-plus"></i> Add Form Check
+      </button>
+    </div>
+
+    <p-table
+      [value]="formChecks"
+      [tableStyle]="{ 'min-width': '50rem' }"
+      styleClass="p-datatable-sm"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Check Type</th>
+          <th>Form Type</th>
+          <th>Description</th>
+          <th>File Initial</th>
+          <th>Quantity</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-formCheck>
+        <tr>
+          <td>{{ formCheck.checkType }}</td>
+          <td>{{ formCheck.formType }}</td>
+          <td>{{ formCheck.description }}</td>
+          <td>{{ formCheck.fileInitial }}</td>
+          <td>{{ formCheck.quanitity }}</td>
+          <td class="text-center">
+            <div class="d-flex justify-content-center gap-2">
+              <button
+                type="button"
+                [routerLink]="['/edit-form-check', formCheck.id, 'product', productId, 'bank', bankId$ | async]"
+                class="btn btn-warning btn-sm"
+              >
+                <i class="fa fa-edit"></i> Edit
+              </button>
+              <button
+                type="button"
+                (click)="deleteFormCheck(formCheck.id, $event)"
+                class="btn btn-danger btn-sm"
+              >
+                <i class="fa fa-trash"></i> Delete
+              </button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Configuration Section -->
+  <div class="section-card">
+    <div class="section-header">
+      <h4>Product Configuration</h4>
+    </div>
+
+    <div class="configuration-form">
+      <div class="form-row">
+        <div class="field">
+          <label for="configFileName">File Name</label>
+          <input
+            id="configFileName"
+            type="text"
+            pInputText
+            placeholder="Enter File Name"
+          >
+        </div>
+
+        <div class="field">
+          <label for="configType">Configuration Type</label>
+          <p-dropdown
+            id="configType"
+            [options]="configTypes"
+            placeholder="Select Configuration Type"
+          ></p-dropdown>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="configJson">Configuration JSON</label>
+        <textarea
+          id="configJson"
+          pInputTextarea
+          [rows]="10"
+          [cols]="30"
+          placeholder="Enter JSON Configuration"
+        ></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="saveConfiguration()"
+        >
+          <i class="fa fa-save"></i> Save Configuration
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Form Check Dialog -->
+<p-dialog 
+  [(visible)]="showAddFormCheckDialog" 
+  [style]="{width: '50vw'}" 
+  [modal]="true"
+  header="Add Form Check" 
+  [draggable]="false" 
+  [resizable]="false"
+>
+  <div class="p-fluid">
+    <div class="field">
+      <label for="checkType">Check Type</label>
+      <p-dropdown
+        id="checkType"
+        [options]="checkTypes"
+        placeholder="Select Check Type"
+      ></p-dropdown>
+    </div>
+
+    <div class="field">
+      <label for="formType">Form Type</label>
+      <p-dropdown
+        id="formType"
+        [options]="formTypes"
+        placeholder="Select Form Type"
+      ></p-dropdown>
+    </div>
+
+    <div class="field">
+      <label for="description">Description</label>
+      <input
+        id="description"
+        type="text"
+        pInputText
+        placeholder="Enter Description"
+      >
+    </div>
+
+    <div class="field">
+      <label for="fileInitial">File Initial</label>
+      <input
+        id="fileInitial"
+        type="text"
+        pInputText
+        placeholder="Enter File Initial"
+      >
+    </div>
+
+    <div class="field">
+      <label for="quantity">Quantity</label>
+      <p-inputNumber
+        id="quantity"
+        [min]="0"
+        [showButtons]="true"
+        placeholder="Enter Quantity"
+      ></p-inputNumber>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button
+      pButton
+      label="Cancel"
+      icon="pi pi-times"
+      class="p-button-text"
+      (click)="showAddFormCheckDialog = false"
+    ></button>
+    <button
+      pButton
+      label="Save"
+      icon="pi pi-check"
+      (click)="saveFormCheck()"
+    ></button>
+  </ng-template>
+</p-dialog>

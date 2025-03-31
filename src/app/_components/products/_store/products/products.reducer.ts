@@ -1,7 +1,7 @@
 import { createFeature, createReducer, on } from "@ngrx/store";
-import { Product } from "../../_models/product";
-import { getAllProductsSuccess, deleteProductSuccess } from "./products.actions";
 
+import { getAllProductsSuccess, deleteProductSuccess } from "./products.actions";
+import { Product } from "../../../../_models/product";
 export interface ProductsState {
     products: Product[];
 }
@@ -25,7 +25,7 @@ export const productsReducer = createReducer(
   }))
 );
 
-export const productsFeature = createFeature({
+export const ProductsFeature = createFeature({
   name: 'products',
   reducer: productsReducer,
 });

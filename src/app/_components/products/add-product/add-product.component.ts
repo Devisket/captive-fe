@@ -14,7 +14,7 @@ import { ProductService } from '../../../_services/product.service';
 import { InputTextModule } from 'primeng/inputtext';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { Store } from '@ngrx/store';
-import { createProduct } from '../products.actions';
+import { createProduct } from '../_store/products/products.actions';
 @Component({
   selector: 'app-add-product',
   standalone: true,
