@@ -1,6 +1,12 @@
+<h1>Branch List</h1>
 <p-table
   [value]="products"
   [tableStyle]="{ 'min-width': '50rem' }"
+  [rows]="5"
+  [scrollable]="true"
+  [scrollHeight]="'500px'"
+  [tableStyle]="{ 'min-width': '50rem' }"
+  [paginatorDropdownAppendTo]="'body'"
   styleClass="p-datatable-sm"
 >
   <ng-template pTemplate="header">
@@ -13,42 +19,18 @@
   <ng-template pTemplate="body" let-product>
     <tr>
       <td class="text-center">
-        <a 
-          [routerLink]="['/product-detail', product.productId, 'bank', bankId]"
-          class="text-decoration-none"
+        <a
+          [routerLink]="['../product-detail', product.productId, 'bank', bankId]"
+          class="no-underline text-primary"
         >
           {{ product.productName }}
         </a>
       </td>
-      <td class="p-0">
-        <div class="d-flex justify-content-center align-items-center gap-2">
+      <td>
+        <div class="flex justify-content-center align-items-center gap-2">
           <button
             type="button"
-            [routerLink]="[
-              '/add-form-check',
-              product.productId,
-              'bank',
-              bankId
-            ]"
-            class="btn btn-info btn-sm"
-          >
-            <i class="fa fa-plus"></i> ADD FORM CHECK
-          </button>
-          <button
-            type="button"
-            [routerLink]="[
-              '/view-configuration',
-              product.productId,
-              'bank',
-              bankId
-            ]"
-            class="btn btn-success btn-sm"
-          >
-            <i class="fa fa-eye"></i> CONFIGURATION
-          </button>
-          <button
-            type="button"
-            [routerLink]="['/edit-product', product.productId, 'bank', bankId]"
+            [routerLink]="['./edit-product', product.productId, 'bank', bankId]"
             class="btn btn-warning btn-sm"
           >
             <i class="fa fa-edit"></i> EDIT

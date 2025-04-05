@@ -1,4 +1,4 @@
-import { createReducer, on } from '@ngrx/store';
+import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
 import { initialState } from './shared.state';
 import {
   setLoading,
@@ -7,7 +7,7 @@ import {
   setSelectedBankInfoId,
 } from './shared.actions';
 
-export const sharedReducer = createReducer(
+const reducer = createReducer(
   initialState,
   on(setLoading, (state, { loading }) => ({
     ...state,
@@ -30,3 +30,21 @@ export const sharedReducer = createReducer(
     };
   })
 );
+
+export const SharedFeature = createFeature({
+  name: 'shared',
+  reducer: reducer,
+  extraSelectors: ({ selectSelectedBankInfoId }) => ({
+    selectSelectedBankInfoId: createSelector(
+      selectSelectedBankInfoId,
+      (selectedBankInfoId: string | null) => {
+        if(!selectedBankInfoId){
+          return sessionStorage.getItem('selectedBankInfoId');
+        }
+        return selectedBankInfoId;
+      }
+    ),
+  }),
+});
+
+

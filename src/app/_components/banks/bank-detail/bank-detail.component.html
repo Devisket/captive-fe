@@ -1,45 +1,7 @@
-<div class="d-flex justify-content-between">
-  <h3>{{ bankInfo?.bankName }}</h3>
-  <div class="d-flex justify-content-end">
-      <button type="button" (click)="openAddBranchModal()"  *ngIf="activeTabset === 'Branches'" class="btn btn-outline-info float-end">Add Branch</button>
-      <button type="button" routerLink="/add-form-check/{{bankInfo?.id}}" *ngIf="activeTabset === 'Form Checks'" class="btn btn-outline-info float-end">Form Checks</button>
-      <button type="button" routerLink="/add-product-type/{{bankInfo?.id}}" *ngIf="activeTabset === 'Products'" class="btn btn-outline-success float-end">Add Products</button>
-      <button type="button" routerLink="/add-check-validation/{{bankInfo?.id}}" *ngIf="activeTabset === 'Check Validation'" class="btn btn-outline-success float-end">Add New Check Validation</button>
-      <button type="button" (click)="addBatch(bankInfo?.id, $event)"  *ngIf="activeTabset === 'Batches'" class="btn btn-outline-primary float-end">Create New Batch</button>
-  </div>
-</div>
-<hr>
-<div class="row">
-    <div class="col-12">
-        <tabset
-        [justified]="true"
-        class="bank-tabset" #bankTabs>
-            <tab heading="Batches"
-            [active]="activeTabset === 'Batches'"
-            (selectTab)="onTabChange($event)">
-              <app-batch-list *ngIf="bankInfo" [bankInfo]="bankInfo"></app-batch-list>
-            </tab>
-            <tab heading="Check Inventory"
-              [active]="activeTabset === 'Check Inventory'"
-              (selectTab)="onTabChange($event)">
-              <check-inventory-list *ngIf="bankInfo"></check-inventory-list>
-            </tab>
-            <tab heading="Branches"
-                [active]="activeTabset === 'Branches'"
-                (selectTab)="onTabChange($event)">
-                <app-branch-list *ngIf="bankInfo" [bankInfo]="bankInfo"></app-branch-list>
-            </tab>
-            <tab heading="Products"
-                [active]="activeTabset === 'Products'"
-                (selectTab)="onTabChange($event)">
-                <app-product-list *ngIf="bankInfo"></app-product-list>
-            </tab>
-            <tab heading="Check Validation"
-              [active]="activeTabset === 'Check Validation'"
-              (selectTab)="onTabChange($event)">
-              <app-check-validation-list *ngIf="bankInfo" [bankInfo]="bankInfo"></app-check-validation-list>
-            </tab>
-          </tabset>
-
-    </div>
-</div>
+<p-tabView [(activeIndex)]="activeTabIndex" (activeIndexChange)="onTabChange($event)" class="bank-detail-tabview">
+  <p-tabPanel *ngFor="let tab of tabs" [header]="tab.name">
+    <ng-container *ngIf="activeTabIndex === tabs.indexOf(tab)">
+      <router-outlet></router-outlet>
+    </ng-container>
+  </p-tabPanel>
+</p-tabView>

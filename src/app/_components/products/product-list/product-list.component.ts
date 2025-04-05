@@ -7,22 +7,18 @@ import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
-import { Store } from '@ngrx/store';
-import { getSelectedBankInfoId } from '../../../_store/shared/shared.selectors';
+import { Store, StoreModule } from '@ngrx/store';
 import { Observable, map } from 'rxjs';
-import { getAllStateProducts } from '../_store/products/products.selector';
-import { getAllProducts, deleteProduct } from '../_store/products/products.actions';
-
+import {
+  getAllProducts,
+  deleteProduct,
+} from '../_store/products/products.actions';
+import { SharedFeature } from '../../../_store/shared/shared.reducer';
+import { ProductsFeature } from '../_store/products/products.reducer';
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [
-    RouterLink,
-    FormsModule,
-    TableModule,
-    ButtonModule,
-    AsyncPipe,
-  ],
+  imports: [RouterLink, FormsModule, TableModule, ButtonModule],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.scss',
 })
@@ -38,26 +34,25 @@ export class ProductListComponent implements OnInit {
     private productService: ProductService,
     private toastr: ToastrService
   ) {
-    this.products$ = this.store.select(getAllStateProducts);
+    this.products$ = this.store.select(ProductsFeature.selectProducts);
   }
 
   ngOnInit(): void {
-
     this.products$.subscribe((products) => {
+      console.log(products);
       this.products = products;
       console.log(this.products);
     });
 
-    this.store.select(getSelectedBankInfoId).subscribe((bankId) => {
-      console.log("Bank ID", bankId);
-      this.bankId = bankId!;
-      if (this.bankId) {
-        console.log("Bank ID", this.bankId);  
-        this.loadProducts();
-      }
-    });
+    this.store
+      .select(SharedFeature.selectSelectedBankInfoId)
+      .subscribe((bankId) => {
+        if (bankId) {
+          this.bankId = bankId as string;
+          this.loadProducts();
+        }
+      });
   }
-
 
   loadProducts() {
     this.store.dispatch(getAllProducts({ bankInfoId: this.bankId! }));

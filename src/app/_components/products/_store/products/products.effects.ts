@@ -15,8 +15,7 @@ import { exhaustMap, map, catchError, mergeMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { getSelectedBankInfoId } from '../../../../_store/shared/shared.selectors';
-
+import { SharedFeature } from '../../../../_store/shared/shared.reducer';
 @Injectable()
 export class ProductsEffects {
   private actions$ = inject(Actions);
@@ -60,7 +59,7 @@ export class ProductsEffects {
     return this.actions$.pipe(
       ofType(deleteProduct),
       mergeMap(({ id }) => {
-        return this.store.select(getSelectedBankInfoId).pipe(
+        return this.store.select(SharedFeature.selectSelectedBankInfoId).pipe(
           mergeMap((bankInfoId) => {
             if (!bankInfoId)
               return of(deleteProductFailure({ error: 'No bank selected' }));

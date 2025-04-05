@@ -4,7 +4,6 @@ import { BranchService } from '../../../_services/branch.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { EnumsService } from '../../../_services/enums.service';
-import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BankBranch } from '../../../_models/bank-branch';
 
 @Component({
@@ -26,8 +25,10 @@ export class EditBranchComponent {
   router = inject(Router);
   enums = inject(EnumsService);
 
-  bsModalRef = inject(BsModalRef);
 
+
+
+  
   @Input() title?: string;
   @Input() branchId?: string;
   @Input() bankInfoId?: string;
@@ -60,7 +61,6 @@ export class EditBranchComponent {
       next: _ => {
         this.toastr.success("Bank has been updated successsfully");
         this.editBranchForm?.reset();
-        this.bsModalRef.hide();
       },
       error: error => console.log(error),
       complete: () => window.location.reload()

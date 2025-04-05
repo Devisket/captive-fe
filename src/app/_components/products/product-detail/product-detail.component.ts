@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
@@ -18,11 +18,11 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextareaModule } from 'primeng/inputtextarea';
-import { getSelectedBankInfoId } from '../../../_store/shared/shared.selectors';
 import { map } from 'rxjs/operators';
-import { getAllStateProducts } from '../_store/products/products.selector';
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { AddFormcheckComponent } from './components/add-formcheck/add-formcheck.component';
+import { SharedFeature } from '../../../_store/shared/shared.reducer';
+import { ProductsFeature } from '../_store/products/products.reducer';
 
 @Component({
   selector: 'app-product-detail',
@@ -46,12 +46,14 @@ import { AddFormcheckComponent } from './components/add-formcheck/add-formcheck.
   templateUrl: './product-detail.component.html',
   styleUrl: './product-detail.component.scss',
 })
-export class ProductDetailComponent implements OnInit {
+export class ProductDetailComponent implements OnInit, OnDestroy {
+  componentName = 'ProductDetailComponent';
   product$: Observable<Product | undefined> = new Observable();
   bankId$: Observable<string | null> = new Observable();
   formChecks: FormCheck[] = [];
   productId: string = '';
   selectedConfigType: any = {};
+  bankId: string | null = null;
   // Configuration form
   configuration: Partial<ProductConfiguration> = {
     fileName: '',
@@ -89,6 +91,8 @@ export class ProductDetailComponent implements OnInit {
     },
   ];
 
+  configJson: string = '';
+
   constructor(
     private store: Store,
     private route: ActivatedRoute,
@@ -97,14 +101,21 @@ export class ProductDetailComponent implements OnInit {
     private toastr: ToastrService,
     private dialogService: DialogService
   ) {}
+  ngOnDestroy(): void {
+    console.log(`${this.componentName} destroyed`);
+  }
 
   ngOnInit(): void {
     this.productId = this.route.snapshot.paramMap.get('productId') || '';
-    this.bankId$ = this.store.select(getSelectedBankInfoId);
+    this.bankId$ = this.store.select(SharedFeature.selectSelectedBankInfoId);
+
+    this.bankId$.subscribe((bankId) => {
+      this.bankId = bankId;
+    });
 
     // Get product from store
     this.product$ = this.store
-      .select(getAllStateProducts)
+      .select(ProductsFeature.selectProducts)
       .pipe(
         map((products) => products.find((p) => p.productId === this.productId))
       );
@@ -115,7 +126,6 @@ export class ProductDetailComponent implements OnInit {
   }
 
   loadFormChecks() {
-    this.bankId$ = this.store.select(getSelectedBankInfoId);
     this.bankId$.subscribe((bankId) => {
       if (bankId) {
         this.formCheckService
@@ -170,44 +180,41 @@ export class ProductDetailComponent implements OnInit {
       return;
     }
 
-    this.bankId$ = this.store.select(getSelectedBankInfoId);
-    this.bankId$.subscribe((bankId) => {
-      if (bankId) {
-        if (this.configuration.id) {
-          // Update existing configuration
-          this.configurationService
-            .updateProductConfigurations(
-              this.productId,
-              bankId,
-              this.configuration.id,
-              this.configuration
-            )
-            .subscribe({
-              next: () => {
-                this.toastr.success('Configuration updated successfully');
-                this.loadConfiguration();
-              },
-              error: (error) =>
-                this.toastr.error('Error updating configuration'),
-            });
-        } else {
-          // Create new configuration
-          this.configurationService
-            .addProductConfigurations(
-              this.productId,
-              bankId,
-              this.configuration
-            )
-            .subscribe({
-              next: () => {
-                this.toastr.success('Configuration saved successfully');
-                this.loadConfiguration();
-              },
-              error: (error) => this.toastr.error('Error saving configuration'),
-            });
-        }
+    if (this.bankId) {
+      if (this.configuration.id) {
+        // Update existing configuration
+        this.configurationService
+          .updateProductConfigurations(
+            this.productId,
+            this.bankId,
+            this.configuration.id,
+            this.configuration
+          )
+          .subscribe({
+            next: () => {
+              this.toastr.success('Configuration updated successfully');
+              this.loadConfiguration();
+            },
+            error: (error) =>
+              this.toastr.error('Error updating configuration'),
+          });
+      } else {
+        // Create new configuration
+        this.configurationService
+          .addProductConfigurations(
+            this.productId,
+            this.bankId,
+            this.configuration
+          )
+          .subscribe({
+            next: () => {
+              this.toastr.success('Configuration saved successfully');
+              this.loadConfiguration();
+            },
+            error: (error) => this.toastr.error('Error saving configuration'),
+          });
       }
-    });
+    }
   }
 
   openAddFormCheckDialog() {
@@ -230,21 +237,18 @@ export class ProductDetailComponent implements OnInit {
       return;
     }
 
-    this.bankId$ = this.store.select(getSelectedBankInfoId);
-    this.bankId$.subscribe((bankId) => {
-      if (bankId) {
-        this.formCheckService
-          .addFormCheck(this.newFormCheck as FormCheck, bankId)
-          .subscribe({
-            next: () => {
-              this.toastr.success('Form check added successfully');
-              this.showAddFormCheckDialog = false;
-              this.loadFormChecks();
-            },
-            error: (error) => this.toastr.error('Error adding form check'),
-          });
-      }
-    });
+    if (this.bankId) {
+      this.formCheckService
+        .addFormCheck(this.newFormCheck as FormCheck, this.bankId)
+        .subscribe({
+          next: () => {
+            this.toastr.success('Form check added successfully');
+            this.showAddFormCheckDialog = false;
+            this.loadFormChecks();
+          },
+          error: (error) => this.toastr.error('Error adding form check'),
+        });
+    }
   }
 
   deleteFormCheck(formCheckId: string, event: Event) {
@@ -262,5 +266,35 @@ export class ProductDetailComponent implements OnInit {
         },
         error: (error) => this.toastr.error('Error deleting form check'),
       });
+  }
+
+  autoFormatJson(value: string) {
+    try {
+      if (!value) {
+        this.configJson = '';
+        return;
+      }
+
+      // Try to parse the JSON
+      const parsed = JSON.parse(value);
+      
+      // If successful, format it
+      this.configJson = JSON.stringify(parsed, null, 2);
+    } catch (error) {
+      // If parsing fails, keep the original value
+      this.configJson = value;
+    }
+  }
+
+  formatJson() {
+    try {
+      if (!this.configJson) return;
+      
+      // Parse and re-stringify with proper formatting
+      const parsedJson = JSON.parse(this.configJson);
+      this.configJson = JSON.stringify(parsedJson, null, 2);
+    } catch (error) {
+      this.toastr.error('Invalid JSON format. Please check your input.', 'Error');
+    }
   }
 }

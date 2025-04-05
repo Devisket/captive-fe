@@ -1,6 +1,5 @@
 import { ChangeDetectorRef, Component, HostListener, inject, Input, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BranchService } from '../../../_services/branch.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
@@ -31,9 +30,7 @@ export class AddBranchComponent implements OnInit{
 
   @Input() title?: string;
   @Input() dataId?: string;
-
-
-  bsModalRef = inject(BsModalRef);
+  
   statuses: any = [];
   tags: any = [];
 
@@ -47,16 +44,16 @@ export class AddBranchComponent implements OnInit{
   model: any = {};
 
   addBranch(){
-    const values = this.bsModalRef.id;
-    this.branchService.addBranch(this.addBranchForm?.value, values).subscribe({
-      next: _ => {
-        this.toastr.success("Bank has been added successsfully");
-        this.addBranchForm?.reset();
-        this.bsModalRef.hide();
-      },
-      error: error => this.toastr.error("Not saved"),
-      complete: () => window.location.reload()
-    })
+    // const values = this.bsModalRef.id;
+    // this.branchService.addBranch(this.addBranchForm?.value, values).subscribe({
+    //   next: _ => {
+    //     this.toastr.success("Bank has been added successsfully");
+    //     this.addBranchForm?.reset();
+    //     this.bsModalRef.hide();
+    //   },
+    //   error: error => this.toastr.error("Not saved"),
+    //   complete: () => window.location.reload()
+    // })
   }
 
   getBranches() {

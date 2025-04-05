@@ -1,6 +1,6 @@
 <div class="modal-header">
     <h4 class="modal-title pull-left">{{ title }}</h4>
-    <button type="button" class="btn-close close pull-right" (click)="bsModalRef.hide()">
+    <button type="button" class="btn-close close pull-right">
         <span class="visually-hidden">&times;</span>
     </button>
 </div>
@@ -116,7 +116,7 @@
 </div>
 <div class="modal-footer">
     <div class="d-flex justify-content-between">
-        <button type="button" tabindex="-1" class="btn btn-default me-2 btn-sm" (click)="bsModalRef.hide()">Cancel</button>
+        <button type="button" tabindex="-1" class="btn btn-default me-2 btn-sm">Cancel</button>
         <button type="submit"
             class="btn btn-success me-2 btn-sm"
             [disabled]="!addBranchForm.dirty"

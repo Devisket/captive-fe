@@ -11,13 +11,11 @@
   <div class="section-card">
     <div class="section-header">
       <h4>Form Checks</h4>
-      <button
+      <p-button
         type="button"
         (click)="openAddFormCheckDialog()"
-        class="btn btn-primary"
-      >
-        <i class="fa fa-plus"></i> Add Form Check
-      </button>
+        >Add Form Check
+      </p-button>
     </div>
 
     <p-table
@@ -45,20 +43,27 @@
           <td>{{ formCheck.quanitity }}</td>
           <td class="text-center">
             <div class="d-flex justify-content-center gap-2">
-              <button
+              <p-button
                 type="button"
-                [routerLink]="['/edit-form-check', formCheck.id, 'product', productId, 'bank', bankId$ | async]"
+                [routerLink]="[
+                  '/edit-form-check',
+                  formCheck.id,
+                  'product',
+                  productId,
+                  'bank',
+                  bankId$ | async
+                ]"
                 class="btn btn-warning btn-sm"
               >
                 <i class="fa fa-edit"></i> Edit
-              </button>
-              <button
+              </p-button>
+              <p-button
                 type="button"
                 (click)="deleteFormCheck(formCheck.id, $event)"
                 class="btn btn-danger btn-sm"
               >
                 <i class="fa fa-trash"></i> Delete
-              </button>
+              </p-button>
             </div>
           </td>
         </tr>
@@ -81,7 +86,7 @@
             type="text"
             pInputText
             placeholder="Enter File Name"
-          >
+          />
         </div>
 
         <div class="field">
@@ -95,13 +100,24 @@
       </div>
 
       <div class="field">
-        <label for="configJson">Configuration JSON</label>
+        <div class="field-header">
+          <label for="configJson">Configuration JSON</label>
+          <button pButton 
+                  type="button" 
+                  label="Format JSON" 
+                  icon="pi pi-code" 
+                  class="p-button-sm p-button-outlined"
+                  (click)="formatJson()">
+          </button>
+        </div>
         <textarea
           id="configJson"
           pInputTextarea
           [rows]="10"
           [cols]="30"
           placeholder="Enter JSON Configuration"
+          [(ngModel)]="configJson"
+          (ngModelChange)="autoFormatJson($event)"
         ></textarea>
       </div>
 
@@ -119,12 +135,12 @@
 </div>
 
 <!-- Add Form Check Dialog -->
-<p-dialog 
-  [(visible)]="showAddFormCheckDialog" 
-  [style]="{width: '50vw'}" 
+<p-dialog
+  [(visible)]="showAddFormCheckDialog"
+  [style]="{ width: '50vw' }"
   [modal]="true"
-  header="Add Form Check" 
-  [draggable]="false" 
+  header="Add Form Check"
+  [draggable]="false"
   [resizable]="false"
 >
   <div class="p-fluid">
@@ -153,7 +169,7 @@
         type="text"
         pInputText
         placeholder="Enter Description"
-      >
+      />
     </div>
 
     <div class="field">
@@ -163,7 +179,7 @@
         type="text"
         pInputText
         placeholder="Enter File Initial"
-      >
+      />
     </div>
 
     <div class="field">
