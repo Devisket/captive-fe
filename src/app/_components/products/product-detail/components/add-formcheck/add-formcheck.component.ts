@@ -8,10 +8,12 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { FloatLabelModule } from 'primeng/floatlabel';
+import { CommonModule, NgClass } from '@angular/common';
 import {
   createFormCheck,
   updateFormCheck,
 } from '../../../_store/formchecks/formchecks.action';
+
 @Component({
   selector: 'app-add-formcheck',
   templateUrl: './add-formcheck.component.html',
@@ -24,6 +26,8 @@ import {
     ButtonModule,
     DropdownModule,
     FloatLabelModule,
+    CommonModule,
+    NgClass,
   ],
 })
 export class AddFormcheckComponent implements OnInit {

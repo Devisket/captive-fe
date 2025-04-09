@@ -51,6 +51,7 @@
             label="Edit"
             icon="pi pi-pencil"
             pInitEditableRow
+            (onClick)="onRowEditInit(product)"
           />
           <p-button
             type="button"
@@ -64,12 +65,14 @@
             type="button"
             label="Save"
             icon="pi pi-check"
+            (click)="onRowEditSave(product)"
             pSaveEditableRow
           />
           <p-button
             type="button"
             label="Cancel"
             icon="pi pi-times"
+            (click)="onCancelEdit(product)"
             pCancelEditableRow
           />
         </div>

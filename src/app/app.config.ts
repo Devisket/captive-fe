@@ -20,6 +20,8 @@ import { FormChecksFeature } from './_components/products/_store/formchecks/form
 import { FormChecksEffects } from './_components/products/_store/formchecks/formchecks.effects';
 import { ProductConfigurationFeature } from './_components/products/_store/product-configurations/product-configuration.reducer';
 import { ProductConfigurationsEffects } from './_components/products/_store/product-configurations/product-configurations.effects';
+import { BatchFeature } from './_components/branches/_store/batch/batch.reducer';
+import { BatchEffects } from './_components/branches/_store/batch/batch.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -36,7 +38,8 @@ export const appConfig: ApplicationConfig = {
       products: ProductsFeature.reducer,
       formChecks: FormChecksFeature.reducer,
       productConfiguration: ProductConfigurationFeature.reducer,
+      batch: BatchFeature.reducer,
     }),
-    provideEffects([ProductsEffects, FormChecksEffects, ProductConfigurationsEffects])
+    provideEffects([ProductsEffects, FormChecksEffects, ProductConfigurationsEffects, BatchEffects])
 ]
 };

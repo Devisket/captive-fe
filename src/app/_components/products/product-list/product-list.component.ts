@@ -9,6 +9,7 @@ import { Observable, Subscription, map } from 'rxjs';
 import {
   getAllProducts,
   deleteProduct,
+  updateProduct,
 } from '../_store/products/products.actions';
 import { SharedFeature } from '../../../_store/shared/shared.reducer';
 import { ProductsFeature } from '../_store/products/products.reducer';
@@ -47,7 +48,7 @@ export class ProductListComponent implements OnInit {
   ngOnInit(): void {
     this.subscription$.add(
       this.products$.subscribe((products) => {
-        this.products = products.map(product => ({...product}));
+        this.products = products.map((product) => ({ ...product }));
       })
     );
 
@@ -99,24 +100,23 @@ export class ProductListComponent implements OnInit {
     });
   }
 
-  onRowEditInit(event: any) {
-    this.clonedProduct = { ...event.data };
+  onRowEditInit(product: Product) {
+    this.clonedProduct = { ...product };
   }
 
-  onRowEditSave(event: any) {
-    if (this.bankId) {
-      const product = event.data;
-      console.log('Saving product:', product);
-      this.clonedProduct = undefined;
-    }
+  onRowEditSave(product: Product) {
+    this.store.dispatch(
+      updateProduct({ bankId: this.bankId!, product: product })
+    );
   }
 
-  cancelEdit(event: any) {
-    const product = event.data;
+  onCancelEdit(product: Product) {
     if (this.clonedProduct) {
-      const index = this.products.findIndex(p => p.productId === product.productId);
+      const index = this.products.findIndex(
+        (p) => p.productId === product.productId
+      );
       if (index !== -1) {
-        this.products[index] = {...this.clonedProduct};
+        this.products[index] = { ...this.clonedProduct };
       }
     }
     this.clonedProduct = undefined;
