@@ -15,7 +15,13 @@
     <ng-template pTemplate="body" let-batch>
       <tr>
         <td>{{ batch.orderNumber }}</td>
-        <td>{{ batch.batchName }}</td>
+        <td>
+          <a href="javascript:void(0)" 
+             class="text-primary cursor-pointer hover:underline"
+             (click)="showBatchDetail(batch)">
+            {{ batch.batchName }}
+          </a>
+        </td>
         <td>{{ batch.noOfFiles }}</td>
         <td>{{ batch.createdDate }}</td>
         <td>{{ batch.batchFileStatus }}</td>

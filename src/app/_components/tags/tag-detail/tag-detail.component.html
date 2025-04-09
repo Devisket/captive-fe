@@ -1,9 +1,46 @@
 <p-tabView>
+  <p-tabPanel header="Check Inventory">
+    <div *ngIf="checkInventories.length === 0" class="text-center p-4">
+      No check inventory found for this tag.
+    </div>
+    <p-table
+      [value]="checkInventories"
+      styleClass="p-datatable-sm"
+      *ngIf="checkInventories.length > 0"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Series Pattern</th>
+          <th>Number of Padding</th>
+          <th>Starting Series</th>
+          <th>Ending Series</th>
+          <th>Warning Series</th>
+          <th>Is Repeating</th>
+          <th>Is Used</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-inventory>
+        <tr>
+          <td>{{ inventory.seriesPattern }}</td>
+          <td>{{ inventory.numberOfPadding }}</td>
+          <td>{{ inventory.startingSeries }}</td>
+          <td>{{ inventory.endingSeries }}</td>
+          <td>{{ inventory.warningSeries }}</td>
+          <td>{{ inventory.isRepeating ? "Yes" : "No" }}</td>
+          <td>{{ inventory.isActive ? "Yes" : "No" }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-tabPanel>
   <p-tabPanel header="Tag Mappings">
     <div *ngIf="tagMappings.length === 0" class="text-center p-4">
       No mappings found for this tag.
     </div>
-    <p-table [value]="tagMappings" styleClass="p-datatable-sm" *ngIf="tagMappings.length > 0">
+    <p-table
+      [value]="tagMappings"
+      styleClass="p-datatable-sm"
+      *ngIf="tagMappings.length > 0"
+    >
       <ng-template pTemplate="header">
         <tr>
           <th *ngIf="tag.searchByBranch">Branch</th>
@@ -20,25 +57,4 @@
       </ng-template>
     </p-table>
   </p-tabPanel>
-  <p-tabPanel header="Check Inventory">
-    <div *ngIf="checkInventories.length === 0" class="text-center p-4">
-      No check inventory found for this tag.
-    </div>
-    <p-table [value]="checkInventories" styleClass="p-datatable-sm" *ngIf="checkInventories.length > 0">
-      <ng-template pTemplate="header">
-        <tr>
-          <th>Starting Series</th>
-          <th>Ending Series</th>
-          <th>Is Used</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-inventory>
-        <tr>
-          <td>{{ inventory.startingSeries }}</td>
-          <td>{{ inventory.endingSeries }}</td>
-          <td>{{ inventory.isUsed ? 'Yes' : 'No' }}</td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </p-tabPanel>
-</p-tabView> 
+</p-tabView>

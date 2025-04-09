@@ -15,6 +15,8 @@ import {
   getAllBatches,
 } from '../_store/batch.actions';
 import { BatchFeature } from '../_store/batch.reducer';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { UploadOrderFilesComponent } from '../../order-files/upload-order-files/order-files-list.component';
 
 @Component({
   selector: 'app-batch-list',
@@ -22,14 +24,19 @@ import { BatchFeature } from '../_store/batch.reducer';
   imports: [FormsModule, ButtonModule, TableModule],
   templateUrl: './batch-list.component.html',
   styleUrl: './batch-list.component.scss',
+  providers: [DialogService]
 })
 export class BatchListComponent implements OnInit {
-  constructor(private router: Router, private store: Store) {}
+  constructor(
+    private router: Router, 
+    private store: Store,
+    private dialogService: DialogService
+  ) {}
 
-  bankInfo = input.required<Bank>();
   batches: Batch[] = [];
   toastr = inject(ToastrService);
   bankId: string = ' ';
+  ref: DynamicDialogRef | undefined;
 
   subscriptions$ = new Subscription();
 
@@ -60,5 +67,25 @@ export class BatchListComponent implements OnInit {
 
   onAddBatch() {
     this.store.dispatch(createNewBatch({ bankId: this.bankId }));
+  }
+
+  showBatchDetail(batch: Batch) {
+    console.log(batch);
+    this.ref = this.dialogService.open(UploadOrderFilesComponent, {
+      header: `Batch Details - ${batch.batchName}`,
+      width: '90%',
+      height: '90%',
+      data: {
+        batch: batch,
+        bankId: this.bankId
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.ref) {
+      this.ref.close();
+    }
+    this.subscriptions$.unsubscribe();
   }
 }
