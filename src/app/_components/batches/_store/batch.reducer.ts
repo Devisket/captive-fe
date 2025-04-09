@@ -1,4 +1,4 @@
-import { Batch } from '../../../../_models/batch';
+
 import { createFeature, createReducer, on } from '@ngrx/store';
 import {
   getAllBatches,
@@ -7,6 +7,7 @@ import {
   createNewBatchFailure,
   deleteBatchFailure,
 } from './batch.actions';
+import { Batch } from '../../../_models/batch';
 
 export interface BatchState {
   batches: Batch[];

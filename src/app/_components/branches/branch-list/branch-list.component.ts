@@ -9,7 +9,6 @@ import { Bank } from '../../../_models/bank';
 import { BankBranch } from '../../../_models/bank-branch';
 import { BranchService } from '../../../_services/branch.service';
 import { ToastrService } from 'ngx-toastr';
-import { EditBranchComponent } from '../edit-branch/edit-branch.component';
 import { DialogService } from 'primeng/dynamicdialog';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
@@ -69,16 +68,9 @@ export class BranchListComponent implements OnInit {
     });
   }
 
-  openEditBranchModal(branchId: any) {
-    this.branch = this.branches.find((branch) => branch.id === branchId);
 
-    this.dialogService.open(EditBranchComponent, {
-      header: 'Edit Branch',
-      width: '70%',
-      data: {
-        branchId: this.branch?.id,
-        bankInfoId: this.bankId,
-      },
-    });
+  onAddBranch() {
   }
+
+
 }

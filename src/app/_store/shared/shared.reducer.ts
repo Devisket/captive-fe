@@ -6,6 +6,7 @@ import {
   clearError,
   setSelectedBankInfoId,
   setSelectedProductId,
+  getBankValuesSuccess,
 } from './shared.actions';
 
 const reducer = createReducer(
@@ -37,7 +38,11 @@ const reducer = createReducer(
       ...state,
       selectedProductId,
     };
-  })
+  }),
+  on(getBankValuesSuccess, (state, { bankValues }) => ({
+    ...state,
+    bankValues,
+  }))
 );
 
 export const SharedFeature = createFeature({
@@ -47,7 +52,7 @@ export const SharedFeature = createFeature({
     selectSelectedBankInfoId: createSelector(
       selectSelectedBankInfoId,
       (selectedBankInfoId: string | null) => {
-        if(!selectedBankInfoId){
+        if (!selectedBankInfoId) {
           return sessionStorage.getItem('selectedBankInfoId');
         }
         return selectedBankInfoId;
@@ -56,7 +61,7 @@ export const SharedFeature = createFeature({
     selectSelectedProductId: createSelector(
       selectSelectedProductId,
       (selectedProductId: string | null) => {
-        if(!selectedProductId){
+        if (!selectedProductId) {
           return sessionStorage.getItem('selectedProductId');
         }
         return selectedProductId;
@@ -64,5 +69,3 @@ export const SharedFeature = createFeature({
     ),
   }),
 });
-
-

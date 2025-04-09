@@ -3,5 +3,7 @@ export interface Batch {
   orderNumber: number
   batchName: string
   createdDate: string
-  batchFileStatus: number
+  batchFileStatus: string
+  errorMessage: string
+  noOfFiles: number
 }

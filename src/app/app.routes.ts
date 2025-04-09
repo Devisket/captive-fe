@@ -1,32 +1,17 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './_guards/auth.guard';
 import { BankDetailComponent } from './_components/banks/bank-detail/bank-detail.component';
-import { EditBankComponent } from './_components/banks/edit-bank/edit-bank.component';
-import { EditProfileComponent } from './_components/auth/edit-profile/edit-profile.component';
-import { preventUnsavedChangesGuard } from './_guards/prevent-unsaved-changes.guard';
-import { AddBankComponent } from './_components/banks/add-bank/add-bank.component';
 import { UserListComponent } from './_components/users/user-list/user-list.component';
 import { TestErrorsComponent } from './_components/errors/test-errors/test-errors.component';
 import { NotFoundComponent } from './_components/errors/not-found/not-found.component';
 import { ServerErrorComponent } from './_components/errors/server-error/server-error.component';
 import { BankListComponent } from './_components/banks/bank-list/bank-list.component';
-import { AddProductComponent } from './_components/products/add-product/add-product.component';
-import { AddBatchComponent } from './_components/batches/add-batch/add-batch.component';
-import { UploadOrderFilesComponent } from './_components/order-files/upload-order-files/order-files-list.component';
-import { TagListComponent } from './_components/tags/tag-list/tag-list.component';
-import { CheckValidationListComponent } from './_components/check-validation/check-validation-list/check-validation-list.component';
-import { AddTagComponent } from './_components/tags/add-tag/add-tag.component';
-import { EditTagComponent } from './_components/tags/edit-tag/edit-tag.component';
-import { AddTagMappingComponent } from './_components/tags/add-tag-mapping/add-tag-mapping.component';
-import { AddCheckValidationComponent } from './_components/check-validation/add-check-validation/add-check-validation.component';
-import { EditCheckValidationComponent } from './_components/check-validation/edit-check-validation/edit-check-validation.component';
 import { ProductDetailComponent } from './_components/products/product-detail/product-detail.component';
 import { BranchListComponent } from './_components/branches/branch-list/branch-list.component';
 import { ProductListComponent } from './_components/products/product-list/product-list.component';
-import { ProductsFeature } from './_components/products/_store/products/products.reducer';
-import { StoreModule } from '@ngrx/store';
 import { BatchListComponent } from './_components/batches/batch-list/batch-list.component';
-
+import { CheckInventoryListComponent } from './_components/check-inventory/check-inventory-list/check-inventory-list.component';
+import { TagListComponent } from './_components/tags/tag-list/tag-list.component';
 export const appRoutes: Routes = [
   { path: '', component: BankListComponent },
   {
@@ -85,7 +70,15 @@ export const bankDetailsRoutes: Routes = [
         component: ProductDetailComponent,
       },
       {
+        path: 'check-validations',
+        component: TagListComponent,
+      },
+      {
         path: 'batches',
+        component: BatchListComponent,
+      },
+      {
+        path: 'batch-detail/:batchId',
         component: BatchListComponent,
       },
     ],

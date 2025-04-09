@@ -1,5 +1,6 @@
 import { createAction, props } from "@ngrx/store";
-import { Batch } from "../../../../_models/batch";
+import { Batch } from "../../../_models/batch";
+
 
 export const getAllBatches = createAction('[Batch] Get All Batches', props<{ bankId: string }>());
 

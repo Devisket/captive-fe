@@ -1,8 +1,8 @@
 export interface BankBranch {
-    id: string
+    id:string,
     branchName: string
     branchCode: string
-    brstn: string
+    brstnCode: string
     branchAddress1: string
     branchAddress2: string
     branchAddress3: string
@@ -10,6 +10,4 @@ export interface BankBranch {
     branchAddress5: string
     mergingBranchId: string
     branchStatus: string
-    tagId: string
-    bankInfoId: string
 }

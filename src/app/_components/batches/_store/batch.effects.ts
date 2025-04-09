@@ -10,9 +10,9 @@ import {
   getAllBatchesFailure,
   getAllBatchesSuccess,
 } from './batch.actions';
-import { Batch } from '../../../../_models/batch';
-import { BatchesService } from '../../../../_services/batches.service';
 import { Injectable } from '@angular/core';
+import { Batch } from '../../../_models/batch';
+import { BatchesService } from '../../../_services/batches.service';
 
 @Injectable()
 export class BatchEffects {

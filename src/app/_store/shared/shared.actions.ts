@@ -1,4 +1,5 @@
 import { createAction, props } from '@ngrx/store';
+import { BankValues } from '../../_models/values/bankValues';
 
 export const setLoading = createAction(
   '[Shared] Set Loading',
@@ -20,4 +21,19 @@ export const setSelectedProductId = createAction(
   props<{ selectedProductId: string }>()
 );
 
-export const clearError = createAction('[Shared] Clear Error'); 
+export const getBankValues = createAction(
+  '[Shared] Get Bank Values',
+  props<{ bankId: string }>()
+);
+
+export const getBankValuesSuccess = createAction(
+  '[Shared] Get Bank Values Success',
+  props<{ bankValues: BankValues }>()
+);
+
+export const getBankValuesFailure = createAction(
+  '[Shared] Get Bank Values Failure',
+  props<{ error: string }>()
+);
+
+export const clearError = createAction('[Shared] Clear Error');

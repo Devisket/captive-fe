@@ -7,7 +7,7 @@ import { Bank } from '../../../_models/bank';
 import { ToastrService } from 'ngx-toastr';
 import { TableModule } from 'primeng/table';
 import { Store } from '@ngrx/store';
-import { setSelectedBankInfoId } from '../../../_store/shared/shared.actions';
+import { getBankValues, setSelectedBankInfoId } from '../../../_store/shared/shared.actions';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 @Component({
@@ -56,5 +56,6 @@ export class BankListComponent implements OnInit {
   navigateToBank(bank: Bank) {
     this.router.navigate(['banks', bank.id, 'bank-detail']);
     this.store.dispatch(setSelectedBankInfoId({ selectedBankInfoId: bank.id }));
+    this.store.dispatch(getBankValues({ bankId: bank.id }));
   }
 }
