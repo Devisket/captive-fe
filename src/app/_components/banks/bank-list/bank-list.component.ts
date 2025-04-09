@@ -6,10 +6,14 @@ import { FormsModule } from '@angular/forms';
 import { Bank } from '../../../_models/bank';
 import { ToastrService } from 'ngx-toastr';
 import { TableModule } from 'primeng/table';
+import { Store } from '@ngrx/store';
+import { getBankValues, setSelectedBankInfoId } from '../../../_store/shared/shared.actions';
+import { ButtonModule } from 'primeng/button';
+import { RippleModule } from 'primeng/ripple';
 @Component({
   selector: 'app-bank-list',
   standalone: true,
-  imports: [RouterLink, NgFor, FormsModule, LowerCasePipe, TableModule],
+  imports: [ButtonModule, RippleModule, FormsModule, TableModule],
   templateUrl: './bank-list.component.html',
   styleUrl: './bank-list.component.scss',
 })
@@ -18,6 +22,8 @@ export class BankListComponent implements OnInit {
   router = inject(Router);
   private toastr = inject(ToastrService);
   bankInfos: Bank[] = [];
+
+  constructor(private store: Store) {}
 
   ngOnInit(): void {
     this.getBanks();
@@ -47,7 +53,9 @@ export class BankListComponent implements OnInit {
     });
   }
 
-  navigateToBank(bank:Bank){
-    this.router.navigate(['banks', bank.id]);
+  navigateToBank(bank: Bank) {
+    this.router.navigate(['banks', bank.id, 'bank-detail']);
+    this.store.dispatch(setSelectedBankInfoId({ selectedBankInfoId: bank.id }));
+    this.store.dispatch(getBankValues({ bankId: bank.id }));
   }
 }

@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { MegaMenuModule } from 'primeng/megamenu';
 import { MegaMenuItem } from 'primeng/api';
 
@@ -9,11 +8,10 @@ import { MegaMenuItem } from 'primeng/api';
   standalone: true,
   imports: [
     FormsModule,
-    BsDropdownModule,
     MegaMenuModule,
   ],
   templateUrl: './app-header.component.html',
-  styleUrl: './app-header.component.css',
+  styleUrl: './app-header.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class ApplicationHeaderComponent implements OnInit{

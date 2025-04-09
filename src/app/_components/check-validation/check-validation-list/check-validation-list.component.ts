@@ -7,7 +7,7 @@ import { TableModule } from 'primeng/table';
 import { ProductService } from '../../../_services/product.service';
 import { BanksService } from '../../../_services/banks.service';
 import { BranchService } from '../../../_services/branch.service';
-import { FormCheckService } from '../../../_services/form-check.service';
+import { FormChecksService } from '../../../_services/form-check.service';
 import { Product } from '../../../_models/product';
 import { FormCheck } from '../../../_models/form-check';
 import { BankBranch } from '../../../_models/bank-branch';
@@ -28,7 +28,7 @@ export class CheckValidationListComponent implements OnInit{
   productService = inject(ProductService);
   bankService = inject(BanksService)
   branchService = inject(BranchService)
-  formCheckService = inject(FormCheckService)
+  formCheckService = inject(FormChecksService)
   
   validationTypes: any = [];
 
@@ -61,13 +61,13 @@ export class CheckValidationListComponent implements OnInit{
     });
   }
 
-  loadFormChecks(){
-    this.formCheckService.getAllFormChecks(this.bankInfo().id).subscribe({
-      next: (res) => {
-        this.formChecks = res;
-      }
-    });
-  }
+  // loadFormChecks(){
+  //   this.formCheckService.getAllFormChecks(this.bankInfo().id, this.productId).subscribe({
+  //     next: (res) => {
+  //       this.formChecks = res;
+  //     }
+  //   });
+  // }
 
 
   getAllTagAndMapping(){
@@ -78,7 +78,7 @@ export class CheckValidationListComponent implements OnInit{
 
         await this.loadProducts();
         await this.loadBranches();
-        await this.loadFormChecks();
+        // await this.loadFormChecks();
 
 
 
@@ -86,7 +86,7 @@ export class CheckValidationListComponent implements OnInit{
 
           tag.mapping.map((mapping)=>{
             mapping.formCheckName = this.formChecks.find((formCheck)=>formCheck.id === mapping.formCheckId)?.checkType ?? '';
-            mapping.productName = this.products.find((product)=>product.id === mapping.productId)?.productTypeName ?? '';
+            mapping.productName = this.products.find((product)=>product.productId === mapping.productId)?.productName ?? '';
             mapping.branchName = this.branches.find((branch)=>branch.id === mapping.branchId)?.branchName ?? '';
           })
         })

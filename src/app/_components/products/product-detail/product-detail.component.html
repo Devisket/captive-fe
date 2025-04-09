@@ -1,3 +1,134 @@
-<p-panel header="Product Detail">
+<div class="container-fluid">
+  <!-- Page Header -->
+  <div class="page-header align-items-center">
+    <h2>
+      <span *ngIf="product$ | async as product"
+        >Product Details - {{ product.productName }}</span
+      >
+    </h2>
+  </div>
 
-</p-panel>
+  <!-- Form Checks Section -->
+  <div class="section-card">
+    <div class="section-header">
+      <h4>Form Checks</h4>
+      <p-button type="button" (click)="openAddFormCheckDialog()"
+        >Add Form Check
+      </p-button>
+    </div>
+
+    <p-table
+      [value]="formChecks"
+      [tableStyle]="{ 'min-width': '50rem' }"
+      styleClass="p-datatable-sm"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Check Type</th>
+          <th>Form Type</th>
+          <th>Form Check Type</th>
+          <th>Description</th>
+          <th>File Initial</th>
+          <th>Quantity</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-formCheck>
+        <tr>
+          <td>{{ formCheck.checkType }}</td>
+          <td>{{ formCheck.formType }}</td>
+          <td>{{ formCheck.formCheckType }}</td>
+          <td>{{ formCheck.description }}</td>
+          <td>{{ formCheck.fileInitial }}</td>
+          <td>{{ formCheck.quantity }}</td>
+          <td class="text-center">
+            <div class="d-flex justify-content-center gap-2">
+              <p-button
+                type="button"
+                (click)="openAddFormCheckDialog(formCheck)"
+                class="btn btn-warning btn-sm"
+              >
+                <i class="fa fa-edit"></i> Edit
+              </p-button>
+              <p-button
+                type="button"
+                (click)="deleteFormCheck(formCheck.id, $event)"
+                class="btn btn-danger btn-sm"
+              >
+                <i class="fa fa-trash"></i> Delete
+              </p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Configuration Section -->
+  <form [formGroup]="productConfigurationForm">
+    <div class="section-card">
+      <div class="section-header">
+        <h4>Product Configuration</h4>
+      </div>
+
+      <div class="configuration-form">
+        <div class="form-row">
+          <div class="field">
+            <label for="configFileName">File Name</label>
+            <input
+              id="configFileName"
+              type="text"
+              pInputText
+              formControlName="fileName"
+              placeholder="Enter File Name"
+            />
+          </div>
+
+          <div class="field">
+            <label for="configType">Configuration Type</label>
+            <p-dropdown
+              id="configType"
+              [options]="configTypes"
+              formControlName="configurationType"
+              placeholder="Select Configuration Type"
+            ></p-dropdown>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-header">
+            <label for="configJson">Configuration JSON</label>
+            <button
+              pButton
+              type="button"
+              label="Format JSON"
+              icon="pi pi-code"
+              class="p-button-sm p-button-outlined my-3"
+              (click)="formatJson()"
+            ></button>
+          </div>
+          <textarea
+            id="configJson"
+            pInputTextarea
+            [rows]="40"
+            [cols]="50"
+            placeholder="Enter JSON Configuration"
+            [(ngModel)]="configJson"
+            formControlName="configurationData"
+            (ngModelChange)="autoFormatJson($event)"
+          ></textarea>
+        </div>
+
+        <div class="form-actions">
+          <p-button
+            type="button"
+            label="Save Configuration"
+            (click)="onSaveConfiguration()"
+          >
+          </p-button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

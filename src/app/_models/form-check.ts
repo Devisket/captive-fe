@@ -4,6 +4,6 @@ export interface FormCheck {
     description: string
     checkType: string
     formType: string
-    quanitity: number
+    quantity: number
     fileInitial: string
 }

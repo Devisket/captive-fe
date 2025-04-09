@@ -1,56 +1,83 @@
-import { Component, HostListener, inject, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  inject,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { Bank } from '../../../_models/bank';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BanksService } from '../../../_services/banks.service';
-import { FormsModule, NgForm } from '@angular/forms';
+import {
+  FormControl,
+  NgForm,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ProductService } from '../../../_services/product.service';
-import { UpperCasePipe } from '@angular/common';
-
+import { InputTextModule } from 'primeng/inputtext';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { Store } from '@ngrx/store';
+import {
+  createProduct,
+  updateProduct,
+} from '../_store/products/products.actions';
+import { ButtonModule } from 'primeng/button';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 @Component({
   selector: 'app-add-product',
   standalone: true,
-  imports: [FormsModule, UpperCasePipe, RouterLink],
+  imports: [
+    InputTextModule,
+    ButtonModule,
+    FloatLabelModule,
+    ReactiveFormsModule,
+  ],
   templateUrl: './add-product.component.html',
-  styleUrl: './add-product.component.scss'
+  styleUrl: './add-product.component.scss',
 })
-export class AddProductComponent implements OnInit{
-
+export class AddProductComponent implements OnInit {
   @ViewChild('addProductTypeForm') addProductTypeForm?: NgForm;
-  @HostListener('window:beforeunload', ['$event']) notify($event:any) {
+  @HostListener('window:beforeunload', ['$event']) notify($event: any) {
     if (this.addProductTypeForm?.dirty) {
       $event.returnValue = true;
     }
   }
 
-  toastr = inject(ToastrService);
-  route = inject(ActivatedRoute);
-  router = inject(Router);
+  constructor(
+    private config: DynamicDialogConfig,
+    private store: Store,
+    private ref: DynamicDialogRef
+  ) {}
+
   bankService = inject(BanksService);
   productTypeService = inject(ProductService);
+
+  formGroup: FormGroup = new FormGroup({
+    productId: new FormControl(null, []),
+    productName: new FormControl('', Validators.required),
+  });
+
   bankInfos: Bank[] = [];
   bankInfo?: Bank;
   model: any = {};
+  bankId: string = '';
 
-  ngOnInit(): void {
-    this.loadBank()
+  ngOnInit(): void {}
+
+  onSaveProduct() {
+    this.store.dispatch(
+      createProduct({
+        bankId: this.config.data.bankId,
+        product: this.formGroup.value,
+      })
+    );
+    this.onClose();
   }
 
-  loadBank() {
-    let bankId = this.route.snapshot.paramMap.get('id');
-    if (!bankId) return;
-    this.bankService.getBanks().subscribe(data => {
-      this.bankInfo = data.bankInfos.find((bank: Bank) => bank.id === bankId);
-    });
-  }
-
-  addProductType() {
-    this.productTypeService.addProductType(this.addProductTypeForm?.value, this.bankInfo?.id).subscribe({
-      next: _ => {
-        this.toastr.success( this.bankInfo?.bankName + " product type has been added successsfully");
-        this.router.navigateByUrl('/banks/' + this.bankInfo?.id);
-      },
-      error: error => this.toastr.error("Not saved")
-    })
+  onClose() {
+    this.ref.close();
   }
 }

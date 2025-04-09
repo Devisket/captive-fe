@@ -2,44 +2,90 @@ import { Component, inject, input, OnInit } from '@angular/core';
 import { Bank } from '../../../_models/bank';
 import { Batch } from '../../../_models/batch';
 import { ToastrService } from 'ngx-toastr';
-import { BatchesService } from '../../../_services/batches.service';
-import { DatePipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { TableModule } from 'primeng/table';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
+import { SharedFeature } from '../../../_store/shared/shared.reducer';
+import {
+  createNewBatch,
+  deleteBatch,
+  getAllBatches,
+} from '../_store/batch.actions';
+import { BatchFeature } from '../_store/batch.reducer';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { UploadOrderFilesComponent } from '../../order-files/upload-order-files/order-files-list.component';
 
 @Component({
   selector: 'app-batch-list',
   standalone: true,
-  imports: [DatePipe, RouterLink, FormsModule],
+  imports: [FormsModule, ButtonModule, TableModule],
   templateUrl: './batch-list.component.html',
-  styleUrl: './batch-list.component.scss'
+  styleUrl: './batch-list.component.scss',
+  providers: [DialogService]
 })
-export class BatchListComponent implements OnInit{
+export class BatchListComponent implements OnInit {
+  constructor(
+    private router: Router, 
+    private store: Store,
+    private dialogService: DialogService
+  ) {}
 
-  private batchServices = inject(BatchesService);
-  bankInfo = input.required<Bank>();
   batches: Batch[] = [];
-  batch?: Batch;
   toastr = inject(ToastrService);
-  bankId = ""
-  ngOnInit(): void 
-  {
-    this.bankInfo;
-    this.bankId = this.bankInfo().id;
-    this.getBatches();    
+  bankId: string = ' ';
+  ref: DynamicDialogRef | undefined;
+
+  subscriptions$ = new Subscription();
+
+  ngOnInit(): void {
+    this.subscriptions$.add(
+      this.store
+        .select(SharedFeature.selectSelectedBankInfoId)
+        .subscribe((bankId) => {
+          this.bankId = bankId ?? '';
+        })
+    );
+    this.subscriptions$.add(
+      this.store.select(BatchFeature.selectBatches).subscribe((batches) => {
+        this.batches = batches;
+      })
+    );
+
+    this.getBatches();
   }
 
-  getBatches(){    
-    this.batchServices.getBatches(this.bankId).subscribe(data => {
-      if(!data) return;
-      this.batches = data.batchFiles;
+  getBatches() {
+    this.store.dispatch(getAllBatches({ bankId: this.bankId }));
+  }
+
+  onDeleteBatch(batchId: string) {
+    this.store.dispatch(deleteBatch({ bankId: this.bankId, batchId: batchId }));
+  }
+
+  onAddBatch() {
+    this.store.dispatch(createNewBatch({ bankId: this.bankId }));
+  }
+
+  showBatchDetail(batch: Batch) {
+    console.log(batch);
+    this.ref = this.dialogService.open(UploadOrderFilesComponent, {
+      header: `Batch Details - ${batch.batchName}`,
+      width: '90%',
+      height: '90%',
+      data: {
+        batch: batch,
+        bankId: this.bankId
+      }
     });
   }
 
-  onDeleteBatch(batchId:string) 
-  {
-    this.batchServices.deleteBatch(this.bankId, batchId).subscribe(data => {
-      this.getBatches();
-    })
+  ngOnDestroy() {
+    if (this.ref) {
+      this.ref.close();
+    }
+    this.subscriptions$.unsubscribe();
   }
 }

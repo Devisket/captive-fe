@@ -1,74 +1,124 @@
-import { Component, inject, input, OnInit, ViewChild } from '@angular/core';
-import { Bank } from '../../../_models/bank';
-import { ProductService } from '../../../_services/product.service';
+import { Component, OnInit } from '@angular/core';
 import { Product } from '../../../_models/product';
 import { RouterLink } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
-import { NgFor, NgIf, UpperCasePipe } from '@angular/common';
-import { FormCheckListComponent } from '../../form-checks/form-check-list/form-check-list.component';
-import { FormsModule, NgForm } from '@angular/forms';
-import { FormCheckService } from '../../../_services/form-check.service';
-import { Table, TableModule } from 'primeng/table';
+import { FormsModule } from '@angular/forms';
+import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
+import { Store } from '@ngrx/store';
+import { Observable, Subscription, map } from 'rxjs';
+import {
+  getAllProducts,
+  deleteProduct,
+  updateProduct,
+} from '../_store/products/products.actions';
+import { SharedFeature } from '../../../_store/shared/shared.reducer';
+import { ProductsFeature } from '../_store/products/products.reducer';
+import { DialogService } from 'primeng/dynamicdialog';
+import { AddProductComponent } from '../add-product/add-product.component';
+import { CommonModule } from '@angular/common';
+import { InputTextModule } from 'primeng/inputtext';
 @Component({
   selector: 'app-product-list',
   standalone: true,
   imports: [
     RouterLink,
-    NgIf,
     FormsModule,
-    NgFor,
-    FormCheckListComponent,
-    UpperCasePipe,
     TableModule,
     ButtonModule,
+    CommonModule,
+    InputTextModule,
   ],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.scss',
 })
 export class ProductListComponent implements OnInit {
   visibleProductTypes: { [key: string]: boolean } = {};
+  bankId: string | undefined = undefined;
+  products$: Observable<Product[]>;
 
-  toggleFormCheckList(productTypeId: string): void {
-    this.visibleProductTypes[productTypeId] =
-      !this.visibleProductTypes[productTypeId];
-  }
-
-  bankInfo = input.required<Bank>();
-  productTypeService = inject(ProductService);
-  formCheckService = inject(FormCheckService);
-  toastr = inject(ToastrService);
   products: Product[] = [];
 
-  ngOnInit(): void {
-    this.bankInfo;
-    this.getProducts();
+  clonedProduct: Product | undefined = undefined;
+
+  subscription$: Subscription = new Subscription();
+  constructor(private store: Store, private dialogService: DialogService) {
+    this.products$ = this.store.select(ProductsFeature.selectProducts);
   }
 
-  getProducts() {
-    const bankInfoId = this.bankInfo().id;
-    this.productTypeService.getAllProducts(bankInfoId).subscribe((data) => {
-      if (!data) return;
-      this.products = data.productTypes;
+  ngOnInit(): void {
+    this.subscription$.add(
+      this.products$.subscribe((products) => {
+        this.products = products.map((product) => ({ ...product }));
+      })
+    );
+
+    this.subscription$.add(
+      this.store
+        .select(SharedFeature.selectSelectedBankInfoId)
+        .subscribe((bankId) => {
+          if (bankId) {
+            this.bankId = bankId as string;
+            this.loadProducts();
+          }
+        })
+    );
+  }
+
+  loadProducts() {
+    this.store.dispatch(getAllProducts({ bankId: this.bankId! }));
+  }
+
+  deleteProductType(productId: string, event: Event) {
+    event.preventDefault();
+    if (!confirm('Confirm Deletion!')) {
+      return;
+    }
+    this.store.dispatch(deleteProduct({ bankId: this.bankId!, id: productId }));
+  }
+
+  ngOnDestroy(): void {
+    this.subscription$.unsubscribe();
+  }
+
+  openAddProductButtonClick(product?: Product) {
+    this.dialogService.open(AddProductComponent, {
+      header: product ? 'Update Product' : 'Add Product',
+      width: '500px',
+      closable: true,
+      focusOnShow: true,
+      closeOnEscape: true,
+      style: {
+        'max-height': '500px',
+        'min-width': '500px',
+        overflow: 'auto',
+        padding: '0px',
+      },
+      data: {
+        productId: product?.productId,
+        bankId: this.bankId,
+      },
     });
   }
 
-  deleteProductType(productTypeId: string, event: Event) {
-    const bankInfoId = this.bankInfo().id;
-    if (!confirm('Confirm Deletion!')) {
-      event.preventDefault();
-      return;
+  onRowEditInit(product: Product) {
+    this.clonedProduct = { ...product };
+  }
+
+  onRowEditSave(product: Product) {
+    this.store.dispatch(
+      updateProduct({ bankId: this.bankId!, product: product })
+    );
+  }
+
+  onCancelEdit(product: Product) {
+    if (this.clonedProduct) {
+      const index = this.products.findIndex(
+        (p) => p.productId === product.productId
+      );
+      if (index !== -1) {
+        this.products[index] = { ...this.clonedProduct };
+      }
     }
-    this.productTypeService
-      .deleteProductType(bankInfoId, productTypeId)
-      .subscribe({
-        error: (error) => this.toastr.error(error),
-        next: (_) => {
-          this.toastr.success('Successfully deleted product type');
-          this.products = this.products.filter(
-            (products) => products.productTypeId !== productTypeId
-          );
-        },
-      });
+    this.clonedProduct = undefined;
   }
 }

@@ -6,7 +6,6 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { Bank } from '../../../_models/bank';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BanksService } from '../../../_services/banks.service';
 import { BatchesService } from '../../../_services/batches.service';
@@ -23,6 +22,7 @@ import { ButtonModule } from 'primeng/button';
 import { CheckOrders } from '../../../_models/check-order';
 import { DialogModule } from 'primeng/dialog';
 import { LogType } from '../../../_models/constants';
+import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-order-file-list',
@@ -47,7 +47,14 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
     }
   }
 
-  orderFileCols = ['', 'File Name', 'Status', 'Personal Quantity', 'Commercial Quantity', 'Action'];
+  orderFileCols = [
+    '',
+    'File Name',
+    'Status',
+    'Personal Quantity',
+    'Commercial Quantity',
+    'Action',
+  ];
 
   checkOrderCols = [
     {
@@ -84,14 +91,14 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
     dialogTitle: 'Warning',
     dialogType: LogType.Warning,
     dialogMessage: 'This is a warning message',
-  }
+  };
 
   route = inject(ActivatedRoute);
   bankService = inject(BanksService);
   batchService = inject(BatchesService);
   orderFileService = inject(OrderFilesService);
   toastr = inject(ToastrService);
-  bankInfo?: Bank;
+  config = inject(DynamicDialogConfig);
   batch?: Batch;
   model: any = {};
   selectedFiles: File[] = [];
@@ -99,34 +106,31 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
   visibleBatches: Set<string> = new Set();
   private refreshInterval: any;
   $subscription = new Subscription();
+  bankInfoId: string = '';
 
   visibleDialog: boolean = false;
 
+  constructor() {
+    if (this.config.data) {
+      this.bankInfoId = this.config.data.bankId;
+      this.batch = this.config.data.batch;
+    }
+  }
+
   ngOnInit(): void {
-    const batchId = this.route.snapshot.paramMap.get('batchId')!;
-
-    this.orderFileService.startConnection();
-    this.batchService.startConnection(batchId);
-
-    this.bankInfo;
-    this.loadBank();
-    this.getBatch();
+    if (!this.batch) {
+      const batchId = this.route.snapshot.paramMap.get('batchId')!;
+      this.orderFileService.startConnection();
+      this.batchService.startConnection(batchId);
+      this.getBatch();
+    }
+    
     this.getOrderFiles();
     this.startRefreshing();
   }
 
   ngOnDestroy(): void {
     clearInterval(this.refreshInterval);
-  }
-
-  loadBank() {
-    let bankId = this.route.snapshot.paramMap.get('bankId');
-    if (!bankId) return;
-    this.$subscription.add(
-      this.bankService.getBanks().subscribe((data) => {
-        this.bankInfo = data.bankInfos.find((bank: Bank) => bank.id === bankId);
-      })
-    );
   }
 
   getBatch() {
@@ -154,7 +158,7 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
       next: (returnLog: any) => {
         this.toastr.success('Process successfully.');
         this.getOrderFiles();
-        if(returnLog.logMessage !== ''){
+        if (returnLog.logMessage !== '') {
           this.dialogData.dialogType = LogType.Warning;
           this.dialogData.dialogMessage = returnLog.logMessage;
           this.visibleDialog = true;
@@ -164,7 +168,7 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
         this.dialogData.dialogType = LogType.Error;
         this.dialogData.dialogMessage = err.error.message;
         this.visibleDialog = true;
-      }
+      },
     });
   }
 
@@ -190,8 +194,8 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
       this.selectedFiles.forEach((file) => {
         formData.append('files', file, file.name);
       });
-      if (this.bankInfo) {
-        formData.append('bankId', this.bankInfo?.id);
+      if (this.bankInfoId) {
+        formData.append('bankId', this.bankInfoId);
       }
       if (this.batch) {
         formData.append('batchId', this.batch?.id);
@@ -219,11 +223,10 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
 
   getOrderFiles() {
     const headers = new HttpHeaders().set('X-Skip-Spinner', 'true');
-    let batchId = this.route.snapshot.paramMap.get('batchId');
-    let bankId = this.route.snapshot.paramMap.get('bankId');
+    const batchId = this.batch?.id;
 
     this.orderFileService
-      .getOrderFiles(bankId, batchId, headers)
+      .getOrderFiles(this.bankInfoId, batchId, headers)
       .subscribe((data) => {
         if (!data) return;
         if (!data.orderFiles) return;
@@ -233,14 +236,16 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
 
         this.orderFiles.forEach((orderFile: OrderFile) => {
           if (orderFile.status === 'Processing') {
-            // Refresh the page or update the view
             this.refreshView();
           } else {
             clearInterval(this.refreshInterval);
           }
 
-          if(orderFile.status === "Pending"){
-            const invalidCheckOrders = orderFile.checkOrders.filter((checkOrder: CheckOrders) => !checkOrder.isValid && checkOrder.errorMessage !== '');
+          if (orderFile.status === 'Pending') {
+            const invalidCheckOrders = orderFile.checkOrders.filter(
+              (checkOrder: CheckOrders) =>
+                !checkOrder.isValid && checkOrder.errorMessage !== ''
+            );
             console.log(invalidCheckOrders);
             invalidCheckOrders.forEach((invalidCheckOrder: CheckOrders) => {
               this.dialogData.dialogType = LogType.Error;
@@ -261,8 +266,7 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
   }
 
   canBeProcess(orderFile: OrderFile): boolean {
-    if(!orderFile.checkOrders)
-      return false;
+    if (!orderFile.checkOrders) return false;
 
     return orderFile.checkOrders.some((x) => !x.isValid);
   }
@@ -283,7 +287,7 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
     this.visibleDialog = true;
   }
 
-  processAll(){
+  processAll() {
     // this.orderFileService.processAllOrderFiles(this.bankInfo?.id).subscribe({
     //   next: (_) => {
     //     this.toastr.success('Successfully processed all order files.');
@@ -291,12 +295,32 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
     // });
   }
 
-  validateAll(){
-    this.orderFileService.validateAllOrderFiles(this.bankInfo!.id, this.batch!.id).subscribe({
-      next: (data) => {
+  validateAll() {
+    this.orderFileService
+      .validateAllOrderFiles(this.bankInfoId, this.batch!.id)
+      .subscribe({
+        next: (data) => {
+          this.getOrderFiles();
+        },
+      });
+  }
+  canBeValidateByBatch(orderFiles: OrderFile[]): boolean {
+    return orderFiles.filter(x => x.status !== 'Valid' && x.status !== 'Completed').length > 0;
+  }
+  canBeProcessByBatch(orderFiles: OrderFile[]): boolean {
+    return orderFiles.filter(x => x.status !== 'Valid' && x.status !== 'Completed').length > 0;
+  }
 
-        this.getOrderFiles()
-      }
-    });
+
+  canBeValidate(orderFile: OrderFile): boolean {
+    return orderFile.status !== 'Valid' && orderFile.status !== 'Completed';
+  }
+
+  canOrderFileBeProcess(orderFile: OrderFile): boolean {
+    return orderFile.status === 'Valid';
+  }
+
+  orderFileIsValid(orderFile: OrderFile): boolean {
+    return orderFile.status === 'Completed';
   }
 }

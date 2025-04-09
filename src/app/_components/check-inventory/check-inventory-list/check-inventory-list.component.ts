@@ -21,18 +21,6 @@ export class CheckInventoryListComponent implements OnInit {
     'tag',
   ];
   checkInventories: CheckInventory[] = [
-    {
-      id: '12341234',
-      isRepeating: true,
-      numberOfPadding: 5,
-      product: 'Product 1',
-      tag: 'Default',
-      warningSeries: 500,
-      startingSeries: 1,
-      seriesPattern: 'ABCC',
-      productId: '1',
-      tagId: '1',
-    },
   ];
   ngOnInit(): void {}
 }

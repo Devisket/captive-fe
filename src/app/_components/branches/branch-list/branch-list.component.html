@@ -1,48 +1,37 @@
-@if (branches) {
-    <div class="table-responsive" style="min-height: 300px;">
-        <table class="table table-sm" width="100%">
-            <thead>
-                <tr>
-                    <th>Branch Name</th>
-                    <th>BRSTN Code</th>
-                    <th>Branch Code</th>
-                    <th>Branch Address</th>
-                    <th class="text-center">
-                        Action
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                
-                @for (branch of branches; track $index) {
-                    <tr>
-                        <td>{{ branch.branchName }}</td>
-                        <td>{{ branch.brstn }}</td>
-                        <td>{{ branch.branchCode }}</td>
-                        <td>
-                            <div dropdown class="dropdown" style="min-width: 300px;">
-                                <a dropdownToggle class="text-dark">{{branch.branchAddress1}}</a>
-                                <div *dropdownMenu class="dropdown-menu">
-                                    <ol>
-                                        @if (branch.branchAddress1 != null) { <li class="px-3">{{branch.branchAddress1}}</li> }
-                                        @if (branch.branchAddress2 != null) { <li class="px-3">{{branch.branchAddress2}}</li> }
-                                        @if (branch.branchAddress3 != null) { <li class="px-3">{{branch.branchAddress3}}</li> }
-                                        @if (branch.branchAddress4 != null) { <li class="px-3">{{branch.branchAddress4}}</li> }
-                                        @if (branch.branchAddress5 != null) { <li class="px-3">{{branch.branchAddress5}}</li> }
-                                    </ol>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="d-flex justify-content-center">
-                                <button type="button" class="btn btn-sm btn-info me-2" (click)="openEditBranchModal(branch.id)" ><i class="fa fa-edit"></i></button>
-                                <button type="button" class="btn btn-sm btn-danger me-2" (click)="deleteBranch(bankInfo().id, branch.id, $event)"><i class="fa fa-trash"></i></button>
-                            </div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-}
-
+<h1>Branch List</h1>
+<p-button label="Add Branch" icon="pi pi-plus" (onClick)="onAddBranch()"></p-button>
+<p-table 
+[paginator]="true"
+[rows]="5"
+[scrollable]="true"
+[scrollHeight]="'500px'"
+[tableStyle]="{ 'min-width': '50rem' }"
+[rowsPerPageOptions]="[5, 10, 20]"
+[paginatorDropdownAppendTo]="'body'"
+[value]="branches">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Branch Name</th>
+      <th>BRSTN Code</th>
+      <th>Branch Code</th>
+      <th>Branch Address</th>
+      <th>Action</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-branch>
+    <tr>
+      <td>{{ branch.branchName }}</td>
+      <td>{{ branch.brstn }}</td>
+      <td>{{ branch.branchCode }}</td>
+      <td>
+        <div dropdown class="dropdown" style="min-width: 300px">
+          <a dropdownToggle class="text-dark">{{ branch.branchAddress1 }}</a>
+        </div>
+      </td>
+      <td>
+        <p-button class="mx-2">Edit</p-button>
+        <p-button>Delete</p-button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

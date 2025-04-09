@@ -12,7 +12,7 @@ import { BranchService } from '../../../_services/branch.service';
 import { BankBranch } from '../../../_models/bank-branch';
 import { Product } from '../../../_models/product';
 import { FormCheck } from '../../../_models/form-check';
-import { FormCheckService } from '../../../_services/form-check.service';
+import { FormChecksService } from '../../../_services/form-check.service';
 import { ProductService } from '../../../_services/product.service';
 
 @Component({
@@ -34,7 +34,7 @@ export class AddTagMappingComponent {
   tagServices = inject(TagsService);
   tagMappingServices = inject(TagMappingService);
   branchService = inject(BranchService);
-  formCheckServices = inject(FormCheckService);
+  formCheckServices = inject(FormChecksService);
   productServices = inject(ProductService);
   bankService = inject(BanksService);
   toastr = inject(ToastrService);
@@ -71,9 +71,9 @@ export class AddTagMappingComponent {
   }
 
   loadProducts(){
-    this.productServices.getAllProducts(this.bankId).subscribe(data => {
-      this.products = data.productTypes;
-    })
+    // this.productServices.getAllProducts(this.bankId).subscribe(data => {
+    //   this.products = data.productTypes;
+    // })
   }
 
   loadTag() {

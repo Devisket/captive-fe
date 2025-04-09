@@ -1,12 +1,13 @@
-<ngx-spinner type='ball-clip-rotate-pulse'>
+<div class="h-full flex flex-column">
+  <p-toast />
+  <ngx-spinner type="ball-clip-rotate-pulse">
     <h3>Loading...</h3>
-</ngx-spinner>
-<header>
+  </ngx-spinner>
+  <header>
     <app-header></app-header>
-</header>
-<main style="overflow: auto;" class="p-5 mb-5">
-    <div class="container">
-        <router-outlet></router-outlet>
-    </div>
-</main>
-<app-footer></app-footer>
+  </header>
+  <main class="p-5 flex-grow-1 overflow-auto">
+    <router-outlet></router-outlet>
+  </main>
+  <app-footer></app-footer>
+</div>

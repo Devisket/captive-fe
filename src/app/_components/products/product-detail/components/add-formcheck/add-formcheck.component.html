@@ -1,0 +1,104 @@
+<form class="formgrid grid" [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+  <div class="field col-6 mt-5">
+    <span class="p-float-label">
+      <input
+        class="w-full"
+        [ngClass]="{'ng-invalid ng-dirty': formGroup.get('checkType')?.invalid && formGroup.get('checkType')?.touched}"
+        pInputText
+        id="checkType"
+        formControlName="checkType"
+      />
+      <label for="checkType">Check Type *</label>
+    </span>
+    <small class="p-error" *ngIf="formGroup.get('checkType')?.invalid && formGroup.get('checkType')?.touched">
+      Check Type is required
+    </small>
+  </div>
+
+  <div class="field col-6 mt-5">
+    <span class="p-float-label">
+      <input
+        class="w-full"
+        [ngClass]="{'ng-invalid ng-dirty': formGroup.get('formType')?.invalid && formGroup.get('formType')?.touched}"
+        pInputText
+        id="formType"
+        formControlName="formType"
+      />
+      <label for="formType">Form Type *</label>
+    </span>
+    <small class="p-error" *ngIf="formGroup.get('formType')?.invalid && formGroup.get('formType')?.touched">
+      Form Type is required
+    </small>
+  </div>
+
+  <div class="field my-3 col-6">
+    <span class="p-float-label">
+      <input
+        pInputText
+        id="description"
+        formControlName="description"
+        class="w-full"
+      />
+      <label for="description">Description</label>
+    </span>
+  </div>
+
+  <div class="field my-3 col-6">
+    <span class="p-float-label">
+      <p-dropdown
+        [options]="formCheckTypes"
+        formControlName="formCheckType"
+        [ngClass]="{'ng-invalid ng-dirty': formGroup.get('formCheckType')?.invalid && formGroup.get('formCheckType')?.touched}"
+        id="formcheckType"
+        optionLabel="label"
+        optionValue="value"
+        class="w-full"
+      />
+      <label for="formcheckType">Form Check Type *</label>
+    </span>
+    <small class="p-error" *ngIf="formGroup.get('formCheckType')?.invalid && formGroup.get('formCheckType')?.touched">
+      Form Check Type is required
+    </small>
+  </div>
+
+  <div class="field my-3 col-6">
+    <span class="p-float-label">
+      <input
+        class="w-full"
+        [ngClass]="{'ng-invalid ng-dirty': formGroup.get('fileInitial')?.invalid && formGroup.get('fileInitial')?.touched}"
+        pInputText
+        id="fileInitial"
+        formControlName="fileInitial"
+      />
+      <label for="fileInitial">File Initial *</label>
+    </span>
+    <small class="p-error" *ngIf="formGroup.get('fileInitial')?.invalid && formGroup.get('fileInitial')?.touched">
+      File Initial is required
+    </small>
+  </div>
+
+  <div class="field my-3 col-6">
+    <span class="p-float-label">
+      <p-inputNumber
+        class="w-full"
+        [ngClass]="{'ng-invalid ng-dirty': formGroup.get('quantity')?.invalid && formGroup.get('quantity')?.touched}"
+        id="quantity"
+        formControlName="quantity"
+        [useGrouping]="false"
+      />
+      <label for="quantity">Quantity *</label>
+    </span>
+    <small class="p-error" *ngIf="formGroup.get('quantity')?.invalid && formGroup.get('quantity')?.touched">
+      <span *ngIf="formGroup.get('quantity')?.errors?.['required']">Quantity is required</span>
+      <span *ngIf="formGroup.get('quantity')?.errors?.['pattern']">Quantity must be a number</span>
+    </small>
+  </div>
+
+  <div class="field mt-5 col-12 flex justify-content-center">
+    <p-button 
+      label="Submit" 
+      type="submit"
+      [disabled]="formGroup.invalid"
+    />
+  </div>
+</form>

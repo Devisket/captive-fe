@@ -1,55 +1,206 @@
-<!-- @if (bankInfo && checkValidation) {
-
-<div class="d-flex justify-content-between mb-3">
-  <h4>
-    {{ bankInfo.bankName }} Tag List
-  </h4>
-  <div class="d-flex justify-content-end">
-      <button
-        class="btn btn-success me-2 btn-sm"
-        [routerLink]="['/add-tag', checkValidation.id, 'bank', bankInfo.id ]"
-        type="button"
-        tabindex="-1"
-        >
-        ADD NEW TAG
-      </button>
-
-      <button
-        class="btn btn-danger me-2 btn-sm"
-        routerLink="/banks/{{ bankInfo.id }}"
-        type="button"
-        tabindex="-1"
-        >
-        BACK TO BANK INFO
-      </button>
-  </div>
+<div class="flex justify-content-between align-items-center mb-2">
+  <h1>Check Validations</h1>
+  <p-button
+    label="Add Tag"
+    icon="pi pi-plus"
+    (onClick)="showAddDialog()"
+  ></p-button>
 </div>
 
-  @if(tags.length > 0){
-    @for(tag of tags; track $index){
-      <div class="row">
-        <div class="col-12">
-            <div style="background-color: azure;" class="p-4 pb-0">
-              <div class="d-flex justify-content-between">
-                <h4>{{ tag.name | uppercase }}</h4>
-                <div class="d-flex justify-content-start">
-                  <button type="button" [routerLink]="['/add-tag-mapping', tag.id, 'checkValidation', checkValidation.id, 'bank', bankInfo.id ]" class="btn btn-sm py-0 btn-outline-primary me-2">Add Mapping</button>
-                  <button type="button" [routerLink]="['/edit-tag', tag.id, 'checkValidation', checkValidation.id, 'bank', bankInfo.id ]" class="btn btn-sm py-0 btn-outline-warning me-2">Edit</button>
-                  <button type="button" class="btn btn-sm py-0 btn-outline-danger me-2" (click)="deleteTag(tag.id, $event)">Delete</button>
-                  <button type="button" class="btn btn-sm py-0 btn-outline-info me-2" (click)="toggletagMappingVisibility(tag.id)">
-                    @if(!isTagMappingVisible(tag.id)){
-                      <i class="fa fa-arrow-down text-primary"></i> {{ tag.mapping.length }}
-                    }
-                    @else {
-                      <i class="fa fa-arrow-up text-danger"> {{ tag.mapping.length }}</i>
-                    }
-                  </button>
-                </div>
-              </div>
-              <app-tag-mapping-list *ngIf="tag.mapping.length > 0 && isTagMappingVisible(tag.id)" [mapping]="tag.mapping" [bankInfo]="bankInfo" [tag]="tag"></app-tag-mapping-list>
+<p-dialog
+  header="Add New Tag"
+  [(visible)]="displayAddDialog"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  class="p-fluid"
+>
+  <div class="field">
+    <label for="tagName">Tag Name</label>
+    <input
+      type="text"
+      pInputText
+      id="tagName"
+      [(ngModel)]="newTag.tagName"
+      required
+      autofocus
+    />
+  </div>
+  <div class="field-checkbox">
+    <p-checkbox
+      [(ngModel)]="newTag.isDefaultTag"
+      [binary]="true"
+      inputId="isDefault"
+    ></p-checkbox>
+    <label for="isDefault" class="ml-2">Default Tag</label>
+  </div>
+  <div class="field-checkbox">
+    <p-checkbox
+      [(ngModel)]="newTag.searchByBranch"
+      [binary]="true"
+      inputId="searchByBranch"
+    ></p-checkbox>
+    <label for="searchByBranch" class="ml-2">Search By Branch</label>
+  </div>
+  <div class="field-checkbox">
+    <p-checkbox
+      [(ngModel)]="newTag.searchByAccount"
+      [binary]="true"
+      inputId="searchByAccount"
+    ></p-checkbox>
+    <label for="searchByAccount" class="ml-2">Search By Account</label>
+  </div>
+  <div class="field-checkbox">
+    <p-checkbox
+      [(ngModel)]="newTag.searchByFormCheck"
+      [binary]="true"
+      inputId="searchByFormCheck"
+    ></p-checkbox>
+    <label for="searchByFormCheck" class="ml-2">Search By Form Check</label>
+  </div>
+  <div class="field-checkbox">
+    <p-checkbox
+      [(ngModel)]="newTag.searchByProduct"
+      [binary]="true"
+      inputId="searchByProduct"
+    ></p-checkbox>
+    <label for="searchByProduct" class="ml-2">Search By Product</label>
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button
+      label="Save"
+      icon="pi pi-check"
+      (onClick)="saveNewTag()"
+    ></p-button>
+    <p-button
+      label="Cancel"
+      icon="pi pi-times"
+      (onClick)="hideAddDialog()"
+      class="p-button-text"
+    ></p-button>
+  </ng-template>
+</p-dialog>
+
+<p-toast></p-toast>
+
+<p-table
+  [value]="tags"
+  [tableStyle]="{ 'min-width': '50rem' }"
+  [scrollable]="true"
+  [scrollHeight]="'500px'"
+  styleClass="p-datatable-sm"
+  editMode="row"
+  dataKey="id"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th class="text-center">Tag Name</th>
+      <th class="text-center">Default Tag</th>
+      <th class="text-center">Search By Branch</th>
+      <th class="text-center">Search By Account</th>
+      <th class="text-center">Search By Form Check</th>
+      <th class="text-center">Search By Product</th>
+      <th class="text-center">Actions</th>
+    </tr>
+  </ng-template>
+  <ng-template
+    pTemplate="body"
+    let-tag
+    let-editing="editing"
+    let-rowIndex="rowIndex"
+  >
+    <tr [pEditableRow]="tag">
+      <td class="text-center">
+        <a 
+          href="javascript:void(0)" 
+          class="text-primary cursor-pointer hover:underline"
+          (click)="showTagDetail(tag)"
+        >
+          {{ tag.tagName }}
+        </a>
+      </td>
+      <td class="text-center">
+        <p-checkbox
+          [binary]="true"
+          [(ngModel)]="tag.isDefaultTag"
+          [disabled]="!editing"
+          inputId="default-{{ tag.id }}"
+        ></p-checkbox>
+      </td>
+      <td class="text-center">
+        <p-checkbox
+          [binary]="true"
+          [(ngModel)]="tag.searchByBranch"
+          [disabled]="!editing"
+          (onChange)="onSearchOptionChange(tag, 'searchByBranch')"
+          inputId="branch-{{ tag.id }}"
+        ></p-checkbox>
+      </td>
+      <td class="text-center">
+        <p-checkbox
+          [binary]="true"
+          [(ngModel)]="tag.searchByAccount"
+          [disabled]="!editing"
+          (onChange)="onSearchOptionChange(tag, 'searchByAccount')"
+          inputId="account-{{ tag.id }}"
+        ></p-checkbox>
+      </td>
+      <td class="text-center">
+        <p-checkbox
+          [binary]="true"
+          [(ngModel)]="tag.searchByFormCheck"
+          [disabled]="!editing"
+          (onChange)="onSearchOptionChange(tag, 'searchByFormCheck')"
+          inputId="formcheck-{{ tag.id }}"
+        ></p-checkbox>
+      </td>
+      <td class="text-center">
+        <p-checkbox
+          [binary]="true"
+          [(ngModel)]="tag.searchByProduct"
+          [disabled]="!editing"
+          (onChange)="onSearchOptionChange(tag, 'searchByProduct')"
+          inputId="product-{{ tag.id }}"
+        ></p-checkbox>
+      </td>
+      <td class="text-center">
+        <div class="flex justify-content-center gap-2">
+          <button
+            *ngIf="!editing"
+            pButton
+            type="button"
+            icon="pi pi-pencil"
+            class="p-button-rounded p-button-text"
+            pInitEditableRow
+            (click)="onRowEditInit(tag)"
+          ></button>
+          <button
+            *ngIf="!editing"
+            pButton
+            type="button"
+            icon="pi pi-trash"
+            class="p-button-rounded p-button-text"
+            (click)="onDeleteTag(tag)"
+          ></button>
+          <button
+            *ngIf="editing"
+            pButton
+            type="button"
+            icon="pi pi-check"
+            class="p-button-rounded p-button-text p-button-success"
+            pSaveEditableRow
+            (click)="onRowEditSave(tag)"
+          ></button>
+          <button
+            *ngIf="editing"
+            pButton
+            type="button"
+            icon="pi pi-times"
+            class="p-button-rounded p-button-text p-button-danger"
+            pCancelEditableRow
+            (click)="onRowEditCancel(tag)"
+          ></button>
         </div>
-      </div>
-      </div>
-    }
-  }
-} -->
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

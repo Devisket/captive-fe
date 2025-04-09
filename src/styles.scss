@@ -1,27 +1,14 @@
 @import "primeng/resources/themes/lara-light-blue/theme.css";
 @import "primeng/resources/primeng.css";
 @import "primeicons/primeicons.css";
-
 html, body { 
     height: 100%;
     font-family: var(--font-family);
     margin: 0;
-}
-
-// Apply dark theme to bootstrap components
-.btn {
-    color: var(--text-color);
-}
-
-.table {
-    color: var(--text-color);
+    padding: 0;
+    display: block;
 }
 
 .bg-light {
     background-color: var(--surface-card) !important;
-}
-
-// Add contrast to text on dark backgrounds
-.text-primary {
-    color: var(--primary-color) !important;
 }

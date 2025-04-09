@@ -1,7 +1,21 @@
+<h1>Product List</h1>
+<p-button
+  type="button"
+  label="Add Product"
+  icon="pi pi-plus"
+  (onClick)="openAddProductButtonClick()"
+></p-button>
 <p-table
   [value]="products"
   [tableStyle]="{ 'min-width': '50rem' }"
+  [rows]="5"
+  [scrollable]="true"
+  [scrollHeight]="'500px'"
+  [tableStyle]="{ 'min-width': '50rem' }"
+  [paginatorDropdownAppendTo]="'body'"
   styleClass="p-datatable-sm"
+  dataKey="productId"
+  editMode="row"
 >
   <ng-template pTemplate="header">
     <tr>
@@ -10,54 +24,57 @@
     </tr>
   </ng-template>
 
-  <ng-template pTemplate="body" let-product>
-    <tr>
-      <td class="text-center">{{ product.productTypeName }}</td>
-      <td class="p-0">
-        <div class="d-flex justify-content-center align-items-center gap-2">
-          <button
+  <ng-template pTemplate="body" let-product let-editing="editing" let-rowIndex="rowIndex">
+    <tr [pEditableRow]="product">
+      <td class="text-center">
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <input pInputText type="text" [(ngModel)]="product.productName" />
+          </ng-template>
+          <ng-template pTemplate="output">
+            <a
+              [routerLink]="['../product-detail', product.productId]"
+              class="no-underline text-primary"
+            >
+              {{ product.productName }}
+            </a>
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        <div
+          *ngIf="!editing"
+          class="flex justify-content-center align-items-center gap-2"
+        >
+          <p-button
             type="button"
-            [routerLink]="[
-              '/add-form-check',
-              product.productTypeId,
-              'bank',
-              bankInfo().id
-            ]"
-            class="btn btn-info btn-sm"
-          >
-            <i class="fa fa-plus"></i> ADD FORM CHECK
-          </button>
-          <button
+            label="Edit"
+            icon="pi pi-pencil"
+            pInitEditableRow
+            (onClick)="onRowEditInit(product)"
+          />
+          <p-button
             type="button"
-            [routerLink]="[
-              '/view-configuration',
-              product.productTypeId,
-              'bank',
-              bankInfo().id
-            ]"
-            class="btn btn-success btn-sm"
-          >
-            <i class="fa fa-eye"></i> CONFIGURATION
-          </button>
-          <button
+            label="Delete"
+            icon="pi pi-trash"
+            (click)="deleteProductType(product.productId, $event)"
+          />
+        </div>
+        <div *ngIf="editing" class="flex justify-content-center align-items-center gap-2">
+          <p-button
             type="button"
-            [routerLink]="[
-              '/edit-product',
-              product.productTypeId,
-              'bank',
-              bankInfo().id
-            ]"
-            class="btn btn-warning btn-sm"
-          >
-            <i class="fa fa-edit"></i> EDIT
-          </button>
-          <button
+            label="Save"
+            icon="pi pi-check"
+            (click)="onRowEditSave(product)"
+            pSaveEditableRow
+          />
+          <p-button
             type="button"
-            (click)="deleteProductType(product.productTypeId, $event)"
-            class="btn btn-danger btn-sm"
-          >
-            <i class="fa fa-trash"></i> DELETE
-          </button>
+            label="Cancel"
+            icon="pi pi-times"
+            (click)="onCancelEdit(product)"
+            pCancelEditableRow
+          />
         </div>
       </td>
     </tr>

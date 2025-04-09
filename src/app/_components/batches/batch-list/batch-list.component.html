@@ -1,42 +1,35 @@
-@if(batches){
-  <div class="table-responsive">
-    <table class="table table-sm" width="100%">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Batch</th>
-          <th>No of Files</th>
-          <th>Date Upload</th>
-          <th>Status</th>
-          <th class="text-center">Action</th>
-        </tr>
-      </thead>
-      <tbody>
+<h1>Batch List</h1>
+<p-button label="Add Batch" icon="pi pi-plus" (onClick)="onAddBatch()"></p-button>
+<div class="flex flex-column">
+  <p-table [value]="batches">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>#</th>
+        <th>Batch</th>
+        <th>No of Files</th>
+        <th>Created Date</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-batch>
+      <tr>
+        <td>{{ batch.orderNumber }}</td>
+        <td>
+          <a href="javascript:void(0)" 
+             class="text-primary cursor-pointer hover:underline"
+             (click)="showBatchDetail(batch)">
+            {{ batch.batchName }}
+          </a>
+        </td>
+        <td>{{ batch.noOfFiles }}</td>
+        <td>{{ batch.createdDate }}</td>
+        <td>{{ batch.batchFileStatus }}</td>
+        <td>
+          <p-button label="Delete" (onClick)="onDeleteBatch(batch.id)" [outlined]="true" severity="danger" />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
 
-        <tbody>
-
-          @for (batch of batches; track $index) {
-              <tr>
-                  <td>{{ $index + 1 }}</td>
-                  <td title="{{ batch.id }}">{{ batch.batchName }}</td>
-                  <td>{{ batch.orderNumber }}</td>
-                  <td>{{ batch.createdDate | date: "MMM dd, yyyy"}}</td>
-                  <td> @if(!batch.batchFileStatus){
-                        <strong class="text-primary">New</strong>
-                      }
-                      @else{
-                        <span class="text-sucess">Processed</span>
-                      }
-                    </td>
-                  <td>
-                      <div class="d-flex justify-content-center">
-                          <button type="button" [routerLink]="['/upload-order-files', batch.id, 'bank', bankInfo().id]"  class="btn btn-sm btn-outline-info me-2"><i class="fa fa-file mx-1"></i>View </button>
-                          <button type="button" (click)="onDeleteBatch(batch.id)" class="btn btn-sm btn-outline-danger me-2"><i class="fa fa-trash-o mx-1"></i>Delete</button>
-                      </div>
-                  </td>
-              </tr>
-          }
-      </tbody>
-    </table>
-  </div>
-}

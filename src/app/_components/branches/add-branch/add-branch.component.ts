@@ -1,69 +1,66 @@
-import { ChangeDetectorRef, Component, HostListener, inject, Input, OnInit, ViewChild } from '@angular/core';
-import { FormsModule, NgForm } from '@angular/forms';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  inject,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  NgForm,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { BranchService } from '../../../_services/branch.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { EnumsService } from '../../../_services/enums.service';
 import { BankBranch } from '../../../_models/bank-branch';
+import { Store } from '@ngrx/store';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-add-branch',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, ReactiveFormsModule],
   templateUrl: './add-branch.component.html',
-  styleUrl: './add-branch.component.scss'
+  styleUrl: './add-branch.component.scss',
 })
-export class AddBranchComponent implements OnInit{
-  @ViewChild('addBranchForm') addBranchForm?: NgForm;
-  @HostListener('window:beforeunload', ['$event']) notify($event:any) {
-    if (this.addBranchForm?.dirty) {
-      $event.returnValue = true;
+export class AddBranchComponent implements OnInit {
+  constructor(
+    private store: Store,
+    private dynamicDialogConfig: DynamicDialogConfig,
+    private dialogRef: DynamicDialogRef
+  ) {}
+
+  formGroup = new FormGroup({
+    branchId: new FormControl(''),
+    branchName: new FormControl('', [Validators.required]),
+    brstnCode: new FormControl('', [Validators.required]),
+    branchCode: new FormControl('', [Validators.required]),
+    BranchAddress1: new FormControl('', [Validators.required]),
+    BranchAddress2: new FormControl('', [Validators.required]),
+    BranchAddress3: new FormControl('', [Validators.required]),
+    BranchAddress4: new FormControl('', [Validators.required]),
+    BranchAddress5: new FormControl('', [Validators.required]),
+  });
+
+  ngOnInit(): void {
+    if(this.dynamicDialogConfig.data.branchData){
+      this.formGroup.patchValue(this.dynamicDialogConfig.data.branchData);
     }
   }
 
-  branchService = inject(BranchService);
-  toastr = inject(ToastrService);
-  router = inject(Router);
-  enums = inject(EnumsService);
-  private cdr = inject(ChangeDetectorRef);
-  branches: BankBranch[] = [];
-
-  @Input() title?: string;
-  @Input() dataId?: string;
-
-
-  bsModalRef = inject(BsModalRef);
-  statuses: any = [];
-  tags: any = [];
-
-  ngOnInit(): void {
-    this.statuses = this.enums.branchStatus();
-    this.tags = this.enums.branchTags();
-    this.cdr.detectChanges();
-    this.getBranches();
-
+  onSubmit() {
+    if(this.formGroup.valid){
+      
+    }
   }
-  model: any = {};
-
-  addBranch(){
-    const values = this.bsModalRef.id;
-    this.branchService.addBranch(this.addBranchForm?.value, values).subscribe({
-      next: _ => {
-        this.toastr.success("Bank has been added successsfully");
-        this.addBranchForm?.reset();
-        this.bsModalRef.hide();
-      },
-      error: error => this.toastr.error("Not saved"),
-      complete: () => window.location.reload()
-    })
+  onClose() {
+    this.dialogRef.close();
   }
-
-  getBranches() {
-    this.branchService.getBranches(this.dataId).subscribe(data => {
-      if(!data) return;
-      this.branches = data.branches;
-    });
-  }
-
 }
