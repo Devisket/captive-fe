@@ -1,81 +1,81 @@
 <div class="flex justify-content-between align-items-center mb-2">
-  <h1>Tag List</h1>
-  <p-button 
-    label="Add Tag" 
-    icon="pi pi-plus" 
+  <h1>Check Validations</h1>
+  <p-button
+    label="Add Tag"
+    icon="pi pi-plus"
     (onClick)="showAddDialog()"
   ></p-button>
 </div>
 
-<p-dialog 
-  header="Add New Tag" 
-  [(visible)]="displayAddDialog" 
-  [modal]="true" 
-  [style]="{ width: '450px' }" 
+<p-dialog
+  header="Add New Tag"
+  [(visible)]="displayAddDialog"
+  [modal]="true"
+  [style]="{ width: '450px' }"
   class="p-fluid"
 >
   <div class="field">
     <label for="tagName">Tag Name</label>
-    <input 
-      type="text" 
-      pInputText 
-      id="tagName" 
-      [(ngModel)]="newTag.tagName" 
-      required 
+    <input
+      type="text"
+      pInputText
+      id="tagName"
+      [(ngModel)]="newTag.tagName"
+      required
       autofocus
     />
   </div>
   <div class="field-checkbox">
-    <p-checkbox 
-      [(ngModel)]="newTag.isDefaultTag" 
-      [binary]="true" 
+    <p-checkbox
+      [(ngModel)]="newTag.isDefaultTag"
+      [binary]="true"
       inputId="isDefault"
     ></p-checkbox>
     <label for="isDefault" class="ml-2">Default Tag</label>
   </div>
   <div class="field-checkbox">
-    <p-checkbox 
-      [(ngModel)]="newTag.searchByBranch" 
-      [binary]="true" 
+    <p-checkbox
+      [(ngModel)]="newTag.searchByBranch"
+      [binary]="true"
       inputId="searchByBranch"
     ></p-checkbox>
     <label for="searchByBranch" class="ml-2">Search By Branch</label>
   </div>
   <div class="field-checkbox">
-    <p-checkbox 
-      [(ngModel)]="newTag.searchByAccount" 
-      [binary]="true" 
+    <p-checkbox
+      [(ngModel)]="newTag.searchByAccount"
+      [binary]="true"
       inputId="searchByAccount"
     ></p-checkbox>
     <label for="searchByAccount" class="ml-2">Search By Account</label>
   </div>
   <div class="field-checkbox">
-    <p-checkbox 
-      [(ngModel)]="newTag.searchByFormCheck" 
-      [binary]="true" 
+    <p-checkbox
+      [(ngModel)]="newTag.searchByFormCheck"
+      [binary]="true"
       inputId="searchByFormCheck"
     ></p-checkbox>
     <label for="searchByFormCheck" class="ml-2">Search By Form Check</label>
   </div>
   <div class="field-checkbox">
-    <p-checkbox 
-      [(ngModel)]="newTag.searchByProduct" 
-      [binary]="true" 
+    <p-checkbox
+      [(ngModel)]="newTag.searchByProduct"
+      [binary]="true"
       inputId="searchByProduct"
     ></p-checkbox>
     <label for="searchByProduct" class="ml-2">Search By Product</label>
   </div>
   <ng-template pTemplate="footer">
-    <p-button 
-      label="Cancel" 
-      icon="pi pi-times" 
-      (onClick)="hideAddDialog()" 
-      class="p-button-text"
-    ></p-button>
-    <p-button 
-      label="Save" 
-      icon="pi pi-check" 
+    <p-button
+      label="Save"
+      icon="pi pi-check"
       (onClick)="saveNewTag()"
+    ></p-button>
+    <p-button
+      label="Cancel"
+      icon="pi pi-times"
+      (onClick)="hideAddDialog()"
+      class="p-button-text"
     ></p-button>
   </ng-template>
 </p-dialog>
@@ -109,7 +109,15 @@
     let-rowIndex="rowIndex"
   >
     <tr [pEditableRow]="tag">
-      <td class="text-center">{{ tag.tagName }}</td>
+      <td class="text-center">
+        <a 
+          href="javascript:void(0)" 
+          class="text-primary cursor-pointer hover:underline"
+          (click)="showTagDetail(tag)"
+        >
+          {{ tag.tagName }}
+        </a>
+      </td>
       <td class="text-center">
         <p-checkbox
           [binary]="true"

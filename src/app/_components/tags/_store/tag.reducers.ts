@@ -14,42 +14,51 @@ import { CheckInventory } from '../../../_models/check-inventory';
 
 export interface TagState {
   tags: Tag[];
-  selectedTag: TagDetailState;
+  selectedTag: Tag | null;
+  tagMappings: TagMapping[];
+  checkInventories: CheckInventory[];
+  error: string | null;
 }
 
-export interface TagDetailState {
-  tag: Tag | undefined;
-  tagMapping?: TagMapping[];
-  checkInventory?: CheckInventory[];
-}
-
-export const initialState: TagState = {
+const initialState: TagState = {
   tags: [],
-  selectedTag: {
-    tag: undefined,
-    tagMapping: [],
-    checkInventory: [],
-  },
+  selectedTag: null,
+  tagMappings: [],
+  checkInventories: [],
+  error: null,
 };
-
-export const tagReducer = createReducer(
-  initialState,
-  on(getTagsSuccess, (state, { tags }) => ({ ...state, tags })),
-  on(getTagsFailure, (state, { error }) => ({ ...state, error })),
-  on(getTagMappingSuccess, (state, { tagMapping }) => ({
-    ...state,
-    selectedTag: { ...state.selectedTag, tagMapping },
-  })),
-  on(getTagMappingFailure, (state, { error }) => ({ ...state, error })),
-  on(getCheckInventorySuccess, (state, { checkInventory }) => ({
-    ...state,
-    selectedTag: { ...state.selectedTag, checkInventory },
-  })),
-  on(getCheckInventoryFailure, (state, { error }) => ({ ...state, error })),
-  on(setSelectedTag, (state, { tag }) => ({ ...state, selectedTag: { tag } }))
-);
 
 export const TagFeature = createFeature({
   name: 'tag',
-  reducer: tagReducer,
+  reducer: createReducer(
+    initialState,
+    on(getTagsSuccess, (state, { tags }) => ({
+      ...state,
+      tags,
+    })),
+    on(getTagsFailure, (state, { error }) => ({
+      ...state,
+      error,
+    })),
+    on(setSelectedTag, (state, { tag }) => ({
+      ...state,
+      selectedTag: tag,
+    })),
+    on(getTagMappingSuccess, (state, { tagMapping }) => ({
+      ...state,
+      tagMappings: tagMapping,
+    })),
+    on(getTagMappingFailure, (state, { error }) => ({
+      ...state,
+      error,
+    })),
+    on(getCheckInventorySuccess, (state, { checkInventory }) => ({
+      ...state,
+      checkInventories: checkInventory,
+    })),
+    on(getCheckInventoryFailure, (state, { error }) => ({
+      ...state,
+      error,
+    }))
+  ),
 });

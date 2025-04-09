@@ -15,6 +15,7 @@ import { MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
+import { TagDetailComponent } from '../tag-detail/tag-detail.component';
 
 @Component({
   selector: 'app-tag-list',
@@ -150,6 +151,16 @@ export class TagListComponent implements OnInit, OnDestroy {
 
   onDeleteTag(tag: Tag) {
     this.store.dispatch(deleteTag({ bankInfoId: this.bankInfoId, tagId: tag.id! }));
+  }
+
+  showTagDetail(tag: Tag) {
+    const ref = this.dialogService.open(TagDetailComponent, {
+      header: `Tag Details - ${tag.tagName}`,
+      width: '70%',
+      data: {
+        tag: tag
+      }
+    });
   }
 
   ngOnDestroy(): void {
