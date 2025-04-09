@@ -16,6 +16,11 @@ import { provideEffects } from '@ngrx/effects';
 import { ProductsFeature } from './_components/products/_store/products/products.reducer';
 import { ProductsEffects } from './_components/products/_store/products/products.effects';
 import { SharedFeature } from './_store/shared/shared.reducer';
+import { FormChecksFeature } from './_components/products/_store/formchecks/formchecks.reducer';
+import { FormChecksEffects } from './_components/products/_store/formchecks/formchecks.effects';
+import { ProductConfigurationFeature } from './_components/products/_store/product-configurations/product-configuration.reducer';
+import { ProductConfigurationsEffects } from './_components/products/_store/product-configurations/product-configurations.effects';
+
 export const appConfig: ApplicationConfig = {
   providers: [
     MessageService,
@@ -29,7 +34,9 @@ export const appConfig: ApplicationConfig = {
     provideStore({
       shared: SharedFeature.reducer,
       products: ProductsFeature.reducer,
+      formChecks: FormChecksFeature.reducer,
+      productConfiguration: ProductConfigurationFeature.reducer,
     }),
-    provideEffects([ProductsEffects])
+    provideEffects([ProductsEffects, FormChecksEffects, ProductConfigurationsEffects])
 ]
 };

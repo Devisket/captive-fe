@@ -1,24 +1,32 @@
 import { Component, OnInit } from '@angular/core';
-import { ProductService } from '../../../_services/product.service';
 import { Product } from '../../../_models/product';
 import { RouterLink } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
-import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
-import { Store, StoreModule } from '@ngrx/store';
-import { Observable, map } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { Observable, Subscription, map } from 'rxjs';
 import {
   getAllProducts,
   deleteProduct,
 } from '../_store/products/products.actions';
 import { SharedFeature } from '../../../_store/shared/shared.reducer';
 import { ProductsFeature } from '../_store/products/products.reducer';
+import { DialogService } from 'primeng/dynamicdialog';
+import { AddProductComponent } from '../add-product/add-product.component';
+import { CommonModule } from '@angular/common';
+import { InputTextModule } from 'primeng/inputtext';
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [RouterLink, FormsModule, TableModule, ButtonModule],
+  imports: [
+    RouterLink,
+    FormsModule,
+    TableModule,
+    ButtonModule,
+    CommonModule,
+    InputTextModule,
+  ],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.scss',
 })
@@ -29,33 +37,34 @@ export class ProductListComponent implements OnInit {
 
   products: Product[] = [];
 
-  constructor(
-    private store: Store,
-    private productService: ProductService,
-    private toastr: ToastrService
-  ) {
+  clonedProduct: Product | undefined = undefined;
+
+  subscription$: Subscription = new Subscription();
+  constructor(private store: Store, private dialogService: DialogService) {
     this.products$ = this.store.select(ProductsFeature.selectProducts);
   }
 
   ngOnInit(): void {
-    this.products$.subscribe((products) => {
-      console.log(products);
-      this.products = products;
-      console.log(this.products);
-    });
+    this.subscription$.add(
+      this.products$.subscribe((products) => {
+        this.products = products.map(product => ({...product}));
+      })
+    );
 
-    this.store
-      .select(SharedFeature.selectSelectedBankInfoId)
-      .subscribe((bankId) => {
-        if (bankId) {
-          this.bankId = bankId as string;
-          this.loadProducts();
-        }
-      });
+    this.subscription$.add(
+      this.store
+        .select(SharedFeature.selectSelectedBankInfoId)
+        .subscribe((bankId) => {
+          if (bankId) {
+            this.bankId = bankId as string;
+            this.loadProducts();
+          }
+        })
+    );
   }
 
   loadProducts() {
-    this.store.dispatch(getAllProducts({ bankInfoId: this.bankId! }));
+    this.store.dispatch(getAllProducts({ bankId: this.bankId! }));
   }
 
   deleteProductType(productId: string, event: Event) {
@@ -63,6 +72,53 @@ export class ProductListComponent implements OnInit {
     if (!confirm('Confirm Deletion!')) {
       return;
     }
-    this.store.dispatch(deleteProduct({ id: productId }));
+    this.store.dispatch(deleteProduct({ bankId: this.bankId!, id: productId }));
+  }
+
+  ngOnDestroy(): void {
+    this.subscription$.unsubscribe();
+  }
+
+  openAddProductButtonClick(product?: Product) {
+    this.dialogService.open(AddProductComponent, {
+      header: product ? 'Update Product' : 'Add Product',
+      width: '500px',
+      closable: true,
+      focusOnShow: true,
+      closeOnEscape: true,
+      style: {
+        'max-height': '500px',
+        'min-width': '500px',
+        overflow: 'auto',
+        padding: '0px',
+      },
+      data: {
+        productId: product?.productId,
+        bankId: this.bankId,
+      },
+    });
+  }
+
+  onRowEditInit(event: any) {
+    this.clonedProduct = { ...event.data };
+  }
+
+  onRowEditSave(event: any) {
+    if (this.bankId) {
+      const product = event.data;
+      console.log('Saving product:', product);
+      this.clonedProduct = undefined;
+    }
+  }
+
+  cancelEdit(event: any) {
+    const product = event.data;
+    if (this.clonedProduct) {
+      const index = this.products.findIndex(p => p.productId === product.productId);
+      if (index !== -1) {
+        this.products[index] = {...this.clonedProduct};
+      }
+    }
+    this.clonedProduct = undefined;
   }
 }

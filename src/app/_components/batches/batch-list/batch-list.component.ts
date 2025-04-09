@@ -4,17 +4,20 @@ import { Batch } from '../../../_models/batch';
 import { ToastrService } from 'ngx-toastr';
 import { BatchesService } from '../../../_services/batches.service';
 import { DatePipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-
+import { ButtonModule } from 'primeng/button';
+import { TableModule } from 'primeng/table';
 @Component({
   selector: 'app-batch-list',
   standalone: true,
-  imports: [DatePipe, RouterLink, FormsModule],
+  imports: [DatePipe, RouterLink, FormsModule, ButtonModule, TableModule],
   templateUrl: './batch-list.component.html',
   styleUrl: './batch-list.component.scss'
 })
 export class BatchListComponent implements OnInit{
+
+  constructor(private router: Router) {}
 
   private batchServices = inject(BatchesService);
   bankInfo = input.required<Bank>();
@@ -23,10 +26,7 @@ export class BatchListComponent implements OnInit{
   toastr = inject(ToastrService);
   bankId = ""
   ngOnInit(): void 
-  {
-    this.bankInfo;
-    this.bankId = this.bankInfo().id;
-    this.getBatches();    
+  {    
   }
 
   getBatches(){    
@@ -42,4 +42,9 @@ export class BatchListComponent implements OnInit{
       this.getBatches();
     })
   }
+
+  onAddBatch()
+  {
+    this.router.navigate(['/add-batch', this.bankId]);
+  } 
 }

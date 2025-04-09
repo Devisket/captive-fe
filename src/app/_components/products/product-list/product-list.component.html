@@ -1,4 +1,10 @@
-<h1>Branch List</h1>
+<h1>Product List</h1>
+<p-button
+  type="button"
+  label="Add Product"
+  icon="pi pi-plus"
+  (onClick)="openAddProductButtonClick()"
+></p-button>
 <p-table
   [value]="products"
   [tableStyle]="{ 'min-width': '50rem' }"
@@ -8,6 +14,8 @@
   [tableStyle]="{ 'min-width': '50rem' }"
   [paginatorDropdownAppendTo]="'body'"
   styleClass="p-datatable-sm"
+  dataKey="productId"
+  editMode="row"
 >
   <ng-template pTemplate="header">
     <tr>
@@ -16,32 +24,54 @@
     </tr>
   </ng-template>
 
-  <ng-template pTemplate="body" let-product>
-    <tr>
+  <ng-template pTemplate="body" let-product let-editing="editing" let-rowIndex="rowIndex">
+    <tr [pEditableRow]="product">
       <td class="text-center">
-        <a
-          [routerLink]="['../product-detail', product.productId, 'bank', bankId]"
-          class="no-underline text-primary"
-        >
-          {{ product.productName }}
-        </a>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <input pInputText type="text" [(ngModel)]="product.productName" />
+          </ng-template>
+          <ng-template pTemplate="output">
+            <a
+              [routerLink]="['../product-detail', product.productId]"
+              class="no-underline text-primary"
+            >
+              {{ product.productName }}
+            </a>
+          </ng-template>
+        </p-cellEditor>
       </td>
       <td>
-        <div class="flex justify-content-center align-items-center gap-2">
-          <button
+        <div
+          *ngIf="!editing"
+          class="flex justify-content-center align-items-center gap-2"
+        >
+          <p-button
             type="button"
-            [routerLink]="['./edit-product', product.productId, 'bank', bankId]"
-            class="btn btn-warning btn-sm"
-          >
-            <i class="fa fa-edit"></i> EDIT
-          </button>
-          <button
+            label="Edit"
+            icon="pi pi-pencil"
+            pInitEditableRow
+          />
+          <p-button
             type="button"
+            label="Delete"
+            icon="pi pi-trash"
             (click)="deleteProductType(product.productId, $event)"
-            class="btn btn-danger btn-sm"
-          >
-            <i class="fa fa-trash"></i> DELETE
-          </button>
+          />
+        </div>
+        <div *ngIf="editing" class="flex justify-content-center align-items-center gap-2">
+          <p-button
+            type="button"
+            label="Save"
+            icon="pi pi-check"
+            pSaveEditableRow
+          />
+          <p-button
+            type="button"
+            label="Cancel"
+            icon="pi pi-times"
+            pCancelEditableRow
+          />
         </div>
       </td>
     </tr>

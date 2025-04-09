@@ -7,7 +7,7 @@ import { TableModule } from 'primeng/table';
 import { ProductService } from '../../../_services/product.service';
 import { BanksService } from '../../../_services/banks.service';
 import { BranchService } from '../../../_services/branch.service';
-import { FormCheckService } from '../../../_services/form-check.service';
+import { FormChecksService } from '../../../_services/form-check.service';
 import { Product } from '../../../_models/product';
 import { FormCheck } from '../../../_models/form-check';
 import { BankBranch } from '../../../_models/bank-branch';
@@ -28,7 +28,7 @@ export class CheckValidationListComponent implements OnInit{
   productService = inject(ProductService);
   bankService = inject(BanksService)
   branchService = inject(BranchService)
-  formCheckService = inject(FormCheckService)
+  formCheckService = inject(FormChecksService)
   
   validationTypes: any = [];
 

@@ -15,4 +15,9 @@ export const setSelectedBankInfoId = createAction(
   props<{ selectedBankInfoId: string }>()
 );
 
+export const setSelectedProductId = createAction(
+  '[Shared] Set Selected Product Id',
+  props<{ selectedProductId: string }>()
+);
+
 export const clearError = createAction('[Shared] Clear Error'); 

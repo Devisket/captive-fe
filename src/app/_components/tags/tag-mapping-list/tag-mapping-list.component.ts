@@ -1,7 +1,7 @@
 import { Component, inject, Input, input, OnInit } from '@angular/core';
 import { TagMapping } from '../../../_models/tag-mapping';
 import { BranchService } from '../../../_services/branch.service';
-import { FormCheckService } from '../../../_services/form-check.service';
+import { FormChecksService } from '../../../_services/form-check.service';
 import { ProductService } from '../../../_services/product.service';
 import { Bank } from '../../../_models/bank';
 import { BankBranch } from '../../../_models/bank-branch';
@@ -23,7 +23,7 @@ export class TagMappingListComponent implements OnInit{
 
   branchService = inject(BranchService);
   productServices = inject(ProductService);
-  formCheckService = inject(FormCheckService);
+  formCheckService = inject(FormChecksService);
   route = inject(ActivatedRoute);
   mapping = input.required<TagMapping[]>();
   tagMappingService = inject(TagMappingService);

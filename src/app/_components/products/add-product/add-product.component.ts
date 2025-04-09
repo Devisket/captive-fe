@@ -8,17 +8,33 @@ import {
 import { Bank } from '../../../_models/bank';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BanksService } from '../../../_services/banks.service';
-import { FormControl, NgForm, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormControl,
+  NgForm,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ProductService } from '../../../_services/product.service';
 import { InputTextModule } from 'primeng/inputtext';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { Store } from '@ngrx/store';
-import { createProduct } from '../_store/products/products.actions';
+import {
+  createProduct,
+  updateProduct,
+} from '../_store/products/products.actions';
+import { ButtonModule } from 'primeng/button';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 @Component({
   selector: 'app-add-product',
   standalone: true,
-  imports: [RouterLink, InputTextModule, FloatLabelModule, ReactiveFormsModule],
+  imports: [
+    InputTextModule,
+    ButtonModule,
+    FloatLabelModule,
+    ReactiveFormsModule,
+  ],
   templateUrl: './add-product.component.html',
   styleUrl: './add-product.component.scss',
 })
@@ -31,48 +47,37 @@ export class AddProductComponent implements OnInit {
   }
 
   constructor(
+    private config: DynamicDialogConfig,
     private store: Store,
-    private toastr: ToastrService,
-    private route: ActivatedRoute,
-    private router: Router
+    private ref: DynamicDialogRef
   ) {}
 
   bankService = inject(BanksService);
   productTypeService = inject(ProductService);
 
-  fg = new FormGroup({
+  formGroup: FormGroup = new FormGroup({
+    productId: new FormControl(null, []),
     productName: new FormControl('', Validators.required),
   });
 
   bankInfos: Bank[] = [];
   bankInfo?: Bank;
   model: any = {};
+  bankId: string = '';
 
-  ngOnInit(): void {
-    this.loadBank();
+  ngOnInit(): void {}
+
+  onSaveProduct() {
+    this.store.dispatch(
+      createProduct({
+        bankId: this.config.data.bankId,
+        product: this.formGroup.value,
+      })
+    );
+    this.onClose();
   }
 
-  loadBank() {
-    let bankId = this.route.snapshot.paramMap.get('id');
-    if (!bankId) return;
-    this.bankService.getBanks().subscribe((data) => {
-      this.bankInfo = data.bankInfos.find((bank: Bank) => bank.id === bankId);
-    });
-  }
-
-  get productNameFormControl() {
-    return this.fg.get('productName') as FormControl;
-  }
-
-  onSubmit() {
-    console.log(this.fg.valid);
-    if (this.fg.valid) {
-      this.store.dispatch(
-        createProduct({
-          bankInfoId: this.bankInfo!.id,
-          productName: this.productNameFormControl.value,
-        })
-      );
-    }
+  onClose() {
+    this.ref.close();
   }
 }

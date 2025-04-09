@@ -1,16 +1,27 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Product } from '../../../_models/product';
 import { FormCheck } from '../../../_models/form-check';
 import { ProductConfiguration } from '../../../_models/product-configuration';
 import { ConfigurationType } from '../../../_models/constants';
-import { FormCheckService } from '../../../_services/form-check.service';
+import { FormChecksService } from '../../../_services/form-check.service';
 import { ProductConfigurationService } from '../../../_services/product-configuration.service';
 import { ToastrService } from 'ngx-toastr';
-import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
@@ -18,11 +29,22 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextareaModule } from 'primeng/inputtextarea';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { AddFormcheckComponent } from './components/add-formcheck/add-formcheck.component';
 import { SharedFeature } from '../../../_store/shared/shared.reducer';
 import { ProductsFeature } from '../_store/products/products.reducer';
+import { FormChecksFeature } from '../_store/formchecks/formchecks.reducer';
+import {
+  deleteFormCheck,
+  getAllFormChecks,
+} from '../_store/formchecks/formchecks.action';
+import { ProductConfigurationFeature } from '../_store/product-configurations/product-configuration.reducer';
+import {
+  createProductConfiguration,
+  getProductConfiguration,
+  updateProductConfiguration,
+} from '../_store/product-configurations/product-configurations.actions';
 
 @Component({
   selector: 'app-product-detail',
@@ -31,7 +53,6 @@ import { ProductsFeature } from '../_store/products/products.reducer';
     CommonModule,
     TableModule,
     ButtonModule,
-    RouterLink,
     DialogModule,
     InputTextModule,
     DropdownModule,
@@ -40,6 +61,7 @@ import { ProductsFeature } from '../_store/products/products.reducer';
     FormsModule,
     ReactiveFormsModule,
     DynamicDialogModule,
+    AsyncPipe,
   ],
   providers: [DialogService],
 
@@ -52,62 +74,67 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   bankId$: Observable<string | null> = new Observable();
   formChecks: FormCheck[] = [];
   productId: string = '';
-  selectedConfigType: any = {};
   bankId: string | null = null;
-  // Configuration form
-  configuration: Partial<ProductConfiguration> = {
-    fileName: '',
-    configurationType: undefined,
-    configurationData: '',
-    productId: '',
-  };
 
-  // Dialog properties
-  showAddFormCheckDialog: boolean = false;
-  newFormCheck: Partial<FormCheck> = {
-    checkType: '',
-    formType: '',
-    description: '',
-    fileInitial: '',
-    quanitity: 0,
-    productId: '',
-  };
+  productConfigurationForm: FormGroup = new FormGroup({
+    id: new FormControl(undefined, []),
+    fileName: new FormControl('', []),
+    configurationType: new FormControl('', []),
+    configurationData: new FormControl('', []),
+  });
 
-  // Dropdown options
-  checkTypes: string[] = ['Type 1', 'Type 2', 'Type 3'];
-  formTypes: string[] = ['Form 1', 'Form 2', 'Form 3'];
   configTypes = [
     {
       label: 'Text',
-      value: ConfigurationType.TextConfiguration,
+      value: 'TextConfiguration',
     },
     {
       label: 'Excel',
-      value: ConfigurationType.ExcelConfiguration,
+      value: 'ExcelConfiguration',
     },
     {
       label: 'MDB',
-      value: ConfigurationType.MdbConfiguration,
+      value: 'MdbConfiguration',
     },
   ];
 
   configJson: string = '';
+  subscription$: Subscription = new Subscription();
+  formChecks$: Observable<FormCheck[]> = this.store.select(
+    FormChecksFeature.selectFormChecks
+  );
+  productConfiguration$: Observable<ProductConfiguration | undefined> =
+    this.store.select(ProductConfigurationFeature.selectProductConfiguration);
 
   constructor(
     private store: Store,
     private route: ActivatedRoute,
-    private formCheckService: FormCheckService,
-    private configurationService: ProductConfigurationService,
     private toastr: ToastrService,
     private dialogService: DialogService
   ) {}
-  ngOnDestroy(): void {
-    console.log(`${this.componentName} destroyed`);
-  }
 
   ngOnInit(): void {
     this.productId = this.route.snapshot.paramMap.get('productId') || '';
     this.bankId$ = this.store.select(SharedFeature.selectSelectedBankInfoId);
+
+    this.subscription$.add(
+      this.formChecks$.subscribe((formChecks) => {
+        this.formChecks = formChecks;
+      })
+    );
+
+    this.subscription$.add(
+      this.productConfiguration$.subscribe((productConfiguration) => {
+        if (productConfiguration) {
+          this.productConfigurationForm.patchValue({
+            id: productConfiguration?.id ?? undefined,
+            fileName: productConfiguration?.fileName,
+            configurationType: productConfiguration?.configurationType,
+            configurationData: productConfiguration?.configurationData,
+          });
+        }
+      })
+    );
 
     this.bankId$.subscribe((bankId) => {
       this.bankId = bankId;
@@ -126,129 +153,52 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   }
 
   loadFormChecks() {
-    this.bankId$.subscribe((bankId) => {
-      if (bankId) {
-        this.formCheckService
-          .getFormCheckByProductId(bankId, this.productId)
-          .subscribe({
-            next: (data) => {
-              if (data) {
-                this.formChecks = data.formChecks;
-              }
-            },
-            error: (error) => this.toastr.error('Error loading form checks'),
-          });
-      }
-    });
+    this.store.dispatch(getAllFormChecks({ productId: this.productId }));
   }
 
   loadConfiguration() {
-    this.configurationService
-      .getProductConfigurations(this.productId)
-      .subscribe({
-        next: (data) => {
-          if (data && data.length > 0) {
-            this.configuration = data[0];
-          } else {
-            this.configuration = {
-              fileName: '',
-              configurationType: undefined,
-              configurationData: '',
-              productId: this.productId,
-            };
-          }
-        },
-        error: (error) => this.toastr.error('Error loading configuration'),
-      });
+    this.store.dispatch(getProductConfiguration({ productId: this.productId }));
   }
 
-  saveConfiguration() {
-    if (
-      !this.configuration.fileName ||
-      !this.configuration.configurationType ||
-      !this.configuration.configurationData
-    ) {
-      this.toastr.error('Please fill in all required fields');
-      return;
-    }
-
-    try {
-      // Validate JSON format
-      JSON.parse(this.configuration.configurationData);
-    } catch (e) {
-      this.toastr.error('Invalid JSON format');
-      return;
-    }
-
-    if (this.bankId) {
-      if (this.configuration.id) {
-        // Update existing configuration
-        this.configurationService
-          .updateProductConfigurations(
-            this.productId,
-            this.bankId,
-            this.configuration.id,
-            this.configuration
-          )
-          .subscribe({
-            next: () => {
-              this.toastr.success('Configuration updated successfully');
-              this.loadConfiguration();
-            },
-            error: (error) =>
-              this.toastr.error('Error updating configuration'),
-          });
+  onSaveConfiguration() {
+    this.productConfigurationForm.markAllAsTouched();
+    if (this.productConfigurationForm.valid) {
+      if (this.productConfigurationForm.value.id) {
+        this.store.dispatch(
+          updateProductConfiguration({
+            productId: this.productId,
+            configuration: this.productConfigurationForm.value,
+          })
+        );
       } else {
-        // Create new configuration
-        this.configurationService
-          .addProductConfigurations(
-            this.productId,
-            this.bankId,
-            this.configuration
-          )
-          .subscribe({
-            next: () => {
-              this.toastr.success('Configuration saved successfully');
-              this.loadConfiguration();
-            },
-            error: (error) => this.toastr.error('Error saving configuration'),
-          });
+        this.store.dispatch(
+          createProductConfiguration({
+            productId: this.productId,
+            configuration: this.productConfigurationForm.value,
+          })
+        );
       }
     }
   }
 
-  openAddFormCheckDialog() {
+  openAddFormCheckDialog(formCheck?: FormCheck) {
     this.dialogService.open(AddFormcheckComponent, {
-      header: 'Add Form Check',
-      width: '50%',
-      height: '50%',
+      header: formCheck ? 'Update Form Check' : 'Add Form Check',
+      width: '500px',
       closable: true,
       focusOnShow: true,
       closeOnEscape: true,
+      style: {
+        'max-height': '500px',
+        'min-width': '500px',
+        overflow: 'auto',
+        padding: '0px',
+      },
       data: {
         productId: this.productId,
+        formCheck: formCheck,
       },
     });
-  }
-
-  saveFormCheck() {
-    if (!this.newFormCheck.checkType || !this.newFormCheck.formType) {
-      this.toastr.error('Please select both Check Type and Form Type');
-      return;
-    }
-
-    if (this.bankId) {
-      this.formCheckService
-        .addFormCheck(this.newFormCheck as FormCheck, this.bankId)
-        .subscribe({
-          next: () => {
-            this.toastr.success('Form check added successfully');
-            this.showAddFormCheckDialog = false;
-            this.loadFormChecks();
-          },
-          error: (error) => this.toastr.error('Error adding form check'),
-        });
-    }
   }
 
   deleteFormCheck(formCheckId: string, event: Event) {
@@ -257,15 +207,9 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.formCheckService
-      .deleteFormCheck(this.productId, formCheckId)
-      .subscribe({
-        next: () => {
-          this.toastr.success('Form check deleted successfully');
-          this.loadFormChecks();
-        },
-        error: (error) => this.toastr.error('Error deleting form check'),
-      });
+    this.store.dispatch(
+      deleteFormCheck({ productId: this.productId, formCheckId: formCheckId })
+    );
   }
 
   autoFormatJson(value: string) {
@@ -277,7 +221,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
 
       // Try to parse the JSON
       const parsed = JSON.parse(value);
-      
+
       // If successful, format it
       this.configJson = JSON.stringify(parsed, null, 2);
     } catch (error) {
@@ -289,12 +233,19 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   formatJson() {
     try {
       if (!this.configJson) return;
-      
+
       // Parse and re-stringify with proper formatting
       const parsedJson = JSON.parse(this.configJson);
       this.configJson = JSON.stringify(parsedJson, null, 2);
     } catch (error) {
-      this.toastr.error('Invalid JSON format. Please check your input.', 'Error');
+      this.toastr.error(
+        'Invalid JSON format. Please check your input.',
+        'Error'
+      );
     }
+  }
+
+  ngOnDestroy(): void {
+    this.subscription$.unsubscribe();
   }
 }

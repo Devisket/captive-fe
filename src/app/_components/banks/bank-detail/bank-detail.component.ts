@@ -1,18 +1,10 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
+import { Component, inject, OnInit } from '@angular/core';
+import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { Bank } from '../../../_models/bank';
-import { DatePipe, NgFor, NgIf } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import { BanksService } from '../../../_services/banks.service';
-import { BranchListComponent } from '../../branches/branch-list/branch-list.component';
-import { AddBranchComponent } from '../../branches/add-branch/add-branch.component';
-import { ProductListComponent } from '../../products/product-list/product-list.component';
-import { FormCheckListComponent } from '../../form-checks/form-check-list/form-check-list.component';
 import { BatchesService } from '../../../_services/batches.service';
 import { ToastrService } from 'ngx-toastr';
-import { AddBatchComponent } from '../../batches/add-batch/add-batch.component';
-import { BatchListComponent } from '../../batches/batch-list/batch-list.component';
-import { CheckValidationListComponent } from '../../check-validation/check-validation-list/check-validation-list.component';
-import { CheckInventoryListComponent } from '../../check-inventory/check-inventory-list/check-inventory-list.component';
 import { Store } from '@ngrx/store';
 import { TabViewModule } from 'primeng/tabview';
 import { BankDetailTab } from '../../../_models/template-dto/bank-detail-tab';
@@ -20,21 +12,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 @Component({
   selector: 'app-bank-detail',
   standalone: true,
-  imports: [
-    TabViewModule,
-    NgFor,
-    RouterLink,
-    DatePipe,
-    BranchListComponent,
-    NgIf,
-    ProductListComponent,
-    FormCheckListComponent,
-    AddBatchComponent,
-    BatchListComponent,
-    CheckValidationListComponent,
-    CheckInventoryListComponent,
-    RouterOutlet, 
-  ],
+  imports: [TabViewModule, NgFor, NgIf, RouterOutlet],
   providers: [DialogService],
   templateUrl: './bank-detail.component.html',
   styleUrl: './bank-detail.component.scss',
@@ -44,7 +22,6 @@ export class BankDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private batchService = inject(BatchesService);
   private toastr = inject(ToastrService);
-  
 
   bank?: Bank;
   bankInfos: any;
@@ -64,9 +41,10 @@ export class BankDetailComponent implements OnInit {
   ngOnInit(): void {
     this.loadBank();
     // Set initial active tab based on current route
-    const currentRoute = this.route.snapshot.firstChild?.routeConfig?.path || 'branches';
+    const currentRoute =
+      this.route.snapshot.firstChild?.routeConfig?.path || 'branches';
     this.router.navigate([currentRoute], { relativeTo: this.route });
-    const tabIndex = this.tabs.findIndex(tab => tab.route === currentRoute);
+    const tabIndex = this.tabs.findIndex((tab) => tab.route === currentRoute);
     if (tabIndex !== -1) {
       this.activeTabIndex = tabIndex;
     }

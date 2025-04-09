@@ -1,10 +1,7 @@
-import { ConfigurationType } from "./constants"
-
 export interface ProductConfiguration {
   id: string
   productId: string
-  productName: string
+  fileName : string
   configurationData: string
-  fileName: string
-  configurationType: ConfigurationType
+  configurationType: string
 }

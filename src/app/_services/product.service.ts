@@ -17,15 +17,15 @@ export class ProductService {
     return this.http.get(this.queryUrl + bankInfoId + "/Product");
   }
 
-  addProductType(bankInfoId: string, productName: string) {
-    return this.http.post(this.commandUrl + `bank/${bankInfoId}/product`, { productName });
+  addProduct(bankInfoId: string, product: Product) {
+    return this.http.post(this.commandUrl + `bank/${bankInfoId}/product`, product);
   }
 
-  updateProductType(productType: any, bankInfoId: string, productId: string) {
-    return this.http.put(this.commandUrl + `bank/${bankInfoId}/product/${productId}`, productType);
+  updateProduct( bankInfoId: string, productId: string, product: Product) {
+    return this.http.put(this.commandUrl + `bank/${bankInfoId}/product/${productId}`, product);
   }
 
-  deleteProductType(bankInfoId: string, productId: string) {
+  deleteProduct(bankInfoId: string, productId: string) {
     return this.http.delete(this.commandUrl + `bank/${bankInfoId}/product/${productId}`);
   }
 }

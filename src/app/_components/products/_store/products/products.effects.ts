@@ -5,36 +5,31 @@ import {
   getAllProductsSuccess,
   getAllProducts,
   createProduct,
-  createProductSuccess,
   createProductFailure,
   deleteProduct,
-  deleteProductSuccess,
   deleteProductFailure,
+  updateProduct,
+  updateProductFailure,
 } from './products.actions';
 import { exhaustMap, map, catchError, mergeMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { Router } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { SharedFeature } from '../../../../_store/shared/shared.reducer';
+
 @Injectable()
 export class ProductsEffects {
   private actions$ = inject(Actions);
   private productService = inject(ProductService);
   private router = inject(Router);
-  private store = inject(Store);
 
   loadProducts$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(getAllProducts),
-      exhaustMap(({ bankInfoId }) => {
-        return this.productService
-          .getAllProducts(bankInfoId)
-          .pipe(
-            map((response) => {
-              console.log(response);
-              return getAllProductsSuccess({ products: response });
-            })
-          );
+      exhaustMap(({ bankId }) => {
+        return this.productService.getAllProducts(bankId).pipe(
+          map((response) => {
+            return getAllProductsSuccess({ products: response });
+          })
+        );
       })
     );
   });
@@ -42,32 +37,37 @@ export class ProductsEffects {
   createProduct$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(createProduct),
-      mergeMap(({ bankInfoId, productName }) => {
-        return this.productService.addProductType(bankInfoId, productName).pipe(
-          mergeMap(() => this.productService.getAllProducts(bankInfoId)),
-          map((products) =>
-            getAllProductsSuccess({ products: products.productTypes })
-          ),
-          tap(() => this.router.navigate(['/banks', bankInfoId])),
+      mergeMap(({ bankId, product }) => {
+        return this.productService.addProduct(bankId, product).pipe(
+          mergeMap(() => this.productService.getAllProducts(bankId)),
+          map(() => getAllProducts({ bankId })),
           catchError((error) => of(createProductFailure({ error })))
         );
       })
     );
   });
 
+  updateProduct$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(updateProduct),
+      mergeMap(({ bankId, product }) =>
+        this.productService
+          .updateProduct(bankId, product.productId, product)
+          .pipe(
+            map(() => getAllProducts({ bankId: bankId })),
+            catchError((error) => of(updateProductFailure({ error })))
+          )
+      )
+    )
+  );
+
   deleteProduct$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(deleteProduct),
-      mergeMap(({ id }) => {
-        return this.store.select(SharedFeature.selectSelectedBankInfoId).pipe(
-          mergeMap((bankInfoId) => {
-            if (!bankInfoId)
-              return of(deleteProductFailure({ error: 'No bank selected' }));
-            return this.productService.deleteProductType(bankInfoId, id).pipe(
-              map(() => deleteProductSuccess({ id })),
-              catchError((error) => of(deleteProductFailure({ error })))
-            );
-          })
+      mergeMap(({ bankId, id }) => {
+        return this.productService.deleteProduct(bankId, id).pipe(
+          map(() => getAllProducts({ bankId: bankId })),
+          catchError((error) => of(deleteProductFailure({ error })))
         );
       })
     );

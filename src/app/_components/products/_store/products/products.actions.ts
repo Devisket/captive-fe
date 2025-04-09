@@ -1,9 +1,9 @@
-import { createAction, props } from "@ngrx/store";
-import { Product } from "../../../../_models/product";
+import { createAction, props } from '@ngrx/store';
+import { Product } from '../../../../_models/product';
 
 export const getAllProducts = createAction(
   '[Products] Get All Products',
-  props<{ bankInfoId: string }>()
+  props<{ bankId: string }>()
 );
 
 export const getAllProductsSuccess = createAction(
@@ -13,12 +13,7 @@ export const getAllProductsSuccess = createAction(
 
 export const createProduct = createAction(
   '[Products] Create Product',
-  props<{ bankInfoId: string, productName:string }>()
-);
-
-export const createProductSuccess = createAction(
-  '[Products] Create Product Success',
-  props<{ product: Product }>()
+  props<{ bankId: string; product: Product }>()
 );
 
 export const createProductFailure = createAction(
@@ -28,12 +23,7 @@ export const createProductFailure = createAction(
 
 export const deleteProduct = createAction(
   '[Products] Delete Product',
-  props<{ id: string }>()
-);
-
-export const deleteProductSuccess = createAction(
-  '[Products] Delete Product Success',
-  props<{ id: string }>()
+  props<{ bankId: string; id: string }>()
 );
 
 export const deleteProductFailure = createAction(
@@ -43,12 +33,10 @@ export const deleteProductFailure = createAction(
 
 export const updateProduct = createAction(
   '[Products] Update Product',
-  props<{ product: any }>()
+  props<{ bankId: string; product: Product }>()
 );
 
-
-
-
-
-
-
+export const updateProductFailure = createAction(
+  '[Products] Update Product Failure',
+  props<{ error: any }>()
+);

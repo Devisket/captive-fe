@@ -1,62 +1,13 @@
-@if (bankInfo) {
-<div class="row d-flex justify-content-center">
-  <div class="col-4">
-    <form [formGroup]="fg" autocomplete="off" (ngSubmit)="onSubmit()">
-      <h2 class="text-center">Add Product Type</h2>
-      <hr />
-      <div class="mb-3 form-floating">
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Bank Name"
-          value="{{ bankInfo.bankName }}"
-          disabled
-        />
-        <label>Bank Name</label>
-      </div>
-      <div class="mt-4 mb-2">
-        <p-floatLabel>
-          <input
-            id="productName"
-            pInputText
-            type="text"
-            name="productName"
-            formControlName="productName"
-          />
-          <label for="productName">Product Type Name</label>
-        </p-floatLabel>
-      </div>
-
-      <div class="d-flex justify-content-between">
-        <button
-          class="btn btn-outline-secondary me-2 btn-sm"
-          routerLink="/banks/{{ bankInfo.id }}"
-          type="button"
-          tabindex="-1"
-        >
-          Cancel
-        </button>
-        <button
-          class="btn btn-success me-2 btn-sm"
-          [disabled]="!fg.dirty"
-          type="submit"
-        >
-          <i class="fa fa-save"></i>
-          Save
-        </button>
-      </div>
-    </form>
+<form class="formgrid grid" [formGroup]="formGroup">
+  <div class="field col-12">
+    <label class="mx-5" for="productName">Product Name</label>
+    <input pInputText id="productName" formControlName="productName" placeholder="Product ABC" />
   </div>
-</div>
-@if(fg.dirty){
-<div class="row">
-  <div class="col-4 mt-3 offset-4 text-center text-sm">
-    <div class="alert alert-warning pb-0">
-      <p>
-        <strong>Warning: </strong>
-        Any unsaved changes will be lost.
-      </p>
-    </div>
-  </div>
-</div>
-} }
+</form>
+<p-button
+type="button"
+class="align-items-center"
+label="Save Product"
+icon="pi pi-check"
+(click)="onSaveProduct()"
+></p-button>

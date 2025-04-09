@@ -54,7 +54,7 @@ export class BankListComponent implements OnInit {
   }
 
   navigateToBank(bank: Bank) {
-    this.router.navigate(['banks', bank.id, 'detail']);
+    this.router.navigate(['banks', bank.id, 'bank-detail']);
     this.store.dispatch(setSelectedBankInfoId({ selectedBankInfoId: bank.id }));
   }
 }

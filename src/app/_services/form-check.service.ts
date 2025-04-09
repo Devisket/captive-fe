@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class FormCheckService {
+export class FormChecksService {
   private http = inject(HttpClient);
   commandUrl = environment.commandUrl;
   queryUrl = environment.queryUrl;
@@ -15,22 +15,19 @@ export class FormCheckService {
     return this.http.get<any>(this.queryUrl + `${bankInfoId}/product/${productId}/formChecks`);
   }
 
-
-  getAllFormChecks(bankInfoId: string, productId: string): Observable<any> {
-    return this.http.get<any>(this.queryUrl + `${bankInfoId}/formChecks/${productId}`);
+  getAllFormChecks( productId: string): Observable<any> {
+    return this.http.get<any>(this.queryUrl + `${productId}/formChecks`);
   }
 
-
-
-  addFormCheck(formCheck: any, productId:string) {
+  addFormCheck(formCheck: any, productId:string) :Observable<any>{
     return this.http.post(this.commandUrl + productId + "/FormChecks", formCheck);
   }
 
-  updateFormCheck(formCheckValue: any, productId:string) {
+  updateFormCheck(formCheckValue: any, productId:string) : Observable<any> {
     return this.http.put(this.commandUrl + productId +  "/FormChecks" , formCheckValue);
   }
 
-  deleteFormCheck(productId:string, formCheckId: string) {
+  deleteFormCheck(productId:string, formCheckId: string) : Observable<any> {
     return this.http.delete(this.commandUrl + productId + "/FormChecks/" + formCheckId);
   }
 }

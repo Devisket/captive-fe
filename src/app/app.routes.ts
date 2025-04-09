@@ -11,9 +11,6 @@ import { NotFoundComponent } from './_components/errors/not-found/not-found.comp
 import { ServerErrorComponent } from './_components/errors/server-error/server-error.component';
 import { BankListComponent } from './_components/banks/bank-list/bank-list.component';
 import { AddProductComponent } from './_components/products/add-product/add-product.component';
-import { EditProductComponent } from './_components/products/edit-product/edit-product.component';
-import { AddFormCheckComponent } from './_components/form-checks/add-form-check/add-form-check.component';
-import { EditFormCheckComponent } from './_components/form-checks/edit-form-check/edit-form-check.component';
 import { AddBatchComponent } from './_components/batches/add-batch/add-batch.component';
 import { UploadOrderFilesComponent } from './_components/order-files/upload-order-files/order-files-list.component';
 import { TagListComponent } from './_components/tags/tag-list/tag-list.component';
@@ -28,6 +25,7 @@ import { BranchListComponent } from './_components/branches/branch-list/branch-l
 import { ProductListComponent } from './_components/products/product-list/product-list.component';
 import { ProductsFeature } from './_components/products/_store/products/products.reducer';
 import { StoreModule } from '@ngrx/store';
+import { BatchListComponent } from './_components/batches/batch-list/batch-list.component';
 
 export const appRoutes: Routes = [
   { path: '', component: BankListComponent },
@@ -38,7 +36,7 @@ export const appRoutes: Routes = [
     children: [
       { path: 'users', component: UserListComponent },
       { path: 'banks', component: BankListComponent },
-      { path: 'banks/:id/detail', loadChildren: () => bankDetailsRoutes },
+      { path: 'banks/:id/bank-detail', loadChildren: () => bankDetailsRoutes },
       // {path: 'banks/:id/edit', component: EditBankComponent,
       //     canDeactivate: [preventUnsavedChangesGuard]
       // },
@@ -83,8 +81,12 @@ export const bankDetailsRoutes: Routes = [
         component: ProductListComponent,
       },
       {
-        path: 'product-detail/:productId/bank/:bankId',
+        path: 'product-detail/:productId',
         component: ProductDetailComponent,
+      },
+      {
+        path: 'batches',
+        component: BatchListComponent,
       },
     ],
   },
