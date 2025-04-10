@@ -15,3 +15,18 @@ thead tr th{
 .check-form-header > th {
   background-color: rgb(227, 250, 255);
 }
+
+.on-hold-row {
+  color: #ef4444; // red-500
+  font-weight: 500;
+}
+
+.completed-row {
+  color: #22c55e;
+  font-weight: 500;
+}
+
+::ng-deep .custom-small-btn {
+  scale: 0.8;
+  padding: 0.4rem 0.8rem;
+}

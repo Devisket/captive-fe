@@ -1,5 +1,7 @@
+import { ValuesDto } from "./valuesDto";
+
 export interface BankValues {
-    branchValues : any[];
-    productValues : any[];
-    formCheckValues: any[];
+    branchValues : ValuesDto[];
+    productValues : ValuesDto[];
+    formCheckValues: ValuesDto[];
 };

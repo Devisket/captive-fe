@@ -1,0 +1,126 @@
+<form [formGroup]="formGroup" (ngSubmit)="onSubmit()" class="p-3">
+  <div class="grid">
+    <div class="col-12">
+      <div class="field">
+        <label for="seriesPattern" class="block text-900 font-medium mb-1">Series Pattern</label>
+        <input
+          pInputText
+          id="seriesPattern"
+          type="text"
+          formControlName="seriesPattern"
+          class="w-full"
+          placeholder="Enter series pattern (e.g., ABC-###)"
+        />
+        <small class="p-error" *ngIf="formGroup.get('seriesPattern')?.invalid && formGroup.get('seriesPattern')?.touched">
+          Series Pattern is required
+        </small>
+      </div>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <div class="field">
+        <label for="numberOfPadding" class="block text-900 font-medium mb-1">Number of Padding</label>
+        <p-inputNumber
+          id="numberOfPadding"
+          formControlName="numberOfPadding"
+          [showButtons]="true"
+          [min]="1"
+          class="w-full"
+          placeholder="Enter padding number"
+        ></p-inputNumber>
+        <small class="p-error" *ngIf="formGroup.get('numberOfPadding')?.invalid && formGroup.get('numberOfPadding')?.touched">
+          Number of Padding must be greater than 0
+        </small>
+      </div>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <div class="field">
+        <label for="warningSeries" class="block text-900 font-medium mb-1">Warning Series</label>
+        <p-inputNumber
+          id="warningSeries"
+          formControlName="warningSeries"
+          [showButtons]="true"
+          [min]="0"
+          class="w-full"
+          placeholder="Enter warning threshold"
+        ></p-inputNumber>
+        <small class="p-error" *ngIf="formGroup.get('warningSeries')?.invalid && formGroup.get('warningSeries')?.touched">
+          Warning Series is required
+        </small>
+        <small class="p-error" *ngIf="formGroup.errors?.['warningLessThanStart']">
+          Warning Series cannot be less than Starting Series
+        </small>
+        <small class="p-error" *ngIf="formGroup.errors?.['warningGreaterThanOrEqualEnd']">
+          Warning Series must be less than Ending Series
+        </small>
+      </div>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <div class="field">
+        <label for="startingSeries" class="block text-900 font-medium mb-1">Starting Series</label>
+        <p-inputNumber
+          id="startingSeries"
+          formControlName="startingSeries"
+          [showButtons]="true"
+          [min]="0"
+          class="w-full"
+          placeholder="Enter starting number"
+        ></p-inputNumber>
+        <small class="p-error" *ngIf="formGroup.get('startingSeries')?.invalid && formGroup.get('startingSeries')?.touched">
+          Starting Series is required
+        </small>
+        <small class="p-error" *ngIf="formGroup.errors?.['startGreaterThanEnd']">
+          Starting Series cannot be greater than Ending Series
+        </small>
+      </div>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <div class="field">
+        <label for="endingSeries" class="block text-900 font-medium mb-1">Ending Series</label>
+        <p-inputNumber
+          id="endingSeries"
+          formControlName="endingSeries"
+          [showButtons]="true"
+          [min]="0"
+          class="w-full"
+          placeholder="Enter ending number"
+        ></p-inputNumber>
+        <small class="p-error" *ngIf="formGroup.get('endingSeries')?.invalid && formGroup.get('endingSeries')?.touched">
+          Ending Series is required
+        </small>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="field-checkbox flex align-items-center">
+        <p-checkbox
+          formControlName="isRepeating"
+          [binary]="true"
+          id="isRepeating"
+          class="mr-2"
+        ></p-checkbox>
+        <label for="isRepeating" class="text-900 font-medium">Is Repeating</label>
+      </div>
+    </div>
+
+    <div class="col-12 flex justify-content-end mt-3">
+      <button
+        pButton
+        type="button"
+        label="Cancel"
+        class="p-button-text mr-2"
+        (click)="onClose()"
+      ></button>
+      <button
+        pButton
+        type="submit"
+        label="Save"
+        [disabled]="!formGroup.valid"
+        icon="pi pi-check"
+      ></button>
+    </div>
+  </div>
+</form>

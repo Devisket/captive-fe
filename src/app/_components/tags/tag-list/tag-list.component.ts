@@ -3,7 +3,13 @@ import { Tag } from '../../../_models/tag';
 import { Store } from '@ngrx/store';
 import { SharedFeature } from '../../../_store/shared/shared.reducer';
 import { Subscription } from 'rxjs';
-import { getTags, updateTag, addNewTag, deleteTag } from '../_store/tag.actions';
+import {
+  getTags,
+  updateTag,
+  addNewTag,
+  deleteTag,
+  setSelectedTag,
+} from '../_store/tag.actions';
 import { TagFeature } from '../_store/tag.reducers';
 import { TableModule } from 'primeng/table';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -16,6 +22,7 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { TagDetailComponent } from '../tag-detail/tag-detail.component';
+import { CheckInventory } from '../../../_models/check-inventory';
 
 @Component({
   selector: 'app-tag-list',
@@ -28,14 +35,14 @@ import { TagDetailComponent } from '../tag-detail/tag-detail.component';
     ButtonModule,
     DialogModule,
     InputTextModule,
-    ToastModule
+    ToastModule,
   ],
   templateUrl: './tag-list.component.html',
   styleUrl: './tag-list.component.scss',
 })
 export class TagListComponent implements OnInit, OnDestroy {
   constructor(
-    private store: Store, 
+    private store: Store,
     private messageService: MessageService,
     private dialogService: DialogService
   ) {}
@@ -73,15 +80,17 @@ export class TagListComponent implements OnInit, OnDestroy {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Tag name is required'
+        detail: 'Tag name is required',
       });
       return;
     }
 
-    this.store.dispatch(addNewTag({ 
-      bankInfoId: this.bankInfoId, 
-      tag: this.newTag 
-    }));
+    this.store.dispatch(
+      addNewTag({
+        bankInfoId: this.bankInfoId,
+        tag: this.newTag,
+      })
+    );
     this.hideAddDialog();
   }
 
@@ -116,7 +125,7 @@ export class TagListComponent implements OnInit, OnDestroy {
   }
 
   onRowEditCancel(tag: Tag) {
-    this.tags[this.findTagIndex(tag)] = this.clonedTag  [tag.id!];
+    this.tags[this.findTagIndex(tag)] = this.clonedTag[tag.id!];
     delete this.clonedTag[tag.id!];
   }
 
@@ -143,23 +152,27 @@ export class TagListComponent implements OnInit, OnDestroy {
 
     this.subscription$.add(
       this.store.select(TagFeature.selectTags).subscribe((tags) => {
-        console.log(tags);
         this.tags = tags.map((tag) => ({ ...tag }));
       })
     );
   }
 
   onDeleteTag(tag: Tag) {
-    this.store.dispatch(deleteTag({ bankInfoId: this.bankInfoId, tagId: tag.id! }));
+    this.store.dispatch(
+      deleteTag({ bankInfoId: this.bankInfoId, tagId: tag.id! })
+    );
   }
 
   showTagDetail(tag: Tag) {
+    this.store.dispatch(setSelectedTag({ tag }));
+
     const ref = this.dialogService.open(TagDetailComponent, {
       header: `Tag Details - ${tag.tagName}`,
       width: '70%',
       data: {
-        tag: tag
-      }
+        bankInfoId: this.bankInfoId,
+        tag: tag,
+      },
     });
   }
 

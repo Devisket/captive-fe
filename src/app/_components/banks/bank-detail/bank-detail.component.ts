@@ -50,7 +50,6 @@ export class BankDetailComponent implements OnInit {
       this.store
         .select(SharedFeature.selectBankValues)
         .subscribe((bankValues) => {
-          console.log(bankValues);
         })
     );
     // Set initial active tab based on current route

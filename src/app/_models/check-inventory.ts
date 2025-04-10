@@ -1,5 +1,6 @@
 export interface CheckInventory {
-  id: string;
+  id?: string;
+  tagId: string;
   seriesPattern: string;
   warningSeries: number;
   numberOfPadding: number;

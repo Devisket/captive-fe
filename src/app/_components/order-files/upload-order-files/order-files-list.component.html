@@ -5,6 +5,7 @@
   }
 </style>
 
+<div *ngIf="!batch"></div>
 <div class="file-container">
   @if(batch){
   <div class="row">
@@ -37,6 +38,24 @@
     </div>
   </div>
 
+  @if(errorMessage){
+  <div class="row mb-3">
+    <div class="col-12">
+      <p-panel
+        header="Error Message"
+        [toggleable]="true"
+        [collapsed]="true"
+        styleClass="p-panel-danger"
+      >
+        <div class="p-3">
+          <i class="pi pi-exclamation-triangle me-2"></i>
+          {{ errorMessage }}
+        </div>
+      </p-panel>
+    </div>
+  </div>
+  }
+
   <p-table
     [value]="orderFiles"
     dataKey="id"
@@ -52,7 +71,7 @@
     </ng-template>
 
     <ng-template pTemplate="body" let-orderFile let-expanded="expanded">
-      <tr>
+      <tr [class.completed-row]="orderFile.status === 'Completed'">
         <td>
           <p-button
             type="button"
@@ -64,7 +83,10 @@
             [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
           />
         </td>
-        <td>{{ orderFile.fileName }}</td>
+        <td>
+          <i *ngIf="orderFile.status === 'Completed'" class="pi pi-check-circle text-success me-2"></i>
+          {{ orderFile.fileName }}
+        </td>
         <td>{{ orderFile.status }}</td>
         <td>{{ orderFile.personalQuantity }}</td>
         <td>{{ orderFile.commercialQuantity }}</td>
@@ -73,7 +95,7 @@
             label="Delete"
             icon="pi pi-trash"
             severity="danger"
-            (click)="onDelete(orderFile.id)"
+            (click)="onDeleteOrderFile(orderFile.id)"
             styleClass="p-button-rounded p-button-raised p-button-sm custom-small-btn me-1"
           >
           </p-button>
@@ -81,7 +103,7 @@
             label="Validate"
             icon="pi pi-check-circle"
             severity="info"
-            (click)="onValidate(orderFile.id)"
+            (click)="onValidateOrderFile(orderFile.id)"
             [disabled]="!canBeValidate(orderFile)"
             styleClass="p-button-rounded p-button-raised p-button-sm custom-small-btn mx-1"
           >
@@ -91,7 +113,7 @@
             icon="pi pi-play"
             severity="success"
             [disabled]="!canOrderFileBeProcess(orderFile)"
-            (click)="onProcess(orderFile.id)"
+            (click)="onProcessOrderFile(orderFile.id)"
             styleClass="p-button-rounded p-button-raised p-button-sm custom-small-btn ms-1"
           >
           </p-button>
@@ -112,13 +134,55 @@
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-checkOrder>
-                <tr>
-                  <td>{{ checkOrder.accountNumber }}</td>
+                <tr
+                  [class.on-hold-row]="checkOrder.isOnHold"
+                  [pTooltip]="
+                    checkOrder.isOnHold ? 'This check order is on hold' : ''
+                  "
+                  tooltipPosition="top"
+                >
+                  <td>
+                    <i
+                      *ngIf="checkOrder.isOnHold"
+                      class="pi pi-exclamation-triangle text-warning me-2"
+                    ></i>
+                    {{ checkOrder.accountNumber }}
+                  </td>
                   <td>{{ checkOrder.brstn }}</td>
                   <td>{{ checkOrder.mainAccountName }}</td>
+                  <td>{{ checkOrder.quantity }}</td>
                   <td>{{ checkOrder.deliverTo }}</td>
-                  <td *ngIf="isCheckOrderHasError(checkOrder)">
-                    {{ checkOrder.errorMessage }}
+                  <td>{{ checkOrder.errorMessage }}</td>
+                  <td>
+                    <p-button
+                      label="Hold"
+                      *ngIf="
+                        !checkOrder.isOnHold &&
+                        !checkOrder.isValid &&
+                        !orderFileIsCompleted(orderFile)
+                      "
+                      icon="pi pi-exclamation-triangle"
+                      severity="warning"
+                      (click)="onHoldCheckOrder(orderFile.id, checkOrder.id)"
+                      styleClass="p-button-rounded p-button-raised p-button-sm custom-small-btn me-1"
+                    />
+                    <p-button
+                      label="Edit"
+                      *ngIf="
+                        !checkOrder.isOnHold && !orderFileIsCompleted(orderFile)
+                      "
+                      icon="pi pi-pencil"
+                      severity="info"
+                      styleClass="p-button-rounded p-button-raised p-button-sm custom-small-btn me-1"
+                    />
+                    <p-button
+                      label="Delete"
+                      icon="pi pi-trash"
+                      *ngIf="!orderFileIsCompleted(orderFile)"
+                      severity="danger"
+                      (click)="onDeleteCheckOrder(orderFile.id, checkOrder.id)"
+                      styleClass="p-button-rounded p-button-raised p-button-sm custom-small-btn me-1"
+                    />
                   </td>
                 </tr>
               </ng-template>
@@ -144,10 +208,10 @@
     label="Process Batch"
     icon="pi pi-play"
     styleClass="p-button-rounded p-button-raised p-button-m custom-medium-btn mx-1"
+    [disabled]="!areAllOrderFilesValid()"
     (click)="processAll()"
   />
 </div>
-
 <p-dialog
   [header]="'Warning' + '&nbsp;'"
   [modal]="true"

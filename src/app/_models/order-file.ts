@@ -8,5 +8,7 @@ export interface OrderFile {
   status: string
   personalQuantity:number
   commercialQuantity:number
+  errorMessage:string
   checkOrders:CheckOrders[]
+  isValid: boolean
 }
