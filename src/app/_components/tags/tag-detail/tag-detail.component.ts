@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { Store } from '@ngrx/store';
-import { DynamicDialogConfig } from 'primeng/dynamicdialog';
+import { DynamicDialogConfig, DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
 import { TabViewModule } from 'primeng/tabview';
 import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
@@ -11,10 +11,11 @@ import { Tag } from '../../../_models/tag';
 import { TagMapping } from '../../../_models/tag-mapping';
 import { CheckInventory } from '../../../_models/check-inventory';
 import { Subscription } from 'rxjs';
-import { getTagMapping, getCheckInventory, addNewTagMapping, deleteTagMapping } from '../_store/tag.actions';
+import { getTagMapping, getCheckInventory, addNewTagMapping, deleteTagMapping, deleteCheckInventory } from '../_store/tag.actions';
 import { TagFeature } from '../_store/tag.reducers';
 import { SharedFeature } from '../../../_store/shared/shared.reducer';
 import { BankValues } from '../../../_models/values/bankValues';
+import { AddCheckInventoryComponent } from '../check-inventory/add-check-inventory/add-check-inventory.component';
 
 @Component({
   selector: 'app-tag-detail',
@@ -27,6 +28,7 @@ import { BankValues } from '../../../_models/values/bankValues';
     DropdownModule,
     FormsModule
   ],
+  providers: [DialogService],
   templateUrl: './tag-detail.component.html',
   styleUrls: ['./tag-detail.component.scss']
 })
@@ -43,7 +45,11 @@ export class TagDetailComponent implements OnInit, OnDestroy {
   selectedProduct: any = null;
   selectedFormCheck: any = null;
 
-  constructor(private store: Store, private config: DynamicDialogConfig) {
+  constructor(
+    private store: Store, 
+    private config: DynamicDialogConfig,
+    private dialogService: DialogService
+  ) {
     this.tag = this.config.data.tag;
     this.bankInfoId = this.config.data.bankInfoId;
   }
@@ -147,6 +153,43 @@ export class TagDetailComponent implements OnInit, OnDestroy {
     }));
   }
 
+  showAddCheckInventoryDialog() {
+    const ref = this.dialogService.open(AddCheckInventoryComponent, {
+      header: 'Add Check Inventory',
+      width: '50%',
+      data: {
+        tagId: this.tag.id,
+        bankId: this.bankInfoId
+      }
+    });
+
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        // Refresh check inventories
+        this.store.dispatch(getCheckInventory({ tagId: this.tag.id! }));
+      }
+    });
+  }
+
+  showEditCheckInventoryDialog(checkInventory: CheckInventory) {
+    const ref = this.dialogService.open(AddCheckInventoryComponent, {
+      header: 'Edit Check Inventory',
+      width: '50%',
+      data: {
+        tagId: this.tag.id,
+        bankId: this.bankInfoId,
+        checkInventory: checkInventory
+      }
+    });
+  }
+
+  onDeleteCheckInventory(checkInventory: CheckInventory) {
+    this.store.dispatch(deleteCheckInventory({ 
+      tagId: this.tag.id!, 
+      checkInventoryId: checkInventory.id! 
+    }));
+  }
+  
   ngOnDestroy() {
     this.subscription$.unsubscribe();
   }

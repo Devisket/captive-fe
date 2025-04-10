@@ -23,6 +23,12 @@ import {
   updateTagMappingFailure,
   deleteTagMapping,
   deleteTagMappingFailure,
+  addNewCheckInventory,
+  addNewCheckInventoryFailure,
+  updateCheckInventory,
+  updateCheckInventoryFailure,
+  deleteCheckInventory,
+  deleteCheckInventoryFailure,
 } from './tag.actions';
 import { of } from 'rxjs';
 import { map } from 'rxjs';
@@ -141,4 +147,42 @@ export class TagEffects {
       )
     )
   );
+
+  addNewCheckInventory$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(addNewCheckInventory),
+      switchMap(({ tagId, checkInventory }) =>
+        this.tagsService.createCheckInventory(checkInventory).pipe(
+          map(() => getCheckInventory({ tagId })),
+          catchError((error) => of(addNewCheckInventoryFailure({ error })))
+        )
+      )
+    )
+  );
+
+  updateCheckInventory$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(updateCheckInventory),
+      switchMap(({ tagId, checkInventory }) =>
+        this.tagsService.updateCheckInventory(checkInventory).pipe(
+          map(() => getCheckInventory({ tagId })),
+          catchError((error) => of(updateCheckInventoryFailure({ error })))
+        )
+      )
+    )
+  );
+
+  deleteCheckInventory$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(deleteCheckInventory),
+      switchMap(({ tagId, checkInventoryId }) =>
+        this.tagsService.deleteCheckInventory(checkInventoryId).pipe(
+          map(() => getCheckInventory({ tagId })),
+          catchError((error) => of(deleteCheckInventoryFailure({ error })))
+        )
+      )
+    )
+  );
+  
+  
 }

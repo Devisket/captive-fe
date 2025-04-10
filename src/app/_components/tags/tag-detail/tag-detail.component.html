@@ -62,7 +62,6 @@
           <th *ngIf="tag.searchByBranch">Branch</th>
           <th *ngIf="tag.searchByProduct">Product</th>
           <th *ngIf="tag.searchByFormCheck">Form Check</th>
-          <th style="width: 100px">Actions</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-mapping>
@@ -70,20 +69,19 @@
           <td *ngIf="tag.searchByBranch">{{ mapping.branchName }}</td>
           <td *ngIf="tag.searchByProduct">{{ mapping.productName }}</td>
           <td *ngIf="tag.searchByFormCheck">{{ mapping.formCheckName }}</td>
-          <td>
-            <button 
-              type="button" 
-              class="btn btn-sm btn-danger" 
-              (click)="onDeleteTagMapping(mapping)"
-            >
-              <i class="pi pi-trash"></i>
-            </button>
-          </td>
         </tr>
       </ng-template>
     </p-table>
   </p-tabPanel>
   <p-tabPanel header="Check Inventory">
+    <div class="flex justify-content-end mb-3">
+      <p-button 
+        label="Add Check Inventory" 
+        icon="pi pi-plus" 
+        (onClick)="showAddCheckInventoryDialog()"
+      ></p-button>
+    </div>
+
     <div *ngIf="checkInventories.length === 0" class="text-center p-4">
       No check inventory found for this tag.
     </div>
@@ -99,8 +97,10 @@
           <th>Starting Series</th>
           <th>Ending Series</th>
           <th>Warning Series</th>
+          <th>Current Series</th>
           <th>Is Repeating</th>
           <th>Is Used</th>
+          <th>Actions</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-inventory>
@@ -110,8 +110,20 @@
           <td>{{ inventory.startingSeries }}</td>
           <td>{{ inventory.endingSeries }}</td>
           <td>{{ inventory.warningSeries }}</td>
+          <td>{{ inventory.currentSeries }}</td>
           <td>{{ inventory.isRepeating ? "Yes" : "No" }}</td>
           <td>{{ inventory.isActive ? "Yes" : "No" }}</td>
+          <td class="flex gap-2">
+            <p-button
+              icon="pi pi-pencil"
+              (onClick)="showEditCheckInventoryDialog(inventory)"
+            ></p-button>
+            <p-button
+              icon="pi pi-trash"
+              (onClick)="onDeleteCheckInventory(inventory)"
+            ></p-button>
+
+          </td>
         </tr>
       </ng-template>
     </p-table>

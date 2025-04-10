@@ -9,6 +9,9 @@ import {
   getCheckInventoryFailure,
   getCheckInventorySuccess,
   setSelectedTag,
+  addNewCheckInventoryFailure,
+  updateCheckInventoryFailure,
+  deleteCheckInventoryFailure,
 } from './tag.actions';
 import { CheckInventory } from '../../../_models/check-inventory';
 
@@ -59,6 +62,18 @@ export const TagFeature = createFeature({
     on(getCheckInventoryFailure, (state, { error }) => ({
       ...state,
       error,
-    }))
+    })),
+    on(addNewCheckInventoryFailure, (state, { error }) => ({
+      ...state,
+      error,
+    })),
+    on(updateCheckInventoryFailure, (state, { error }) => ({
+      ...state,
+      error,
+    })),
+    on(deleteCheckInventoryFailure, (state, { error }) => ({
+      ...state,
+      error,
+    })),
   ),
 });

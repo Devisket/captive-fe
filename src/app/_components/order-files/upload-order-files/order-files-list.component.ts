@@ -70,6 +70,14 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
       value: 'mainAccountName',
     },
     {
+      columnName: 'Quantity',
+      value: 'quantity',
+    },
+    {
+      columnName: 'Starting Series',
+      value: 's',
+    },
+    {
       columnName: 'Deliver To',
       value: 'deliverTo',
     },
@@ -249,7 +257,7 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
             console.log(invalidCheckOrders);
             invalidCheckOrders.forEach((invalidCheckOrder: CheckOrders) => {
               this.dialogData.dialogType = LogType.Error;
-              this.dialogData.dialogMessage = invalidCheckOrder.errorMessage;
+              this.dialogData.dialogMessage = invalidCheckOrder.errorMessage ?? '';
               this.visibleDialog = true;
             });
           }
