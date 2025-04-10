@@ -10,4 +10,5 @@ export interface OrderFile {
   commercialQuantity:number
   errorMessage:string
   checkOrders:CheckOrders[]
+  isValid: boolean
 }

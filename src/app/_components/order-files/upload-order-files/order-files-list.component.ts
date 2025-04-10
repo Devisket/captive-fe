@@ -35,6 +35,7 @@ import {
   releaseFloatingCheckOrder,
   deleteFloatingCheckOrder,
   processAllOrderFiles,
+  uploadOrderFiles,
 } from '../_store/order-file.actions';
 import { OrderFileFeature } from '../_store/order-file.reducers';
 @Component({
@@ -305,13 +306,17 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
         formData.append('batchId', this.batch?.id);
       }
 
-      this.orderFileService.uploadOrderFiles(formData).subscribe({
-        next: (_) => {
-          this.toastr.success('Successfulyy uploaded new order files.');
-        },
-        error: (error) => this.toastr.error('Not saved'),
-        complete: () => window.location.reload(),
-      });
+
+      this.store.dispatch(uploadOrderFiles({ formData, bankId: this.bankInfoId, batchId: this.batch!.id }));
+
+
+      // this.orderFileService.uploadOrderFiles(formData).subscribe({
+            // next: (_) => {
+            // this.toastr.success('Successfulyy uploaded new order files.');
+      //   },
+      //   error: (error) => this.toastr.error('Not saved'),
+      //   complete: () => window.location.reload(),
+      // });
     }
   }
 
@@ -421,5 +426,9 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
 
   orderFileIsCompleted(orderFile: OrderFile): boolean {
     return orderFile.status === 'Completed';
+  }
+
+  areAllOrderFilesValid(): boolean {
+    return this.orderFiles.every(file => file.status === 'Valid');
   }
 }
