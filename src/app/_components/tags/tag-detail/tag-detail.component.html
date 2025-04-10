@@ -62,6 +62,7 @@
           <th *ngIf="tag.searchByBranch">Branch</th>
           <th *ngIf="tag.searchByProduct">Product</th>
           <th *ngIf="tag.searchByFormCheck">Form Check</th>
+          <th>Actions</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-mapping>
@@ -69,6 +70,12 @@
           <td *ngIf="tag.searchByBranch">{{ mapping.branchName }}</td>
           <td *ngIf="tag.searchByProduct">{{ mapping.productName }}</td>
           <td *ngIf="tag.searchByFormCheck">{{ mapping.formCheckName }}</td>
+          <td>
+            <p-button
+              icon="pi pi-trash"
+              (onClick)="onDeleteTagMapping(mapping)"
+            ></p-button>
+          </td>
         </tr>
       </ng-template>
     </p-table>
@@ -114,6 +121,11 @@
           <td>{{ inventory.isRepeating ? "Yes" : "No" }}</td>
           <td>{{ inventory.isActive ? "Yes" : "No" }}</td>
           <td class="flex gap-2">
+            <p-button
+              icon="pi pi-check"
+              *ngIf="inventory.isActive == false"
+              (onClick)="setCheckInventoryActive(inventory)"
+            ></p-button>
             <p-button
               icon="pi pi-pencil"
               (onClick)="showEditCheckInventoryDialog(inventory)"

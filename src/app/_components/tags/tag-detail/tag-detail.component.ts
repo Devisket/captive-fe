@@ -3,7 +3,11 @@ import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { Store } from '@ngrx/store';
-import { DynamicDialogConfig, DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
+import {
+  DynamicDialogConfig,
+  DynamicDialogRef,
+  DialogService,
+} from 'primeng/dynamicdialog';
 import { TabViewModule } from 'primeng/tabview';
 import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
@@ -11,7 +15,14 @@ import { Tag } from '../../../_models/tag';
 import { TagMapping } from '../../../_models/tag-mapping';
 import { CheckInventory } from '../../../_models/check-inventory';
 import { Subscription } from 'rxjs';
-import { getTagMapping, getCheckInventory, addNewTagMapping, deleteTagMapping, deleteCheckInventory } from '../_store/tag.actions';
+import {
+  getTagMapping,
+  getCheckInventory,
+  addNewTagMapping,
+  deleteTagMapping,
+  deleteCheckInventory,
+  setCheckInventoryActive,
+} from '../_store/tag.actions';
 import { TagFeature } from '../_store/tag.reducers';
 import { SharedFeature } from '../../../_store/shared/shared.reducer';
 import { BankValues } from '../../../_models/values/bankValues';
@@ -26,11 +37,11 @@ import { AddCheckInventoryComponent } from '../check-inventory/add-check-invento
     ButtonModule,
     TabViewModule,
     DropdownModule,
-    FormsModule
+    FormsModule,
   ],
   providers: [DialogService],
   templateUrl: './tag-detail.component.html',
-  styleUrls: ['./tag-detail.component.scss']
+  styleUrls: ['./tag-detail.component.scss'],
 })
 export class TagDetailComponent implements OnInit, OnDestroy {
   tag: Tag;
@@ -46,7 +57,7 @@ export class TagDetailComponent implements OnInit, OnDestroy {
   selectedFormCheck: any = null;
 
   constructor(
-    private store: Store, 
+    private store: Store,
     private config: DynamicDialogConfig,
     private dialogService: DialogService
   ) {
@@ -133,11 +144,13 @@ export class TagDetailComponent implements OnInit, OnDestroy {
       formCheckId: this.selectedFormCheck || undefined,
     };
 
-    this.store.dispatch(addNewTagMapping({ 
-      bankInfoId: this.bankInfoId, 
-      tagId: this.tag.id, 
-      tagMappings: [tagMapping] 
-    }));
+    this.store.dispatch(
+      addNewTagMapping({
+        bankInfoId: this.bankInfoId,
+        tagId: this.tag.id,
+        tagMappings: [tagMapping],
+      })
+    );
 
     // Reset form
     this.selectedBranch = null;
@@ -146,11 +159,13 @@ export class TagDetailComponent implements OnInit, OnDestroy {
   }
 
   onDeleteTagMapping(tagMapping: TagMapping) {
-    this.store.dispatch(deleteTagMapping({ 
-      bankInfoId: this.bankInfoId, 
-      tagId: this.tag.id!, 
-      tagMappingId: tagMapping.id!
-    }));
+    this.store.dispatch(
+      deleteTagMapping({
+        bankInfoId: this.bankInfoId,
+        tagId: this.tag.id!,
+        tagMappingId: tagMapping.id!,
+      })
+    );
   }
 
   showAddCheckInventoryDialog() {
@@ -159,8 +174,8 @@ export class TagDetailComponent implements OnInit, OnDestroy {
       width: '50%',
       data: {
         tagId: this.tag.id,
-        bankId: this.bankInfoId
-      }
+        bankId: this.bankInfoId,
+      },
     });
 
     ref.onClose.subscribe((result) => {
@@ -178,18 +193,29 @@ export class TagDetailComponent implements OnInit, OnDestroy {
       data: {
         tagId: this.tag.id,
         bankId: this.bankInfoId,
-        checkInventory: checkInventory
-      }
+        checkInventory: checkInventory,
+      },
     });
   }
 
   onDeleteCheckInventory(checkInventory: CheckInventory) {
-    this.store.dispatch(deleteCheckInventory({ 
-      tagId: this.tag.id!, 
-      checkInventoryId: checkInventory.id! 
-    }));
+    this.store.dispatch(
+      deleteCheckInventory({
+        tagId: this.tag.id!,
+        checkInventoryId: checkInventory.id!,
+      })
+    );
   }
-  
+
+  setCheckInventoryActive(checkInventory: CheckInventory) {
+    this.store.dispatch(
+      setCheckInventoryActive({
+        tagId: this.tag.id!,
+        checkInventoryId: checkInventory.id!,
+      })
+    );
+  }
+
   ngOnDestroy() {
     this.subscription$.unsubscribe();
   }

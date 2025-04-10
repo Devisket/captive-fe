@@ -29,6 +29,8 @@ import {
   updateCheckInventoryFailure,
   deleteCheckInventory,
   deleteCheckInventoryFailure,
+  setCheckInventoryActiveFailure,
+  setCheckInventoryActive,
 } from './tag.actions';
 import { of } from 'rxjs';
 import { map } from 'rxjs';
@@ -183,6 +185,16 @@ export class TagEffects {
       )
     )
   );
-  
-  
+
+  setCheckInventoryActive$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(setCheckInventoryActive),
+      switchMap(({ checkInventoryId, tagId }) =>
+        this.tagsService.setCheckInventoryActive(checkInventoryId).pipe(
+          map(() => getCheckInventory({ tagId })),
+          catchError((error) => of(setCheckInventoryActiveFailure({ error })))
+        )
+      )
+    )
+  );
 }

@@ -45,6 +45,10 @@ export const updateCheckInventoryFailure = createAction('[Tags] Update Check Inv
 export const deleteCheckInventory = createAction('[Tags] Delete Check Inventory', props<{ tagId: string, checkInventoryId: string }>());
 export const deleteCheckInventoryFailure = createAction('[Tags] Delete Check Inventory Failure', props<{ error: string }>());
 
+export const setCheckInventoryActive = createAction('[Tags] Set Check Inventory Active', props<{ tagId: string, checkInventoryId: string }>());
+export const setCheckInventoryActiveFailure = createAction('[Tags] Set Check Inventory Active Failure', props<{ error: string }>());
+
+
 
 
 

@@ -33,8 +33,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             router.navigateByUrl('/not-found');
             break;
           case 500:
-            const navigationExtras: NavigationExtras = {state: {error: error.error}};
-            router.navigateByUrl('/server-error', navigationExtras);
+            console.log(error);
+            messageService.add({severity:'error', summary: 'Server Error', detail: error.error.message})
             break;
           default:
             messageService.add({severity:'error', summary: 'Something unexpected went wrong'});

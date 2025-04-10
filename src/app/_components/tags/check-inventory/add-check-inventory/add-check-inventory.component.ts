@@ -89,12 +89,14 @@ export class AddCheckInventoryComponent implements OnInit, OnDestroy {
     });
 
     if(this.DynamicDialogConfig.data.checkInventory){
+      console.log(this.DynamicDialogConfig.data.checkInventory);
       this.formGroup.patchValue(this.DynamicDialogConfig.data.checkInventory);
     }
   }
   onSubmit() {
     if(this.formGroup.valid){
       const checkInventory: CheckInventory = {
+        id: this.formGroup.value.id || '',
         tagId: this.tagId,
         currentSeries: 0,
         isActive: true,

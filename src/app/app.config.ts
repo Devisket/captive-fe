@@ -27,6 +27,9 @@ import { BranchEffects } from './_components/branches/_store/branch.effects';
 import { SharedEffects } from './_store/shared/shared.effects';
 import { TagFeature } from './_components/tags/_store/tag.reducers';
 import { TagEffects } from './_components/tags/_store/tag.effects';
+import { OrderFileFeature } from './_components/order-files/_store/order-file.reducers';
+import { OrderFileEffects } from './_components/order-files/_store/order-file.effects';
+
 export const appConfig: ApplicationConfig = {
   providers: [
     MessageService,
@@ -48,6 +51,7 @@ export const appConfig: ApplicationConfig = {
       branch: BranchFeature.reducer,
       batch: BatchFeature.reducer,
       tag: TagFeature.reducer,
+      orderFiles: OrderFileFeature.reducer,
     }),
     provideEffects([
       ProductsEffects,
@@ -57,6 +61,7 @@ export const appConfig: ApplicationConfig = {
       BranchEffects,
       SharedEffects,
       TagEffects,
+      OrderFileEffects,
     ]),
   ],
 };
