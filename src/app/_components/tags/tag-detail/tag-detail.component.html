@@ -1,4 +1,88 @@
 <p-tabView>
+  <p-tabPanel header="Tag Mappings">
+    <div class="flex flex-column gap-3 mb-4">
+      <div class="flex gap-3">
+        <div class="flex-1" *ngIf="tag.searchByBranch">
+          <label class="block mb-2">Branch</label>
+          <p-dropdown 
+            [options]="bankValues?.branchValues" 
+            [(ngModel)]="selectedBranch"
+            optionLabel="value"
+            optionValue="id"
+            placeholder="Select Branch"
+            [showClear]="true"
+            styleClass="w-full"
+          ></p-dropdown>
+        </div>
+        <div class="flex-1" *ngIf="tag.searchByProduct">
+          <label class="block mb-2">Product</label>
+          <p-dropdown 
+            [options]="bankValues?.productValues" 
+            [(ngModel)]="selectedProduct"
+            optionLabel="value"
+            optionValue="id"
+            placeholder="Select Product"
+            [showClear]="true"
+            styleClass="w-full"
+          ></p-dropdown>
+        </div>
+        <div class="flex-1" *ngIf="tag.searchByFormCheck">
+          <label class="block mb-2">Form Check</label>
+          <p-dropdown 
+            [options]="bankValues?.formCheckValues" 
+            [(ngModel)]="selectedFormCheck"
+            optionLabel="value"
+            optionValue="id"
+            placeholder="Select Form Check"
+            [showClear]="true"
+            styleClass="w-full"
+          ></p-dropdown>
+        </div>
+      </div>
+      <div class="flex justify-content-end">
+        <p-button 
+          label="Add Mapping" 
+          icon="pi pi-plus" 
+          (onClick)="onAddTagMapping()"
+          [disabled]="!isFormValid()"
+        ></p-button>
+      </div>
+    </div>
+
+    <div *ngIf="tagMappings.length === 0" class="text-center p-4">
+      No mappings found for this tag.
+    </div>
+    <p-table
+      [value]="tagMappings"
+      styleClass="p-datatable-sm"
+      *ngIf="tagMappings.length > 0"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngIf="tag.searchByBranch">Branch</th>
+          <th *ngIf="tag.searchByProduct">Product</th>
+          <th *ngIf="tag.searchByFormCheck">Form Check</th>
+          <th style="width: 100px">Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-mapping>
+        <tr>
+          <td *ngIf="tag.searchByBranch">{{ mapping.branchName }}</td>
+          <td *ngIf="tag.searchByProduct">{{ mapping.productName }}</td>
+          <td *ngIf="tag.searchByFormCheck">{{ mapping.formCheckName }}</td>
+          <td>
+            <button 
+              type="button" 
+              class="btn btn-sm btn-danger" 
+              (click)="onDeleteTagMapping(mapping)"
+            >
+              <i class="pi pi-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-tabPanel>
   <p-tabPanel header="Check Inventory">
     <div *ngIf="checkInventories.length === 0" class="text-center p-4">
       No check inventory found for this tag.
@@ -28,31 +112,6 @@
           <td>{{ inventory.warningSeries }}</td>
           <td>{{ inventory.isRepeating ? "Yes" : "No" }}</td>
           <td>{{ inventory.isActive ? "Yes" : "No" }}</td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </p-tabPanel>
-  <p-tabPanel header="Tag Mappings">
-    <div *ngIf="tagMappings.length === 0" class="text-center p-4">
-      No mappings found for this tag.
-    </div>
-    <p-table
-      [value]="tagMappings"
-      styleClass="p-datatable-sm"
-      *ngIf="tagMappings.length > 0"
-    >
-      <ng-template pTemplate="header">
-        <tr>
-          <th *ngIf="tag.searchByBranch">Branch</th>
-          <th *ngIf="tag.searchByProduct">Product</th>
-          <th *ngIf="tag.searchByFormCheck">Form Check</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-mapping>
-        <tr>
-          <td *ngIf="tag.searchByBranch">{{ mapping.branchName }}</td>
-          <td *ngIf="tag.searchByProduct">{{ mapping.productName }}</td>
-          <td *ngIf="tag.searchByFormCheck">{{ mapping.formCheckName }}</td>
         </tr>
       </ng-template>
     </p-table>

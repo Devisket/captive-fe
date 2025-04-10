@@ -3,7 +3,7 @@ import { Tag } from '../../../_models/tag';
 import { Store } from '@ngrx/store';
 import { SharedFeature } from '../../../_store/shared/shared.reducer';
 import { Subscription } from 'rxjs';
-import { getTags, updateTag, addNewTag, deleteTag } from '../_store/tag.actions';
+import { getTags, updateTag, addNewTag, deleteTag, setSelectedTag } from '../_store/tag.actions';
 import { TagFeature } from '../_store/tag.reducers';
 import { TableModule } from 'primeng/table';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -154,10 +154,14 @@ export class TagListComponent implements OnInit, OnDestroy {
   }
 
   showTagDetail(tag: Tag) {
+
+    this.store.dispatch(setSelectedTag({ tag }));
+
     const ref = this.dialogService.open(TagDetailComponent, {
       header: `Tag Details - ${tag.tagName}`,
       width: '70%',
       data: {
+        bankInfoId: this.bankInfoId,
         tag: tag
       }
     });

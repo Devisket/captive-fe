@@ -40,14 +40,14 @@ export class TagsService {
   }
 
   addNewTagMapping(bankInfoId: any, tagId: any, tagMapping: TagMapping[]) {
-    return this.http.post(this.commandUrl + bankInfoId + '/Tag/' + tagId + '/TagMapping', tagMapping);
+    return this.http.post(this.commandUrl + bankInfoId + '/Tag/' + tagId + '/mapping', tagMapping);
   }
 
   updateTagMapping(bankInfoId: any, tagId: any, tagMappingId: any, tagMapping: TagMapping[]) {
-    return this.http.put(this.commandUrl + bankInfoId + '/Tag/' + tagId + '/TagMapping/' + tagMappingId, tagMapping);
+    return this.http.put(this.commandUrl + bankInfoId + '/Tag/' + tagId + '/mapping/' + tagMappingId, tagMapping);
   }
 
   deleteTagMapping(bankInfoId: any, tagId: any, tagMappingId: any) {
-    return this.http.delete(this.commandUrl + bankInfoId + '/Tag/' + tagId + '/TagMapping/' + tagMappingId);
+    return this.http.delete(this.commandUrl + bankInfoId + '/Tag/' + tagId + '/mapping/' + tagMappingId);
   }
 }
