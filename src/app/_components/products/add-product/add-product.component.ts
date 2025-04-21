@@ -58,6 +58,7 @@ export class AddProductComponent implements OnInit {
   formGroup: FormGroup = new FormGroup({
     productId: new FormControl(null, []),
     productName: new FormControl('', Validators.required),
+    productSequence: new FormControl('', Validators.required),
   });
 
   bankInfos: Bank[] = [];
