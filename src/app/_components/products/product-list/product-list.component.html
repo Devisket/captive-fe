@@ -48,12 +48,7 @@
             <input pInputText type="text" [(ngModel)]="product.productSequence" />
           </ng-template>
           <ng-template pTemplate="output">
-            <a
-              [routerLink]="['../product-detail', product.productId]"
-              class="no-underline text-primary"
-            >
               {{ product.productSequence }}
-            </a>
           </ng-template>
         </p-cellEditor>
       </td>
