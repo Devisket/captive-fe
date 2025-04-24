@@ -20,6 +20,7 @@
   <ng-template pTemplate="header">
     <tr>
       <th class="text-center">Product</th>
+      <th class="text-center">Sequence</th>
       <th class="text-center">Actions</th>
     </tr>
   </ng-template>
@@ -37,6 +38,21 @@
               class="no-underline text-primary"
             >
               {{ product.productName }}
+            </a>
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td class="text-center">
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <input pInputText type="text" [(ngModel)]="product.productSequence" />
+          </ng-template>
+          <ng-template pTemplate="output">
+            <a
+              [routerLink]="['../product-detail', product.productId]"
+              class="no-underline text-primary"
+            >
+              {{ product.productSequence }}
             </a>
           </ng-template>
         </p-cellEditor>

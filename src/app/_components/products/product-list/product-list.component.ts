@@ -105,6 +105,7 @@ export class ProductListComponent implements OnInit {
   }
 
   onRowEditSave(product: Product) {
+    console.log(product);
     this.store.dispatch(
       updateProduct({ bankId: this.bankId!, product: product })
     );
