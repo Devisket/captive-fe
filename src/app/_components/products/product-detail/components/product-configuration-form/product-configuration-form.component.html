@@ -1,0 +1,121 @@
+<div class="card p-4">
+  <div class="flex flex-row gap-3 justify-content-center mb-4">
+    <div class="field">
+      <label for="fileName" class="block mb-2 font-medium">File Name</label>
+      <input
+        pInputText
+        id="fileName"
+        [(ngModel)]="fileName"
+        placeholder="Enter file name"
+        class="w-full"
+      />
+    </div>
+    <div class="field">
+      <label for="configType" class="block mb-2 font-medium">Configuration Type</label>
+      <p-dropdown
+        id="configType"
+        [options]="configTypes"
+        [(ngModel)]="configurationType"
+        placeholder="Select configuration type"
+        class="w-full"
+      ></p-dropdown>
+    </div>
+  </div>
+
+  <form [formGroup]="formGroup">
+    <div *ngIf="configurationType === 'MdbConfiguration'">
+      <div class="table-container">
+        <table class="w-full">
+          <thead>
+            <tr>
+              <th class="text-left p-3 border-bottom-1 surface-border">Label</th>
+              <th class="text-left p-3 border-bottom-1 surface-border">ColumnName</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="p-3 border-bottom-1 surface-border">Has Password</td>
+              <td class="p-3 border-bottom-1 surface-border">
+                <p-inputSwitch id="hasPassword" formControlName="hasPassword" />
+              </td>
+            </tr>
+            <tr>
+              <td class="p-3 border-bottom-1 surface-border">Table Name</td>
+              <td class="p-3 border-bottom-1 surface-border">
+                <input pInputText id="tableName" formControlName="tableName" class="w-20rem"/>
+              </td>
+            </tr>
+            <tr *ngIf="formGroup.get('hasPassword')?.value">
+              <td class="p-3 border-bottom-1 surface-border">Password</td>
+              <td class="p-3 border-bottom-1 surface-border">
+                <input pInputText id="password" formControlName="password" type="password" class="w-20rem"/>
+              </td>
+            </tr>
+            <tr>
+              <td class="p-3 border-bottom-1 surface-border">Check Type</td>
+              <td class="p-3 border-bottom-1 surface-border">
+                <input pInputText id="checkType" formControlName="checkType" class="w-20rem"/>
+              </td>
+            </tr>
+            <tr>
+              <td class="p-3 border-bottom-1 surface-border">Form Type</td>
+              <td class="p-3 border-bottom-1 surface-border">
+                <input pInputText id="formType" formControlName="formType" class="w-20rem"/>
+              </td>
+            </tr>
+            <tr>
+              <td class="p-3 border-bottom-1 surface-border">Deliver To</td>
+              <td class="p-3 border-bottom-1 surface-border">
+                <input pInputText id="deliverTo" formControlName="deliverTo" class="w-20rem"/>
+              </td>
+            </tr>
+            <tr>
+              <td class="p-3 border-bottom-1 surface-border">Quantity</td>
+              <td class="p-3 border-bottom-1 surface-border">
+                <input pInputText id="quantity" formControlName="quantity" class="w-20rem"/>
+              </td>
+            </tr>
+            <tr>
+              <td class="p-3 border-bottom-1 surface-border">BRSTN</td>
+              <td class="p-3 border-bottom-1 surface-border">
+                <input pInputText id="brstn" formControlName="brstn" class="w-20rem"/>
+              </td>
+            </tr>
+            <tr>
+              <td class="p-3 border-bottom-1 surface-border">Account Number</td>
+              <td class="p-3 border-bottom-1 surface-border">
+                <input pInputText id="accountNumber" formControlName="accountNumber" class="w-20rem"/>
+              </td>
+            </tr>
+            <tr>
+              <td class="p-3 border-bottom-1 surface-border">Account Name 1</td>
+              <td class="p-3 border-bottom-1 surface-border">
+                <input pInputText id="accountName1" formControlName="accountName1" class="w-20rem"/>
+              </td>
+            </tr>
+            <tr>
+              <td class="p-3 border-bottom-1 surface-border">Account Name 2</td>
+              <td class="p-3 border-bottom-1 surface-border">
+                <input pInputText id="accountName2" formControlName="accountName2" class="w-20rem"/>
+              </td>
+            </tr>
+            <tr>
+              <td class="p-3 border-bottom-1 surface-border">Concode</td>
+              <td class="p-3 border-bottom-1 surface-border">
+                <input pInputText id="concode" formControlName="concode" class="w-20rem"/>
+              </td>
+            </tr>
+            <tr>
+              <td class="p-3 border-bottom-1 surface-border">Batch</td>
+              <td class="p-3 border-bottom-1 surface-border">
+                <input pInputText id="batch" formControlName="batch" class="w-20rem"/>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div *ngIf="configurationType === 'ExcelConfiguration'"></div>
+    <div *ngIf="configurationType === 'TextConfiguration'"></div>
+  </form>
+</div>
