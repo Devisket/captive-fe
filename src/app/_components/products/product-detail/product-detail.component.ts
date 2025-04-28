@@ -42,7 +42,7 @@ import {
   getProductConfiguration,
   updateProductConfiguration,
 } from '../_store/product-configurations/product-configurations.actions';
-import { ProductConfigurationFormComponent } from "./components/product-configuration-form/product-configuration-form.component";
+import { ProductConfigurationFormComponent } from './components/product-configuration-form/product-configuration-form.component';
 
 @Component({
   selector: 'app-product-detail',
@@ -60,8 +60,8 @@ import { ProductConfigurationFormComponent } from "./components/product-configur
     ReactiveFormsModule,
     DynamicDialogModule,
     AsyncPipe,
-    ProductConfigurationFormComponent
-],
+    ProductConfigurationFormComponent,
+  ],
   providers: [DialogService],
 
   templateUrl: './product-detail.component.html',
@@ -122,19 +122,6 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
       })
     );
 
-    this.subscription$.add(
-      this.productConfiguration$.subscribe((productConfiguration) => {
-        if (productConfiguration) {
-          this.productConfigurationForm.patchValue({
-            id: productConfiguration?.id ?? undefined,
-            fileName: productConfiguration?.fileName,
-            configurationType: productConfiguration?.configurationType,
-            configurationData: productConfiguration?.configurationData,
-          });
-        }
-      })
-    );
-
     this.bankId$.subscribe((bankId) => {
       this.bankId = bankId;
     });
@@ -146,17 +133,11 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
         map((products) => products.find((p) => p.productId === this.productId))
       );
 
-    // Load form checks and configuration
     this.loadFormChecks();
-    this.loadConfiguration();
   }
 
   loadFormChecks() {
     this.store.dispatch(getAllFormChecks({ productId: this.productId }));
-  }
-
-  loadConfiguration() {
-    this.store.dispatch(getProductConfiguration({ productId: this.productId }));
   }
 
   onSaveConfiguration() {

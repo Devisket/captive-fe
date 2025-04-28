@@ -33,6 +33,19 @@
             </tr>
           </thead>
           <tbody>
+           
+            <tr>
+              <td class="p-3 border-bottom-1 surface-border">Enable Barcode</td>
+              <td class="p-3 border-bottom-1 surface-border">
+                <p-inputSwitch id="enableBarcode" formControlName="enableBarcode" />
+              </td>
+            </tr>
+            <tr>
+              <td class="p-3 border-bottom-1 surface-border">Is Encrypted (MCX)</td>
+              <td class="p-3 border-bottom-1 surface-border">
+                <p-inputSwitch id="isEncrypted" formControlName="isEncrypted" />
+              </td>
+            </tr>
             <tr>
               <td class="p-3 border-bottom-1 surface-border">Has Password</td>
               <td class="p-3 border-bottom-1 surface-border">
@@ -103,6 +116,18 @@
               <td class="p-3 border-bottom-1 surface-border">Concode</td>
               <td class="p-3 border-bottom-1 surface-border">
                 <input pInputText id="concode" formControlName="concode" class="w-20rem"/>
+              </td>
+            </tr>
+            <tr>
+              <td class="p-3 border-bottom-1 surface-border">Starting Serial Number</td>
+              <td class="p-3 border-bottom-1 surface-border">
+                <input pInputText id="startingSerialNumber" formControlName="startingSerialNumber" class="w-20rem"/>
+              </td>
+            </tr>
+            <tr>
+              <td class="p-3 border-bottom-1 surface-border">Ending Serial Number</td>
+              <td class="p-3 border-bottom-1 surface-border">
+                <input pInputText id="endingSerialNumber" formControlName="endingSerialNumber" class="w-20rem"/>
               </td>
             </tr>
             <tr>
