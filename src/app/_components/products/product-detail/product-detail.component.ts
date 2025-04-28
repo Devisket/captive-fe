@@ -11,9 +11,6 @@ import { Observable, Subscription } from 'rxjs';
 import { Product } from '../../../_models/product';
 import { FormCheck } from '../../../_models/form-check';
 import { ProductConfiguration } from '../../../_models/product-configuration';
-import { ConfigurationType } from '../../../_models/constants';
-import { FormChecksService } from '../../../_services/form-check.service';
-import { ProductConfigurationService } from '../../../_services/product-configuration.service';
 import { ToastrService } from 'ngx-toastr';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import {
@@ -45,6 +42,7 @@ import {
   getProductConfiguration,
   updateProductConfiguration,
 } from '../_store/product-configurations/product-configurations.actions';
+import { ProductConfigurationFormComponent } from './components/product-configuration-form/product-configuration-form.component';
 
 @Component({
   selector: 'app-product-detail',
@@ -62,6 +60,7 @@ import {
     ReactiveFormsModule,
     DynamicDialogModule,
     AsyncPipe,
+    ProductConfigurationFormComponent,
   ],
   providers: [DialogService],
 
@@ -123,19 +122,6 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
       })
     );
 
-    this.subscription$.add(
-      this.productConfiguration$.subscribe((productConfiguration) => {
-        if (productConfiguration) {
-          this.productConfigurationForm.patchValue({
-            id: productConfiguration?.id ?? undefined,
-            fileName: productConfiguration?.fileName,
-            configurationType: productConfiguration?.configurationType,
-            configurationData: productConfiguration?.configurationData,
-          });
-        }
-      })
-    );
-
     this.bankId$.subscribe((bankId) => {
       this.bankId = bankId;
     });
@@ -147,17 +133,11 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
         map((products) => products.find((p) => p.productId === this.productId))
       );
 
-    // Load form checks and configuration
     this.loadFormChecks();
-    this.loadConfiguration();
   }
 
   loadFormChecks() {
     this.store.dispatch(getAllFormChecks({ productId: this.productId }));
-  }
-
-  loadConfiguration() {
-    this.store.dispatch(getProductConfiguration({ productId: this.productId }));
   }
 
   onSaveConfiguration() {
