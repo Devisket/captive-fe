@@ -26,6 +26,10 @@ export const updateProductConfiguration = createAction(
   props<{ productId: string; configuration: ProductConfiguration }>()
 );
 
+export const resetProductConfiguration = createAction(
+  '[ProductConfigurations] Reset Product Configuration'
+);
+
 
 
 
