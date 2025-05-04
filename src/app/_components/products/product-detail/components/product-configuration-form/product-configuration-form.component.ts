@@ -1,9 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import {
   FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
@@ -16,7 +17,12 @@ import { ProductConfiguration } from '../../../../../_models/product-configurati
 import { ProductConfigurationFeature } from '../../../_store/product-configurations/product-configuration.reducer';
 import { config, Observable, Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { getProductConfiguration } from '../../../_store/product-configurations/product-configurations.actions';
+import {
+  createProductConfiguration,
+  getProductConfiguration,
+  updateProductConfiguration,
+  resetProductConfiguration,
+} from '../../../_store/product-configurations/product-configurations.actions';
 @Component({
   selector: 'app-product-configuration-form',
   templateUrl: './product-configuration-form.component.html',
@@ -33,7 +39,7 @@ import { getProductConfiguration } from '../../../_store/product-configurations/
     PasswordModule,
   ],
 })
-export class ProductConfigurationFormComponent implements OnInit {
+export class ProductConfigurationFormComponent implements OnInit, OnDestroy {
   constructor(private store: Store) {}
 
   @Input() productId: string = '';
@@ -51,10 +57,16 @@ export class ProductConfigurationFormComponent implements OnInit {
       label: 'MDB',
       value: 'MdbConfiguration',
     },
+    {
+      label: 'DBF',
+      value: 'DbfConfiguration',
+    }
   ];
 
   configurationType: string = 'MdbConfiguration';
   fileName: string = '';
+  isChangeFileType: boolean = false;
+  fileType: string = '';
 
   formGroup: FormGroup = new FormGroup({
     id: new FormControl(''),
@@ -84,60 +96,96 @@ export class ProductConfigurationFormComponent implements OnInit {
   subscription$: Subscription = new Subscription();
 
   ngOnInit(): void {
-    this.subscription$.add(
-      this.productConfiguration$.subscribe((productConfiguration) => {
-        if (productConfiguration) {
-          this.productConfig = productConfiguration;
-
-          var configData = JSON.parse(productConfiguration.configurationData);
-          console.log(configData);
-
-          configData.columnDefinition.forEach((columnDefinition: any) => {
-            this.formGroup.patchValue({
-              [columnDefinition.fieldName]: columnDefinition.columnName,
-            });
-          });
-
-          var newVal = {
-            ...this.formGroup.value,
-            tableName: configData.tableName,
-            hasPassword: Boolean(configData.hasPassword),
-            enableBarcode: Boolean(configData.hasBarCode),
-            isEncrypted: Boolean(configData.isEncrypted),
-          }
-          console.log(newVal);
-          this.formGroup.patchValue(newVal);
-          console.log(this.formGroup.value);
-        }
-      })
-    );
-
     if (this.productId) {
-      this.loadConfiguration();
+      console.log('loadConfiguration', this.productId);
+      this.loadConfiguration(this.productId);
     }
   }
 
-  loadConfiguration() {
-    this.store.dispatch(getProductConfiguration({ productId: this.productId }));
+  loadConfiguration(productId: string) {
+    this.store.dispatch(getProductConfiguration({ productId: productId }));
+
+    this.subscription$.add(
+      this.productConfiguration$.subscribe((productConfiguration) => {
+        if (productConfiguration) {
+
+          this.productConfig = productConfiguration;
+
+          const configurationData = JSON.parse(
+            this.productConfig.configurationData
+          );
+
+          console.log('configurationData', configurationData);
+
+          configurationData.columnDefinitions.forEach(
+            (columnDefinition: any) => {
+              this.formGroup.patchValue({
+                [columnDefinition.fieldName]: columnDefinition.columnName,
+              });
+            }
+          );
+
+          this.fileName = productConfiguration.fileName;
+          this.configurationType = productConfiguration.configurationType;
+          this.isChangeFileType = productConfiguration.isChangeFileType;
+          this.fileType = productConfiguration.fileType;
+
+          const val = {
+            ...this.formGroup.value,
+            id: this.productConfig?.id,
+            tableName: configurationData.tableName,
+            hasPassword: Boolean(configurationData.hasPassword),
+            password: configurationData.password,
+            enableBarcode: Boolean(configurationData.hasBarCode),
+            isEncrypted: Boolean(configurationData.isEncrypted),
+          };
+
+          this.formGroup.patchValue(val);
+        }
+      })
+    );
   }
 
   onSaveConfiguration() {
-    console.log(this.formGroup.value);
-  }
+    const columnDefinitions = JSON.stringify(this.buildRequest());
 
-  onSubmit() {
-    var request = this.buildRequest();
+    const request = {
+      ...this.productConfig!,
+      fileName: this.fileName,
+      configurationType: this.configurationType,
+      configurationData: columnDefinitions,
+      fileType: this.fileType,
+      isChangeFileType: this.isChangeFileType,
+
+    };
+
+    if (this.productConfig?.id) {
+      this.store.dispatch(
+        updateProductConfiguration({
+          productId: this.productId,
+          configuration: request,
+        })
+      );
+    } else {
+      this.store.dispatch(
+        createProductConfiguration({
+          productId: this.productId,
+          configuration: request,
+        })
+      );
+    }
     console.log(request);
   }
 
   buildRequest(): any {
-    if (this.configurationType === 'MdbConfiguration') {
+    if (this.configurationType === 'MdbConfiguration' || this.configurationType === 'DbfConfiguration') {
       return {
         hasPassword: this.formGroup.get('hasPassword')?.value,
         password: this.formGroup.get('password')?.value,
         tableName: this.formGroup.get('tableName')?.value,
         enableBarcode: this.formGroup.get('enableBarcode')?.value,
-
+        isEncrypted: this.formGroup.get('isEncrypted')?.value,
+       
         columnDefinitions: [
           {
             fieldName: 'checkType',
@@ -164,16 +212,24 @@ export class ProductConfigurationFormComponent implements OnInit {
             columnName: this.formGroup.get('batch')?.value,
           },
           {
-            fieldName: 'startingSerialNo',
+            fieldName: 'startingSerialNumber',
             columnName: this.formGroup.get('startingSerialNumber')?.value,
           },
           {
-            fieldName: 'endingSerialNo',
+            fieldName: 'endingSerialNumber',
             columnName: this.formGroup.get('endingSerialNumber')?.value,
           },
           {
             fieldName: 'accountNumber',
             columnName: this.formGroup.get('accountNumber')?.value,
+          },
+          {
+            fieldName: 'accountName1',
+            columnName: this.formGroup.get('accountName1')?.value,
+          },
+          {
+            fieldName: 'accountName2',
+            columnName: this.formGroup.get('accountName2')?.value,
           },
           {
             fieldName: 'concode',
@@ -185,6 +241,38 @@ export class ProductConfigurationFormComponent implements OnInit {
   }
 
   getColumnDefinition(columnDefinitions: any[], fieldName: string) {
-    return columnDefinitions.find((x: any) => x.fieldName === fieldName).columnName;
+    return columnDefinitions.find((x: any) => x.fieldName === fieldName)
+      .columnName;
+  }
+
+  ngOnDestroy(): void {
+    this.subscription$.unsubscribe();
+    this.resetForm();
+  }
+
+  resetForm() {
+    this.fileName = '';
+    this.configurationType = '';
+    this.store.dispatch(resetProductConfiguration());
+    this.formGroup.setValue({
+      id: '',
+      tableName: '',
+      hasPassword: false,
+      enableBarcode: false,
+      isEncrypted: false,
+      password: '',
+      checkType: '',
+      formType: '',
+      deliverTo: '',
+      quantity: '',
+      brstn: '',
+      accountNumber: '',
+      accountName1: '',
+      accountName2: '',
+      startingSerialNumber: '',
+      endingSerialNumber: '',
+      concode: '',
+      batch: '',
+    });
   }
 }

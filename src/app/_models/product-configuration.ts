@@ -4,4 +4,6 @@ export interface ProductConfiguration {
   fileName : string
   configurationData: string
   configurationType: string
+  isChangeFileType: boolean
+  fileType: string
 }

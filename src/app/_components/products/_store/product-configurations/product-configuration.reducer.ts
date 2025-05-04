@@ -6,6 +6,7 @@ import {
   getProductConfiguration,
   createProductConfiguration,
   updateProductConfiguration,
+  resetProductConfiguration,
 } from './product-configurations.actions';
 
 export interface ProductConfigurationState {
@@ -42,6 +43,12 @@ export const productConfigurationReducer = createReducer(
     ...state,
     productConfiguration: configuration,
     loading: false,
+  })),
+  on(resetProductConfiguration, (state) => ({
+    ...state,
+    productConfiguration: undefined,
+    loading: false,
+    error: null,
   }))
 );
 
