@@ -19,6 +19,7 @@
           <p-dropdown 
             [options]="bankValues?.productValues" 
             [(ngModel)]="selectedProduct"
+            (onChange)="onSelectedProductChange()"
             optionLabel="value"
             optionValue="id"
             placeholder="Select Product"
@@ -29,7 +30,8 @@
         <div class="flex-1" *ngIf="tag.searchByFormCheck">
           <label class="block mb-2">Form Check</label>
           <p-dropdown 
-            [options]="bankValues?.formCheckValues" 
+            [options]="formCheckOptions"
+            [disabled]="!selectedProduct"
             [(ngModel)]="selectedFormCheck"
             optionLabel="value"
             optionValue="id"
