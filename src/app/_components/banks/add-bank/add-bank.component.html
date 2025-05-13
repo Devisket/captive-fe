@@ -1,60 +1,40 @@
-    <div class="row d-flex justify-content-center">
-      <div class="col-4">
-          <form #addBankForm="ngForm" autocomplete="off" (ngSubmit)="addBank()">
-              <h2 class="text-center"> ADD NEW BANK</h2>
-              <hr />
-              <div class="mb-3 form-floating">
-                  <input type="text"
-                         class="form-control"
-                         name="shortName"
-                         [(ngModel)]="model.shortName"
-                         placeholder="Short Name" />
-                  <label>Short Name</label>
-              </div>
-              <div class="mb-3 form-floating">
-                  <input type="text"
-                         class="form-control"
-                         name="bankName"
-                         [(ngModel)]="model.bankName"
-                         placeholder="Complete Name" />
-                  <label>Bank Name</label>
-              </div>
-              <div class="mb-3 form-floating">
-                  <input type="text"
-                         class="form-control"
-                         name="description"
-                         [(ngModel)]="model.description"
-                         placeholder="Description" />
-                  <label>Bank Description</label>
-              </div>
-
-              <div class="d-flex justify-content-between">
-                  <button class="btn btn-outline-secondary me-2 btn-sm"
-                          routerLink="/banks"
-                          type="button"
-                          tabindex="-1">
-                      Cancel
-                  </button>
-                  <button class="btn btn-success me-2 btn-sm"
-                          [disabled]="!addBankForm.dirty"
-                          type="submit">
-                      <i class="fa fa-save"></i>
-                      Save
-                  </button>
-              </div>
-          </form>
-      </div>
-    </div>
-  
-    @if(addBankForm.dirty){
-      <div class="row">
-        <div class="col-4 mt-3 offset-4 text-center text-sm">
-          <div class="alert alert-warning pb-0">
-            <p>
-              <strong>Warning: </strong>
-              Any unsaved changes will be lost.
-            </p>
-          </div>
-        </div>
-      </div>
-    }
+<form [formGroup]="formGroup">
+  <hr />
+  <div class="field mt-5">
+    <label for="shortName">Short Name</label>
+    <span class="p-float-label">
+      <input
+        class="w-full"
+        pInputText
+        id="shortName"
+        formControlName="shortName"
+      />
+    </span>
+  </div>
+  <div class="field mt-5">
+    <label for="bankName">Bank Name</label>
+    <span class="p-float-label">
+      <input
+        class="w-full"
+        pInputText
+        id="bankName"
+        formControlName="bankName"
+      />
+    </span>
+  </div>
+  <div class="field mt-5">
+    <label for="description">Bank Description</label>
+    <span class="p-float-label">
+      <input
+        class="w-full"
+        pInputText
+        id="description"
+        formControlName="description"
+      />
+    </span>
+  </div>
+</form>
+<div class="flex justify-content-end flex-wrap">
+  <p-button class="mx-3" label="Submit" (onClick)="onSubmit()" />
+  <p-button label="Cancel" (onClick)="onCancel()" />
+</div>

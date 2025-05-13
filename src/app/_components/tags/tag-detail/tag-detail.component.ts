@@ -27,6 +27,7 @@ import { TagFeature } from '../_store/tag.reducers';
 import { SharedFeature } from '../../../_store/shared/shared.reducer';
 import { BankValues } from '../../../_models/values/bankValues';
 import { AddCheckInventoryComponent } from '../check-inventory/add-check-inventory/add-check-inventory.component';
+import { ValuesDto } from '../../../_models/values/valuesDto';
 
 @Component({
   selector: 'app-tag-detail',
@@ -55,6 +56,8 @@ export class TagDetailComponent implements OnInit, OnDestroy {
   selectedBranch: any = null;
   selectedProduct: any = null;
   selectedFormCheck: any = null;
+
+  formCheckOptions: ValuesDto[] = [];
 
   constructor(
     private store: Store,
@@ -214,6 +217,13 @@ export class TagDetailComponent implements OnInit, OnDestroy {
         checkInventoryId: checkInventory.id!,
       })
     );
+  }
+
+  onSelectedProductChange() {
+    this.formCheckOptions =
+      this.bankValues?.formCheckValues.filter(
+        (formCheck) => formCheck.productId === this.selectedProduct
+      ) || [];
   }
 
   ngOnDestroy() {
