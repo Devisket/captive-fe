@@ -100,7 +100,6 @@ export class TagDetailComponent implements OnInit, OnDestroy {
       this.store
         .select(TagFeature.selectCheckInventories)
         .subscribe((inventories) => {
-          console.log('Received check inventories:', inventories);
           this.checkInventories = inventories;
         })
     );
@@ -178,6 +177,25 @@ export class TagDetailComponent implements OnInit, OnDestroy {
       data: {
         tagId: this.tag.id,
         bankId: this.bankInfoId,
+      },
+    });
+
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        // Refresh check inventories
+        this.store.dispatch(getCheckInventory({ tagId: this.tag.id! }));
+      }
+    });
+  }
+
+  initiateCheckInventory() {
+    const ref = this.dialogService.open(AddCheckInventoryComponent, {
+      header: 'Initiate Check Inventory',
+      width: '50%',
+      data: {
+        tagId: this.tag.id,
+        bankId: this.bankInfoId,
+        initiateCheckInventory: true,
       },
     });
 

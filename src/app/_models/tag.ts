@@ -8,4 +8,5 @@ export interface Tag {
   searchByAccount:boolean;
   searchByFormCheck:boolean;
   searchByProduct:boolean;
+  isLocked:boolean;
 }

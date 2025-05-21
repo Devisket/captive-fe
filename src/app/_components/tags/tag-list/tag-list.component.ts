@@ -9,6 +9,7 @@ import {
   addNewTag,
   deleteTag,
   setSelectedTag,
+  lockTag,
 } from '../_store/tag.actions';
 import { TagFeature } from '../_store/tag.reducers';
 import { TableModule } from 'primeng/table';
@@ -63,6 +64,7 @@ export class TagListComponent implements OnInit, OnDestroy {
       searchByAccount: false,
       searchByFormCheck: false,
       searchByProduct: false,
+      isLocked: false,
     };
   }
 
@@ -154,6 +156,12 @@ export class TagListComponent implements OnInit, OnDestroy {
       this.store.select(TagFeature.selectTags).subscribe((tags) => {
         this.tags = tags.map((tag) => ({ ...tag }));
       })
+    );
+  }
+
+  onLockTag(tag: Tag) {
+    this.store.dispatch(
+      lockTag({ bankInfoId: this.bankInfoId, tagId: tag.id! })
     );
   }
 

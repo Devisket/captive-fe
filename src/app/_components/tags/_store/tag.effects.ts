@@ -31,6 +31,10 @@ import {
   deleteCheckInventoryFailure,
   setCheckInventoryActiveFailure,
   setCheckInventoryActive,
+  initiateCheckInventoryFailure,
+  initiateCheckInventory,
+  lockTagFailure,
+  lockTag,
 } from './tag.actions';
 import { of } from 'rxjs';
 import { map } from 'rxjs';
@@ -112,6 +116,18 @@ export class TagEffects {
     )
   );
 
+  lockTag$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(lockTag),
+      switchMap(({ bankInfoId, tagId }) =>
+        this.tagsService.lockTag(bankInfoId, tagId).pipe(
+          map(() => getTags({ bankInfoId })),
+          catchError((error) => of(lockTagFailure({ error })))
+        )
+      )
+    )
+  );
+
   addNewTagMapping$ = createEffect(() =>
     this.actions$.pipe(
       ofType(addNewTagMapping),
@@ -157,6 +173,18 @@ export class TagEffects {
         this.tagsService.createCheckInventory(checkInventory).pipe(
           map(() => getCheckInventory({ tagId })),
           catchError((error) => of(addNewCheckInventoryFailure({ error })))
+        )
+      )
+    )
+  );
+
+  initiateCheckInventory$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(initiateCheckInventory),
+      switchMap(({ tagId, checkInventory }) =>
+        this.tagsService.inititateCheckInventory(checkInventory).pipe(
+          map(() => getCheckInventory({ tagId })),
+          catchError((error) => of(initiateCheckInventoryFailure({ error })))
         )
       )
     )

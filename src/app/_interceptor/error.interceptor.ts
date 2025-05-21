@@ -23,7 +23,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
               }
               throw modalStateErrors.flat();
             } else {
-              messageService.add({severity:'error', summary: 'Validation Errors', detail: error.error});
+              messageService.add({severity:'error', summary: 'Validation Errors', detail: error.error.Message, life:10000});
             }
             break;
           case 401:
@@ -34,7 +34,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             break;
           case 500:
             console.log(error);
-            messageService.add({severity:'error', summary: 'Server Error', detail: error.error.message})
+            console.log(error.error.Message);
+            messageService.add({severity:'error', summary: 'Server Error', detail: error.error.Message, life:10000})
             break;
           default:
             messageService.add({severity:'error', summary: 'Something unexpected went wrong'});

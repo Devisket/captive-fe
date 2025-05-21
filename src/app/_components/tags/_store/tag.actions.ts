@@ -24,6 +24,9 @@ export const addNewTagFailure = createAction('[Tags] Add New Tag Failure', props
 export const updateTag = createAction('[Tags] Update Tag', props<{ bankInfoId: string, tagId: string, tag: Tag }>());
 export const updateTagFailure = createAction('[Tags] Update Tag Failure', props<{ error: string }>());
 
+export const lockTag = createAction('[Tags] Lock Tag', props<{ bankInfoId: string, tagId: string }>());
+export const lockTagFailure = createAction('[Tags] Lock Tag Failure', props<{ error: string }>());
+
 export const deleteTag = createAction('[Tags] Delete Tag', props<{ bankInfoId: string, tagId: string }>());
 export const deleteTagFailure = createAction('[Tags] Delete Tag Failure', props<{ error: string }>());
 
@@ -38,6 +41,9 @@ export const deleteTagMappingFailure = createAction('[Tags] Delete Tag Mapping F
 
 export const addNewCheckInventory = createAction('[Tags] Add New Check Inventory', props<{ tagId: string, checkInventory: CheckInventory }>());
 export const addNewCheckInventoryFailure = createAction('[Tags] Add New Check Inventory Failure', props<{ error: string }>());
+
+export const initiateCheckInventory = createAction('[Tags] Inititate Check Inventory', props<{ tagId: string, checkInventory: CheckInventory }>());
+export const initiateCheckInventoryFailure = createAction('[Tags] Inititate Check Inventory Failure', props<{ error: string }>());
 
 export const updateCheckInventory = createAction('[Tags] Update Check Inventory', props<{ tagId: string, checkInventory: CheckInventory }>());
 export const updateCheckInventoryFailure = createAction('[Tags] Update Check Inventory Failure', props<{ error: string }>());
