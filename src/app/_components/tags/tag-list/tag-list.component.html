@@ -99,6 +99,7 @@
       <th class="text-center">Search By Account</th>
       <th class="text-center">Search By Form Check</th>
       <th class="text-center">Search By Product</th>
+      <th class="text-center">Is Locked</th>
       <th class="text-center">Actions</th>
     </tr>
   </ng-template>
@@ -162,10 +163,28 @@
           inputId="product-{{ tag.id }}"
         ></p-checkbox>
       </td>
+
+      <td class="text-center">
+        <p-checkbox
+          [binary]="true"
+          [(ngModel)]="tag.isLocked"
+          [disabled]="!editing"
+          (onChange)="onSearchOptionChange(tag, 'searchByProduct')"
+          inputId="product-{{ tag.id }}"
+        ></p-checkbox>
+      </td>
       <td class="text-center">
         <div class="flex justify-content-center gap-2">
           <button
-            *ngIf="!editing"
+            *ngIf="!editing && !tag.isLocked"
+            pButton
+            type="button"
+            icon="pi pi-lock"
+            class="p-button-rounded p-button-text"
+            (click)="onLockTag(tag)"
+          ></button>
+          <button
+            *ngIf="!editing && !tag.isLocked"
             pButton
             type="button"
             icon="pi pi-pencil"
@@ -174,7 +193,7 @@
             (click)="onRowEditInit(tag)"
           ></button>
           <button
-            *ngIf="!editing"
+            *ngIf="!editing && !tag.isLocked"
             pButton
             type="button"
             icon="pi pi-trash"

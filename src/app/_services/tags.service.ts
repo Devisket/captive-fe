@@ -40,6 +40,10 @@ export class TagsService {
     return this.http.delete(this.commandUrl + bankInfoId + '/Tag/' + tagId);
   }
 
+  lockTag(bankInfoId: any, tagId: any) {
+    return this.http.post(this.commandUrl + bankInfoId + '/Tag/Lock/' + tagId,{});
+  }
+
   addNewTagMapping(bankInfoId: any, tagId: any, tagMapping: TagMapping[]) {
     return this.http.post(
       this.commandUrl + bankInfoId + '/Tag/' + tagId + '/mapping',
@@ -74,9 +78,14 @@ export class TagsService {
         tagMappingId
     );
   }
+  
 
   createCheckInventory(checkInventory: CheckInventory) {
     return this.http.post(this.commandUrl + 'CheckInventory', checkInventory);
+  }
+
+  inititateCheckInventory(checkInventory: CheckInventory) {
+    return this.http.post(this.commandUrl + 'CheckInventory/InitiateCheckInventories', checkInventory);
   }
 
   updateCheckInventory(checkInventory: CheckInventory) {
@@ -98,4 +107,5 @@ export class TagsService {
       null
     );
   }
+  
 }

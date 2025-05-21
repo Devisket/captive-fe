@@ -4,8 +4,8 @@
       <div class="flex gap-3">
         <div class="flex-1" *ngIf="tag.searchByBranch">
           <label class="block mb-2">Branch</label>
-          <p-dropdown 
-            [options]="bankValues?.branchValues" 
+          <p-dropdown
+            [options]="bankValues?.branchValues"
             [(ngModel)]="selectedBranch"
             optionLabel="value"
             optionValue="id"
@@ -16,8 +16,8 @@
         </div>
         <div class="flex-1" *ngIf="tag.searchByProduct">
           <label class="block mb-2">Product</label>
-          <p-dropdown 
-            [options]="bankValues?.productValues" 
+          <p-dropdown
+            [options]="bankValues?.productValues"
             [(ngModel)]="selectedProduct"
             (onChange)="onSelectedProductChange()"
             optionLabel="value"
@@ -29,7 +29,7 @@
         </div>
         <div class="flex-1" *ngIf="tag.searchByFormCheck">
           <label class="block mb-2">Form Check</label>
-          <p-dropdown 
+          <p-dropdown
             [options]="formCheckOptions"
             [disabled]="!selectedProduct"
             [(ngModel)]="selectedFormCheck"
@@ -42,9 +42,9 @@
         </div>
       </div>
       <div class="flex justify-content-end">
-        <p-button 
-          label="Add Mapping" 
-          icon="pi pi-plus" 
+        <p-button
+          label="Add Mapping"
+          icon="pi pi-plus"
           (onClick)="onAddTagMapping()"
           [disabled]="!isFormValid()"
         ></p-button>
@@ -84,15 +84,22 @@
   </p-tabPanel>
   <p-tabPanel header="Check Inventory">
     <div class="flex justify-content-end mb-3">
-      <p-button 
-        label="Add Check Inventory" 
-        icon="pi pi-plus" 
+      @if(checkInventories.length > 0){
+      <p-button
+        label="Add Check Inventory"
+        icon="pi pi-plus"
         (onClick)="showAddCheckInventoryDialog()"
       ></p-button>
+      }
     </div>
 
     <div *ngIf="checkInventories.length === 0" class="text-center p-4">
-      No check inventory found for this tag.
+      <p>No check inventory found for this tag.</p>
+      <p-button
+        label="Initiate Check Inventory"
+        icon="pi pi-bolt"
+        (onClick)="initiateCheckInventory()"
+      ></p-button>
     </div>
     <p-table
       [value]="checkInventories"
@@ -136,7 +143,6 @@
               icon="pi pi-trash"
               (onClick)="onDeleteCheckInventory(inventory)"
             ></p-button>
-
           </td>
         </tr>
       </ng-template>
