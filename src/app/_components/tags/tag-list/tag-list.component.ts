@@ -65,6 +65,7 @@ export class TagListComponent implements OnInit, OnDestroy {
       searchByFormCheck: false,
       searchByProduct: false,
       isLocked: false,
+      checkInventoryInitiated: false,
     };
   }
 
@@ -101,9 +102,6 @@ export class TagListComponent implements OnInit, OnDestroy {
   }
 
   onRowEditSave(tag: Tag) {
-    // Here you would typically dispatch an action to update the tag
-    console.log('Saving tag:', tag);
-
     if (tag.isDefaultTag) {
       const existingDefaultTag = this.tags.find(
         (t) => t.id !== tag.id && t.isDefaultTag
@@ -176,7 +174,9 @@ export class TagListComponent implements OnInit, OnDestroy {
 
     const ref = this.dialogService.open(TagDetailComponent, {
       header: `Tag Details - ${tag.tagName}`,
-      width: '70%',
+      width: '80%',
+      height: '90%',
+      appendTo: 'body',
       data: {
         bankInfoId: this.bankInfoId,
         tag: tag,

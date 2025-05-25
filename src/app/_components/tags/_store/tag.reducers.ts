@@ -21,6 +21,7 @@ export interface TagState {
   selectedTag: Tag | null;
   tagMappings: TagMapping[];
   checkInventories: CheckInventory[];
+  totalRecords: number;
   error: string | null;
 }
 
@@ -29,6 +30,7 @@ const initialState: TagState = {
   selectedTag: null,
   tagMappings: [],
   checkInventories: [],
+  totalRecords: 0,
   error: null,
 };
 
@@ -56,9 +58,10 @@ export const TagFeature = createFeature({
       ...state,
       error,
     })),
-    on(getCheckInventorySuccess, (state, { checkInventory }) => ({
+    on(getCheckInventorySuccess, (state, { checkInventoryResponse }) => ({
       ...state,
-      checkInventories: checkInventory,
+      checkInventories: checkInventoryResponse.checkInventories,
+      totalRecords: checkInventoryResponse.totalCount,
     })),
     on(getCheckInventoryFailure, (state, { error }) => ({
       ...state,

@@ -71,9 +71,9 @@ export class TagEffects {
   getCheckInventory$ = createEffect(() =>
     this.actions$.pipe(
       ofType(getCheckInventory),
-      switchMap(({ tagId }) =>
-        this.tagsService.getCheckInventory(tagId).pipe(
-          map((checkInventory) => getCheckInventorySuccess({ checkInventory })),
+      switchMap(({ query }) =>
+        this.tagsService.getCheckInventory(query).pipe(
+          map((checkInventoryResponse) => getCheckInventorySuccess({ checkInventoryResponse })),
           catchError((error) => of(getCheckInventoryFailure({ error })))
         )
       )
@@ -171,7 +171,7 @@ export class TagEffects {
       ofType(addNewCheckInventory),
       switchMap(({ tagId, checkInventory }) =>
         this.tagsService.createCheckInventory(checkInventory).pipe(
-          map(() => getCheckInventory({ tagId })),
+          map(() => getCheckInventory({ query: { tagId: tagId, currentPage: 1, pageSize: 10, isActive: true, isRepeating: true } })),
           catchError((error) => of(addNewCheckInventoryFailure({ error })))
         )
       )
@@ -183,7 +183,7 @@ export class TagEffects {
       ofType(initiateCheckInventory),
       switchMap(({ tagId, checkInventory }) =>
         this.tagsService.inititateCheckInventory(checkInventory).pipe(
-          map(() => getCheckInventory({ tagId })),
+          map(() => getCheckInventory({ query: { tagId: tagId, currentPage: 1, pageSize: 10, isActive: true, isRepeating: true } })),
           catchError((error) => of(initiateCheckInventoryFailure({ error })))
         )
       )
@@ -195,7 +195,7 @@ export class TagEffects {
       ofType(updateCheckInventory),
       switchMap(({ tagId, checkInventory }) =>
         this.tagsService.updateCheckInventory(checkInventory).pipe(
-          map(() => getCheckInventory({ tagId })),
+          map(() => getCheckInventory({ query: { tagId: tagId, currentPage: 1, pageSize: 10, isActive: true, isRepeating: true } })),
           catchError((error) => of(updateCheckInventoryFailure({ error })))
         )
       )
@@ -207,7 +207,7 @@ export class TagEffects {
       ofType(deleteCheckInventory),
       switchMap(({ tagId, checkInventoryId }) =>
         this.tagsService.deleteCheckInventory(checkInventoryId).pipe(
-          map(() => getCheckInventory({ tagId })),
+          map(() => getCheckInventory({ query: { tagId: tagId, currentPage: 1, pageSize: 10, isActive: true, isRepeating: true } })),
           catchError((error) => of(deleteCheckInventoryFailure({ error })))
         )
       )
@@ -219,7 +219,7 @@ export class TagEffects {
       ofType(setCheckInventoryActive),
       switchMap(({ checkInventoryId, tagId }) =>
         this.tagsService.setCheckInventoryActive(checkInventoryId).pipe(
-          map(() => getCheckInventory({ tagId })),
+          map(() => getCheckInventory({ query: { tagId: tagId, currentPage: 1, pageSize: 10, isActive: true, isRepeating: true } })),
           catchError((error) => of(setCheckInventoryActiveFailure({ error })))
         )
       )

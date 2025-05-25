@@ -1,9 +1,12 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
-import { TagMapping } from '../_models/tag-mapping';
-import { CheckInventory } from '../_models/check-inventory';
+import { CreateTagMappingRequest, TagMapping } from '../_models/tag-mapping';
+import {
+  CheckInventory,
+  CheckInventoryQueryRequest,
+} from '../_models/check-inventory';
 
 @Injectable({
   providedIn: 'root',
@@ -21,8 +24,32 @@ export class TagsService {
     return this.http.get<any>(this.queryUrl + bankInfoId + '/Tag/' + tagId);
   }
 
-  getCheckInventory(tagId: string) {
-    return this.http.get<any>(this.queryUrl + tagId + '/CheckInventory');
+  getCheckInventory(query: CheckInventoryQueryRequest) {
+    var params = new HttpParams()
+      .set('tagId', query.tagId)
+      .set('isActive', query.isActive)
+      .set('isRepeating', query.isRepeating)
+      .set('currentPage', query.currentPage)
+      .set('pageSize', query.pageSize);
+    if (query.branchIds && query.branchIds.length > 0) {
+      query.branchIds.forEach((branchId) => {
+        params = params.append('branchIds', branchId);
+      });
+    }
+    if (query.productIds && query.productIds.length > 0) {
+      query.productIds.forEach((productId) => {
+        params = params.append('productIds', productId);
+      });
+    }
+    if (query.formCheckType && query.formCheckType.length > 0) {
+      query.formCheckType.forEach((formCheckType) => {
+        params = params.append('formCheckType', formCheckType);
+      });
+    }
+
+    return this.http.get<any>(this.queryUrl + query.tagId + '/CheckInventory', {
+      params,
+    });
   }
 
   addNewtag(bankInfoId: any, formData: any) {
@@ -41,10 +68,17 @@ export class TagsService {
   }
 
   lockTag(bankInfoId: any, tagId: any) {
-    return this.http.post(this.commandUrl + bankInfoId + '/Tag/Lock/' + tagId,{});
+    return this.http.post(
+      this.commandUrl + bankInfoId + '/Tag/Lock/' + tagId,
+      {}
+    );
   }
 
-  addNewTagMapping(bankInfoId: any, tagId: any, tagMapping: TagMapping[]) {
+  addNewTagMapping(
+    bankInfoId: any,
+    tagId: any,
+    tagMapping: CreateTagMappingRequest
+  ) {
     return this.http.post(
       this.commandUrl + bankInfoId + '/Tag/' + tagId + '/mapping',
       tagMapping
@@ -78,14 +112,16 @@ export class TagsService {
         tagMappingId
     );
   }
-  
 
   createCheckInventory(checkInventory: CheckInventory) {
     return this.http.post(this.commandUrl + 'CheckInventory', checkInventory);
   }
 
   inititateCheckInventory(checkInventory: CheckInventory) {
-    return this.http.post(this.commandUrl + 'CheckInventory/InitiateCheckInventories', checkInventory);
+    return this.http.post(
+      this.commandUrl + 'CheckInventory/InitiateCheckInventories',
+      checkInventory
+    );
   }
 
   updateCheckInventory(checkInventory: CheckInventory) {
@@ -103,9 +139,8 @@ export class TagsService {
 
   setCheckInventoryActive(checkInventoryId: string) {
     return this.http.post(
-      this.commandUrl + 'CheckInventory/active/' +checkInventoryId,
+      this.commandUrl + 'CheckInventory/active/' + checkInventoryId,
       null
     );
   }
-  
 }

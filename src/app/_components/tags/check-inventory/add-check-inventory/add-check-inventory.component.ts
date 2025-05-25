@@ -125,6 +125,11 @@ export class AddCheckInventoryComponent implements OnInit, OnDestroy {
         startingSeries: this.formGroup.value.startingSeries || 0,
         endingSeries: this.formGroup.value.endingSeries || 0,
         isRepeating: this.formGroup.value.isRepeating || false,
+        mappingData: {
+          branchIds: [],
+          productIds: [],
+          formCheckType: [],
+        },
       };
 
       if (this.DynamicDialogConfig.data.initiateCheckInventory) {
