@@ -2,76 +2,168 @@
   <p-tabPanel header="Tag Mappings">
     <div class="flex flex-column gap-3 mb-4">
       <div class="flex gap-3">
-        <div class="flex-1" *ngIf="tag.searchByBranch">
+        <div class="flex-1">
           <label class="block mb-2">Branch</label>
-          <p-dropdown
+          <p-multiSelect
             [options]="bankValues?.branchValues"
+            [showToggleAll]="true"
             [(ngModel)]="selectedBranch"
             optionLabel="value"
             optionValue="id"
-            placeholder="Select Branch"
-            [showClear]="true"
+            [virtualScroll]="true"
+            scrollHeight="300px"
+            [virtualScrollItemSize]="50"
+            [selectAll]="branchSelectedAll"
+            class="multiselect-custom-virtual-scroll"
             styleClass="w-full"
-          ></p-dropdown>
+            [disabled]="tag.isDefaultTag"
+            placeholder="Select Branch"
+            appendTo="body"
+            (onSelectAllChange)="onBranchSelectAllChange($event)"
+          >
+            <ng-template
+              pTemplate="headercheckboxicon"
+              let-allSelected
+              let-partialSelected="partialSelected"
+            >
+              <i class="pi pi-check" *ngIf="allSelected"></i>
+              <i
+                class="pi pi-minus"
+                *ngIf="partialSelected"
+                [ngStyle]="{ color: 'var(--text-color)' }"
+              ></i>
+            </ng-template>
+          </p-multiSelect>
         </div>
-        <div class="flex-1" *ngIf="tag.searchByProduct">
+        <div class="flex-1">
           <label class="block mb-2">Product</label>
-          <p-dropdown
+          <p-multiSelect
             [options]="bankValues?.productValues"
+            [showToggleAll]="true"
             [(ngModel)]="selectedProduct"
-            (onChange)="onSelectedProductChange()"
             optionLabel="value"
             optionValue="id"
-            placeholder="Select Product"
-            [showClear]="true"
+            [virtualScroll]="true"
+            [virtualScrollItemSize]="43"
+            [disabled]="tag.isDefaultTag"
+            [selectAll]="productSelectedAll"
+            class="multiselect-custom-virtual-scroll"
             styleClass="w-full"
-          ></p-dropdown>
+            placeholder="Select Product"
+            appendTo="body"
+            (onSelectAllChange)="onProductSelectAllChange($event)"
+          >
+            <ng-template
+              pTemplate="headercheckboxicon"
+              let-allSelected
+              let-partialSelected="partialSelected"
+            >
+              <i class="pi pi-check" *ngIf="allSelected"></i>
+              <i
+                class="pi pi-minus"
+                *ngIf="partialSelected"
+                [ngStyle]="{ color: 'var(--text-color)' }"
+              ></i>
+            </ng-template>
+          </p-multiSelect>
         </div>
-        <div class="flex-1" *ngIf="tag.searchByFormCheck">
+        <div class="flex-1">
           <label class="block mb-2">Form Check</label>
-          <p-dropdown
+          <p-multiSelect
             [options]="formCheckOptions"
-            [disabled]="!selectedProduct"
+            [showToggleAll]="true"
             [(ngModel)]="selectedFormCheck"
             optionLabel="value"
             optionValue="id"
-            placeholder="Select Form Check"
-            [showClear]="true"
+            [disabled]="tag.isDefaultTag"
+            [virtualScroll]="true"
+            [virtualScrollItemSize]="43"
+            [selectAll]="formCheckSelectedAll"
+            class="multiselect-custom-virtual-scroll"
             styleClass="w-full"
-          ></p-dropdown>
+            placeholder="Select Form Check"
+            appendTo="body"
+            (onSelectAllChange)="onFormCheckSelectAllChange($event)"
+          >
+            <ng-template
+              pTemplate="headercheckboxicon"
+              let-allSelected
+              let-partialSelected="partialSelected"
+            >
+              <i class="pi pi-check" *ngIf="allSelected"></i>
+              <i
+                class="pi pi-minus"
+                *ngIf="partialSelected"
+                [ngStyle]="{ color: 'var(--text-color)' }"
+              ></i>
+            </ng-template>
+          </p-multiSelect>
         </div>
       </div>
       <div class="flex justify-content-end">
+        <div class="pi pi-info-circle" *ngIf="!canAddTagMapping() && !tag.isDefaultTag">
+          Tag Module should be a combination of Branch, Product and Check Type
+        </div>
         <p-button
           label="Add Mapping"
           icon="pi pi-plus"
+          *ngIf="canAddTagMapping()"
           (onClick)="onAddTagMapping()"
           [disabled]="!isFormValid()"
         ></p-button>
       </div>
     </div>
-
-    <div *ngIf="tagMappings.length === 0" class="text-center p-4">
+    <div
+      *ngIf="viewTagMappingData.length === 0 && !tag.isDefaultTag"
+      class="text-center p-4"
+    >
       No mappings found for this tag.
     </div>
+    <div *ngIf="tag.isDefaultTag" class="text-center p-4">
+      Default Tag doesn't need any mapping.
+    </div>
     <p-table
-      [value]="tagMappings"
+      [value]="viewTagMappingData"
       styleClass="p-datatable-sm"
-      *ngIf="tagMappings.length > 0"
+      *ngIf="viewTagMappingData.length > 0 && !tag.isDefaultTag"
     >
       <ng-template pTemplate="header">
         <tr>
-          <th *ngIf="tag.searchByBranch">Branch</th>
-          <th *ngIf="tag.searchByProduct">Product</th>
-          <th *ngIf="tag.searchByFormCheck">Form Check</th>
+          <th>Branch</th>
+          <th>Product</th>
+          <th>Form Check</th>
           <th>Actions</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-mapping>
         <tr>
-          <td *ngIf="tag.searchByBranch">{{ mapping.branchName }}</td>
-          <td *ngIf="tag.searchByProduct">{{ mapping.productName }}</td>
-          <td *ngIf="tag.searchByFormCheck">{{ mapping.formCheckName }}</td>
+          <td>
+            <span
+              *ngIf="
+                mapping.branches.length > 0 && mapping.branches.length <= 2
+              "
+              >{{ mapping.branches.join(", ") }}</span
+            >
+            <p-scroller
+              *ngIf="mapping.branches.length > 2"
+              [items]="mapping.branches"
+              [itemSize]="50"
+              scrollHeight="200px"
+              styleClass="border-1 surface-border"
+              [style]="{ width: '200px', height: '200px' }"
+            >
+              <ng-template pTemplate="item" let-item let-options="options">
+                <div
+                  class="flex align-items-center p-2"
+                  [ngClass]="{ 'surface-ground': options.odd }"
+                >
+                  {{ item }}
+                </div>
+              </ng-template>
+            </p-scroller>
+          </td>
+          <td>{{ mapping.products.join(", ") }}</td>
+          <td>{{ mapping.formCheckTypes.join(", ") }}</td>
           <td>
             <p-button
               icon="pi pi-trash"
@@ -83,69 +175,240 @@
     </p-table>
   </p-tabPanel>
   <p-tabPanel header="Check Inventory">
-    <div class="flex justify-content-end mb-3">
-      @if(checkInventories.length > 0){
-      <p-button
-        label="Add Check Inventory"
-        icon="pi pi-plus"
-        (onClick)="showAddCheckInventoryDialog()"
-      ></p-button>
-      }
+    <div class="grid">
+      <div class="col-2">
+        <h4>Search Filter</h4>
+        <div class="mb-4">
+          <label class="block mb-2">Branch</label>
+          <p-multiSelect
+            [options]="bankValues?.branchValues"
+            [showToggleAll]="true"
+            [(ngModel)]="selectedBranchFilter"
+            optionLabel="value"
+            optionValue="id"
+            [virtualScroll]="true"
+            scrollHeight="300px"
+            [virtualScrollItemSize]="50"
+            [selectAll]="branchSelectedAllFilter"
+            class="multiselect-custom-virtual-scroll"
+            styleClass="w-full"
+            placeholder="Select Branch"
+            appendTo="body"
+            (onSelectAllChange)="onBranchFilterSelectAllChange($event)"
+          >
+            <ng-template
+              pTemplate="headercheckboxicon"
+              let-allSelected
+              let-partialSelected="partialSelected"
+            >
+              <i class="pi pi-check" *ngIf="allSelected"></i>
+              <i
+                class="pi pi-minus"
+                *ngIf="partialSelected"
+                [ngStyle]="{ color: 'var(--text-color)' }"
+              ></i>
+            </ng-template>
+          </p-multiSelect>
+        </div>
+        <div class="mb-4">
+          <label class="block mb-2">Product</label>
+          <p-multiSelect
+            [options]="bankValues?.productValues"
+            [showToggleAll]="true"
+            [(ngModel)]="selectedProductFilter"
+            optionLabel="value"
+            optionValue="id"
+            [virtualScroll]="true"
+            scrollHeight="300px"
+            [virtualScrollItemSize]="50"
+            [selectAll]="productSelectedAllFilter"
+            class="multiselect-custom-virtual-scroll"
+            styleClass="w-full"
+            placeholder="Select Product"
+            appendTo="body"
+            (onSelectAllChange)="onProductFilterSelectAllChange($event)"
+          >
+            <ng-template
+              pTemplate="headercheckboxicon"
+              let-allSelected
+              let-partialSelected="partialSelected"
+            >
+              <i class="pi pi-check" *ngIf="allSelected"></i>
+              <i
+                class="pi pi-minus"
+                *ngIf="partialSelected"
+                [ngStyle]="{ color: 'var(--text-color)' }"
+              ></i>
+            </ng-template>
+          </p-multiSelect>
+        </div>
+        <div class="mb-4">
+          <label class="block mb-2">Check Type</label>
+          <p-multiSelect
+            [options]="formCheckOptions"
+            [showToggleAll]="true"
+            [(ngModel)]="selectedFormCheckFilter"
+            optionLabel="value"
+            optionValue="id"
+            [virtualScroll]="true"
+            scrollHeight="300px"
+            [virtualScrollItemSize]="50"
+            [selectAll]="formCheckSelectedAllFilter"
+            class="multiselect-custom-virtual-scroll"
+            styleClass="w-full"
+            placeholder="Select Check Type"
+            appendTo="body"
+            (onSelectAllChange)="onFormCheckFilterSelectAllChange($event)"
+          >
+            <ng-template
+              pTemplate="headercheckboxicon"
+              let-allSelected
+              let-partialSelected="partialSelected"
+            >
+              <i class="pi pi-check" *ngIf="allSelected"></i>
+              <i
+                class="pi pi-minus"
+                *ngIf="partialSelected"
+                [ngStyle]="{ color: 'var(--text-color)' }"
+              ></i>
+            </ng-template>
+          </p-multiSelect>
+        </div>
+        <div class="mb-4 flex align-items-center gap-2">
+          <label>Is Repeating</label>
+          <p-checkbox
+            [(ngModel)]="isRepeatingFilter"
+            [binary]="true"
+          ></p-checkbox>
+        </div>
+        <div class="mb-4 flex align-items-center gap-2">
+          <label>Is Active</label>
+          <p-checkbox [(ngModel)]="isActiveFilter" [binary]="true"></p-checkbox>
+        </div>
+        <div class="flex justify-content-start gap-2">
+          <p-button
+            label="Search"
+            icon="pi pi-search"
+            (onClick)="onSearchCheckInventory()"
+          ></p-button>
+          <p-button
+            label="Reset"
+            icon="pi pi-times"
+            (onClick)="onResetCheckInventory()"
+          ></p-button>
+        </div>
+      </div>
+      <div class="col-10">
+        <div class="text-center p-4">
+          <p *ngIf="checkInventories.length === 0">No check inventory found.</p>
+          <p-button
+            *ngIf="!tag.checkInventoryInitiated"
+            label="Initiate Check Inventory"
+            icon="pi pi-bolt"
+            (onClick)="initiateCheckInventory()"
+          ></p-button>
+        </div>
+        <p-table
+          [value]="checkInventories"
+          styleClass="p-datatable-sm p-datatable-gridlines"
+          *ngIf="checkInventories.length > 0"
+          [scrollable]="true"
+          scrollHeight="500px"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Branch</th>
+              <th>Product</th>
+              <th>Check Type</th>
+              <th>Series Pattern</th>
+              <th>Number of Padding</th>
+              <th>Starting Series</th>
+              <th>Ending Series</th>
+              <th>Warning Series</th>
+              <th>Current Series</th>
+              <th>Is Repeating</th>
+              <th>Is Used</th>
+              <th>Actions</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-inventory>
+            <tr>
+              <td>
+                @if(inventory.viewMappingData != null &&
+                inventory.viewMappingData?.branches.length > 0){
+                @if(inventory.viewMappingData?.branches.length > 2){
+                <p-scroller
+                  [items]="inventory.viewMappingData?.branches"
+                  [itemSize]="50"
+                  scrollHeight="200px"
+                  styleClass="border-1 surface-border"
+                  [style]="{ width: '200px', height: '200px' }"
+                >
+                  <ng-template pTemplate="item" let-item let-options="options">
+                    <div
+                      class="flex align-items-center p-2"
+                      [ngClass]="{ 'surface-ground': options.odd }"
+                      style="height: 50px"
+                    >
+                      {{ item }}
+                    </div>
+                  </ng-template>
+                </p-scroller>
+                }@else{
+                {{ inventory.viewMappingData?.branches.join(", ") }}
+                } }@else{ N/A }
+              </td>
+              <td>
+                @if(inventory.viewMappingData != null &&
+                inventory.viewMappingData?.products.length > 0){
+                {{ inventory.viewMappingData?.products.join(", ") }}
+                }@else{ N/A }
+              </td>
+              <td>
+                @if(inventory.viewMappingData != null &&
+                inventory.viewMappingData?.formCheckTypes.length > 0){
+                {{ inventory.viewMappingData?.formCheckTypes.join(", ") }}
+                }@else{ N/A }
+              </td>
+              <td>{{ inventory.seriesPattern }}</td>
+              <td>{{ inventory.numberOfPadding }}</td>
+              <td>{{ inventory.startingSeries }}</td>
+              <td>{{ inventory.endingSeries }}</td>
+              <td>{{ inventory.warningSeries }}</td>
+              <td>{{ inventory.currentSeries }}</td>
+              <td>{{ inventory.isRepeating ? "Yes" : "No" }}</td>
+              <td>{{ inventory.isActive ? "Yes" : "No" }}</td>
+              <td class="flex gap-2">
+                <p-button
+                  size="small"
+                  icon="pi pi-check"
+                  *ngIf="inventory.isActive == false"
+                  (onClick)="setCheckInventoryActive(inventory)"
+                ></p-button>
+                <p-button
+                  size="small"
+                  icon="pi pi-pencil"
+                  (onClick)="showEditCheckInventoryDialog(inventory)"
+                ></p-button>
+                <p-button
+                  size="small"
+                  icon="pi pi-trash"
+                  (onClick)="onDeleteCheckInventory(inventory)"
+                ></p-button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+        <p-paginator
+          [first]="currentPage"
+          [rows]="pageSize"
+          [appendTo]="'body'"
+          [totalRecords]="totalRecords"
+          [showPageLinks]="true"
+          [rowsPerPageOptions]="[10, 20, 30]"
+          (onPageChange)="onPageChange($event)"
+        />
+      </div>
     </div>
-
-    <div *ngIf="checkInventories.length === 0" class="text-center p-4">
-      <p>No check inventory found for this tag.</p>
-      <p-button
-        label="Initiate Check Inventory"
-        icon="pi pi-bolt"
-        (onClick)="initiateCheckInventory()"
-      ></p-button>
-    </div>
-    <p-table
-      [value]="checkInventories"
-      styleClass="p-datatable-sm"
-      *ngIf="checkInventories.length > 0"
-    >
-      <ng-template pTemplate="header">
-        <tr>
-          <th>Series Pattern</th>
-          <th>Number of Padding</th>
-          <th>Starting Series</th>
-          <th>Ending Series</th>
-          <th>Warning Series</th>
-          <th>Current Series</th>
-          <th>Is Repeating</th>
-          <th>Is Used</th>
-          <th>Actions</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-inventory>
-        <tr>
-          <td>{{ inventory.seriesPattern }}</td>
-          <td>{{ inventory.numberOfPadding }}</td>
-          <td>{{ inventory.startingSeries }}</td>
-          <td>{{ inventory.endingSeries }}</td>
-          <td>{{ inventory.warningSeries }}</td>
-          <td>{{ inventory.currentSeries }}</td>
-          <td>{{ inventory.isRepeating ? "Yes" : "No" }}</td>
-          <td>{{ inventory.isActive ? "Yes" : "No" }}</td>
-          <td class="flex gap-2">
-            <p-button
-              icon="pi pi-check"
-              *ngIf="inventory.isActive == false"
-              (onClick)="setCheckInventoryActive(inventory)"
-            ></p-button>
-            <p-button
-              icon="pi pi-pencil"
-              (onClick)="showEditCheckInventoryDialog(inventory)"
-            ></p-button>
-            <p-button
-              icon="pi pi-trash"
-              (onClick)="onDeleteCheckInventory(inventory)"
-            ></p-button>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
   </p-tabPanel>
 </p-tabView>

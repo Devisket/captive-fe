@@ -1,7 +1,7 @@
 import { createAction, props } from "@ngrx/store";
 import { Tag } from "../../../_models/tag";
-import { CheckInventory } from "../../../_models/check-inventory";
-import { TagMapping } from "../../../_models/tag-mapping";
+import { CheckInventory, CheckInventoryQueryRequest, CheckInventoryResponse } from "../../../_models/check-inventory";
+import { CreateTagMappingRequest, TagMapping } from "../../../_models/tag-mapping";
 
 
 export const getTags = createAction('[Tags] Get Tags', props<{ bankInfoId: string }>());
@@ -14,8 +14,8 @@ export const getTagMapping = createAction('[Tags] Get Tag Mapping', props<{ bank
 export const getTagMappingSuccess = createAction('[Tags] Get Tag Mapping Success', props<{ tagMapping: TagMapping[] }>());
 export const getTagMappingFailure = createAction('[Tags] Get Tag Mapping Failure', props<{ error: string }>());
 
-export const getCheckInventory = createAction('[Tags] Get Check Inventory', props<{ tagId: string }>());
-export const getCheckInventorySuccess = createAction('[Tags] Get Check Inventory Success', props<{ checkInventory: CheckInventory[] }>());
+export const getCheckInventory = createAction('[Tags] Get Check Inventory', props<{ query: CheckInventoryQueryRequest }>());
+export const getCheckInventorySuccess = createAction('[Tags] Get Check Inventory Success', props<{ checkInventoryResponse: CheckInventoryResponse }>());
 export const getCheckInventoryFailure = createAction('[Tags] Get Check Inventory Failure', props<{ error: string }>());
 
 export const addNewTag = createAction('[Tags] Add New Tag', props<{ bankInfoId: string, tag: Tag }>());
@@ -30,7 +30,7 @@ export const lockTagFailure = createAction('[Tags] Lock Tag Failure', props<{ er
 export const deleteTag = createAction('[Tags] Delete Tag', props<{ bankInfoId: string, tagId: string }>());
 export const deleteTagFailure = createAction('[Tags] Delete Tag Failure', props<{ error: string }>());
 
-export const addNewTagMapping = createAction('[Tags] Add New Tag Mapping', props<{ bankInfoId: string, tagId: string, tagMappings: TagMapping[] }>());
+export const addNewTagMapping = createAction('[Tags] Add New Tag Mapping', props<{ bankInfoId: string, tagId: string, tagMappings: CreateTagMappingRequest }>());
 export const addNewTagMappingFailure = createAction('[Tags] Add New Tag Mapping Failure', props<{ error: string }>());
 
 export const updateTagMapping = createAction('[Tags] Update Tag Mapping', props<{ bankInfoId: string, tagId: string, tagMappingId: string, tagMappings: TagMapping[] }>());

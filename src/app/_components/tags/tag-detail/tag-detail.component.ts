@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -12,9 +12,16 @@ import { TabViewModule } from 'primeng/tabview';
 import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
 import { Tag } from '../../../_models/tag';
-import { TagMapping } from '../../../_models/tag-mapping';
-import { CheckInventory } from '../../../_models/check-inventory';
-import { Subscription } from 'rxjs';
+import {
+  CreateTagMappingRequest,
+  TagMapping,
+  TagMappingViewData,
+} from '../../../_models/tag-mapping';
+import {
+  CheckInventory,
+  CheckInventoryViewData,
+} from '../../../_models/check-inventory';
+import { map, Subscription } from 'rxjs';
 import {
   getTagMapping,
   getCheckInventory,
@@ -28,7 +35,10 @@ import { SharedFeature } from '../../../_store/shared/shared.reducer';
 import { BankValues } from '../../../_models/values/bankValues';
 import { AddCheckInventoryComponent } from '../check-inventory/add-check-inventory/add-check-inventory.component';
 import { ValuesDto } from '../../../_models/values/valuesDto';
-
+import { MultiSelectModule } from 'primeng/multiselect';
+import { ScrollerModule } from 'primeng/scroller';
+import { PaginatorModule } from 'primeng/paginator';
+import { CheckboxModule } from 'primeng/checkbox';
 @Component({
   selector: 'app-tag-detail',
   standalone: true,
@@ -39,6 +49,10 @@ import { ValuesDto } from '../../../_models/values/valuesDto';
     TabViewModule,
     DropdownModule,
     FormsModule,
+    MultiSelectModule,
+    ScrollerModule,
+    PaginatorModule,
+    CheckboxModule,
   ],
   providers: [DialogService],
   templateUrl: './tag-detail.component.html',
@@ -46,18 +60,45 @@ import { ValuesDto } from '../../../_models/values/valuesDto';
 })
 export class TagDetailComponent implements OnInit, OnDestroy {
   tag: Tag;
-  tagMappings: TagMapping[] = [];
-  checkInventories: CheckInventory[] = [];
+  checkInventories: CheckInventoryViewData[] = [];
   subscription$ = new Subscription();
   bankInfoId: string = '';
   bankValues: BankValues | undefined;
+  viewTagMappingData: TagMappingViewData[] = [];
+
+  formCheckOptions: ValuesDto[] = [
+    {
+      id: 'Personal',
+      value: 'Personal',
+    },
+    {
+      id: 'Commercial',
+      value: 'Commercial',
+    },
+  ];
 
   // New properties for tag mapping form
-  selectedBranch: any = null;
-  selectedProduct: any = null;
-  selectedFormCheck: any = null;
+  selectedBranch: string[] = [];
+  selectedProduct: string[] = [];
+  selectedFormCheck: string[] = [];
 
-  formCheckOptions: ValuesDto[] = [];
+  selectedBranchFilter: string[] = [];
+  selectedProductFilter: string[] = [];
+  selectedFormCheckFilter: string[] = [];
+
+  branchSelectedAll: boolean = false;
+  productSelectedAll: boolean = false;
+  formCheckSelectedAll: boolean = false;
+
+  branchSelectedAllFilter: boolean = false;
+  productSelectedAllFilter: boolean = false;
+  formCheckSelectedAllFilter: boolean = false;
+  isRepeatingFilter: boolean = true;
+  isActiveFilter: boolean = true;
+
+  currentPage: number = 1;
+  pageSize: number = 10;
+  totalRecords: number = 0;
 
   constructor(
     private store: Store,
@@ -77,50 +118,101 @@ export class TagDetailComponent implements OnInit, OnDestroy {
           this.store.dispatch(
             getTagMapping({ bankInfoId: this.bankInfoId, tagId: this.tag.id! })
           );
-          this.store.dispatch(getCheckInventory({ tagId: this.tag.id! }));
+          this.store.dispatch(
+            getCheckInventory({
+              query: {
+                tagId: this.tag.id!,
+                currentPage: 1,
+                pageSize: 10,
+                isActive: true,
+                isRepeating: true,
+              },
+            })
+          );
         })
     );
 
     this.subscription$.add(
-      this.store.select(TagFeature.selectTagMappings).subscribe((mappings) => {
-        console.log('Received tag mappings:', mappings);
-
-        this.tagMappings = mappings.map((mapping) => {
-          return {
-            ...mapping,
-            branchName: this.getBranchValues(mapping.branchId || ''),
-            productName: this.getProductValues(mapping.productId || ''),
-            formCheckName: this.getFormCheckValues(mapping.formCheckId || ''),
-          };
-        });
-      })
+      this.store
+        .select(TagFeature.selectTagMappings)
+        .subscribe((tagMappings: TagMapping[]) => {
+          this.viewTagMappingData = tagMappings.map((mapping) => {
+            return {
+              id: mapping.id,
+              tagId: mapping.tagId,
+              products:
+                mapping.mappings?.productIds?.map((x) =>
+                  this.getProductValues(x)
+                ) || [],
+              branches:
+                mapping.mappings?.branchIds?.map((x) =>
+                  this.getBranchValues(x)
+                ) || [],
+              formCheckTypes:
+                mapping.mappings?.formCheckType?.map((x) =>
+                  this.getFormCheckValues(x)
+                ) || [],
+            } as TagMappingViewData;
+          });
+        })
     );
 
     this.subscription$.add(
       this.store
         .select(TagFeature.selectCheckInventories)
         .subscribe((inventories) => {
-          this.checkInventories = inventories;
+          console.log(inventories);
+          this.checkInventories = inventories.map((inventory) => {
+            return {
+              ...inventory,
+              viewMappingData: {
+                branches:
+                  inventory.mappingData.branchIds?.map(
+                    (x) => this.getBranchValues(x)!
+                  ).sort((a, b) => a.localeCompare(b)) || [],
+                products:
+                  inventory.mappingData?.productIds?.map(
+                    (x) => this.getProductValues(x)!
+                  ).sort((a, b) => a.localeCompare(b)) || [],
+                formCheckTypes: inventory.mappingData?.formCheckType?.map(
+                  (x) => this.getFormCheckValues(x)!
+                ) ?? ['Personal', 'Commercial'],
+              },
+            } as CheckInventoryViewData;
+          });
+
+          this.checkInventories.sort((a, b) => {
+            const branchesA = a.viewMappingData?.branches || [];
+            const branchesB = b.viewMappingData?.branches || [];
+            return branchesA.length - branchesB.length;
+          });
+        })
+    );
+
+    this.subscription$.add(
+      this.store
+        .select(TagFeature.selectTotalRecords)
+        .subscribe((totalRecords) => {
+          this.totalRecords = totalRecords;
         })
     );
   }
 
   getBranchValues(branchId: string) {
-    const branch = this.bankValues?.branchValues.find((b) => b.id === branchId);
+    const branch = this.bankValues!.branchValues.find((b) => b.id === branchId);
     return branch?.value;
   }
 
   getProductValues(productId: string) {
-    const product = this.bankValues?.productValues.find(
+    const product = this.bankValues!.productValues.find(
       (p) => p.id === productId
     );
     return product?.value;
   }
 
   getFormCheckValues(formCheckId: string) {
-    const formCheck = this.bankValues?.formCheckValues.find(
-      (f) => f.id === formCheckId
-    );
+    console.log(formCheckId);
+    const formCheck = this.formCheckOptions.find((f) => f.id === formCheckId);
     return formCheck?.value;
   }
 
@@ -135,32 +227,30 @@ export class TagDetailComponent implements OnInit, OnDestroy {
   onAddTagMapping() {
     if (!this.bankInfoId || !this.tag.id) return;
 
-    console.log(this.selectedBranch);
-    console.log(this.selectedFormCheck);
-
-    const tagMapping: TagMapping = {
+    const tagMapping: CreateTagMappingRequest = {
       id: undefined,
       tagId: this.tag.id,
-      branchId: this.selectedBranch || undefined,
-      productId: this.selectedProduct || undefined,
-      formCheckId: this.selectedFormCheck || undefined,
+      branchIds: this.selectedBranch || undefined,
+      productIds: this.selectedProduct || undefined,
+      formCheckType: this.selectedFormCheck || undefined,
     };
 
     this.store.dispatch(
       addNewTagMapping({
         bankInfoId: this.bankInfoId,
         tagId: this.tag.id,
-        tagMappings: [tagMapping],
+        tagMappings: tagMapping,
       })
     );
 
     // Reset form
-    this.selectedBranch = null;
-    this.selectedProduct = null;
-    this.selectedFormCheck = null;
+    this.selectedBranch = [];
+    this.selectedProduct = [];
+    this.selectedFormCheck = [];
   }
 
   onDeleteTagMapping(tagMapping: TagMapping) {
+    console.log(tagMapping);
     this.store.dispatch(
       deleteTagMapping({
         bankInfoId: this.bankInfoId,
@@ -183,7 +273,17 @@ export class TagDetailComponent implements OnInit, OnDestroy {
     ref.onClose.subscribe((result) => {
       if (result) {
         // Refresh check inventories
-        this.store.dispatch(getCheckInventory({ tagId: this.tag.id! }));
+        this.store.dispatch(
+          getCheckInventory({
+            query: {
+              tagId: this.tag.id!,
+              currentPage: this.currentPage,
+              pageSize: this.pageSize,
+              isActive: true,
+              isRepeating: true,
+            },
+          })
+        );
       }
     });
   }
@@ -201,8 +301,19 @@ export class TagDetailComponent implements OnInit, OnDestroy {
 
     ref.onClose.subscribe((result) => {
       if (result) {
+        this.tag.checkInventoryInitiated = true;
         // Refresh check inventories
-        this.store.dispatch(getCheckInventory({ tagId: this.tag.id! }));
+        this.store.dispatch(
+          getCheckInventory({
+            query: {
+              tagId: this.tag.id!,
+              currentPage: this.currentPage,
+              pageSize: this.pageSize,
+              isActive: true,
+              isRepeating: true,
+            },
+          })
+        );
       }
     });
   }
@@ -237,14 +348,101 @@ export class TagDetailComponent implements OnInit, OnDestroy {
     );
   }
 
-  onSelectedProductChange() {
-    this.formCheckOptions =
-      this.bankValues?.formCheckValues.filter(
-        (formCheck) => formCheck.productId === this.selectedProduct
-      ) || [];
-  }
-
   ngOnDestroy() {
     this.subscription$.unsubscribe();
   }
+
+  onBranchSelectAllChange(event: any) {
+    this.selectedBranch = event.checked
+      ? this.bankValues!.branchValues.map((b) => b.id)
+      : [];
+    this.branchSelectedAll = event.checked;
+  }
+
+  onProductSelectAllChange(event: any) {
+    this.selectedProduct = event.checked
+      ? this.bankValues!.productValues.map((p) => p.id)
+      : [];
+    this.productSelectedAll = event.checked;
+  }
+
+  onFormCheckSelectAllChange(event: any) {
+    this.selectedFormCheck = event.checked
+      ? this.formCheckOptions.map((f) => f.id)
+      : [];
+    this.formCheckSelectedAll = event.checked;
+  }
+
+  onBranchFilterSelectAllChange(event: any) {
+    this.selectedBranchFilter = event.checked
+      ? this.bankValues!.branchValues.map((b) => b.id)
+      : [];
+    this.branchSelectedAll = event.checked;
+  }
+
+  onProductFilterSelectAllChange(event: any) {
+    this.selectedProductFilter = event.checked
+      ? this.bankValues!.productValues.map((p) => p.id)
+      : [];
+    this.productSelectedAll = event.checked;
+  }
+
+  onFormCheckFilterSelectAllChange(event: any) {
+    this.selectedFormCheckFilter = event.checked
+      ? this.formCheckOptions.map((f) => f.id)
+      : [];
+    this.formCheckSelectedAll = event.checked;
+  }
+
+  
+
+  canAddTagMapping(): boolean {
+    return (
+      this.selectedBranch.length > 0 &&
+      this.selectedProduct.length > 0 &&
+      this.selectedFormCheck.length > 0
+    );
+  }
+
+  onPageChange(event: any) {
+    this.store.dispatch(
+      getCheckInventory({
+        query: {
+          tagId: this.tag.id!,
+          currentPage: event.page + 1,
+          pageSize: event.rows,
+          isActive: this.isActiveFilter,
+          isRepeating: this.isRepeatingFilter,
+          branchIds: this.selectedBranchFilter ?? undefined,
+          productIds: this.selectedProductFilter ?? undefined,
+          formCheckType: this.selectedFormCheckFilter ?? undefined,
+        },
+      })
+    );
+  }
+
+  onSearchCheckInventory() {
+    this.store.dispatch(
+      getCheckInventory({
+        query: {
+          tagId: this.tag.id!,
+          currentPage: 1,
+          pageSize: 10,
+          isActive: this.isActiveFilter,
+          isRepeating: this.isRepeatingFilter,
+          branchIds: this.selectedBranchFilter ?? undefined,
+          productIds: this.selectedProductFilter ?? undefined,
+          formCheckType: this.selectedFormCheckFilter ?? undefined,
+        },
+      })
+    );
+  }
+
+  onResetCheckInventory() {
+    this.selectedBranchFilter = [];
+    this.selectedProductFilter = [];
+    this.selectedFormCheckFilter = [];
+    this.isRepeatingFilter = true;
+    this.isActiveFilter = true;
+  } 
 }

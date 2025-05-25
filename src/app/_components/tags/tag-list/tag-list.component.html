@@ -175,6 +175,7 @@
       </td>
       <td class="text-center">
         <div class="flex justify-content-center gap-2">
+          <!--Lock Tag Button-->
           <button
             *ngIf="!editing && !tag.isLocked"
             pButton
@@ -183,6 +184,7 @@
             class="p-button-rounded p-button-text"
             (click)="onLockTag(tag)"
           ></button>
+          <!--Edit Tag Button-->
           <button
             *ngIf="!editing && !tag.isLocked"
             pButton
@@ -192,14 +194,16 @@
             pInitEditableRow
             (click)="onRowEditInit(tag)"
           ></button>
+          <!--Delete Tag Button-->
           <button
-            *ngIf="!editing && !tag.isLocked"
+            *ngIf="!editing"
             pButton
             type="button"
             icon="pi pi-trash"
             class="p-button-rounded p-button-text"
             (click)="onDeleteTag(tag)"
           ></button>
+          <!--Save Tag Button-->
           <button
             *ngIf="editing"
             pButton
@@ -209,6 +213,7 @@
             pSaveEditableRow
             (click)="onRowEditSave(tag)"
           ></button>
+          <!--Cancel Tag Button-->
           <button
             *ngIf="editing"
             pButton

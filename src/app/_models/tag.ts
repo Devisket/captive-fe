@@ -9,4 +9,5 @@ export interface Tag {
   searchByFormCheck:boolean;
   searchByProduct:boolean;
   isLocked:boolean;
+  checkInventoryInitiated:boolean;
 }
