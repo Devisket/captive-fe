@@ -11,10 +11,10 @@
 [value]="branches">
   <ng-template pTemplate="header">
     <tr>
-      <th>Branch Name</th>
-      <th>BRSTN Code</th>
-      <th>Branch Code</th>
-      <th>Branch Address</th>
+      <th pSortableColumn="branchName">Branch Name <p-sortIcon field="branchName"></p-sortIcon></th>
+      <th pSortableColumn="brstn">BRSTN Code <p-sortIcon field="brstn"></p-sortIcon></th>
+      <th pSortableColumn="branchCode">Branch Code <p-sortIcon field="branchCode"></p-sortIcon></th>
+      <th pSortableColumn="branchAddress1">Branch Address <p-sortIcon field="branchAddress1"></p-sortIcon></th>
       <th>Action</th>
     </tr>
   </ng-template>
