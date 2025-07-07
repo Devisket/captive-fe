@@ -1,3 +1,4 @@
+<h1>{{ bankInfo?.bankName }}</h1>
 <p-tabView [(activeIndex)]="activeTabIndex" (activeIndexChange)="onTabChange($event)" class="bank-detail-tabview">
   <p-tabPanel *ngFor="let tab of tabs" [header]="tab.name">
     <ng-container *ngIf="activeTabIndex === tabs.indexOf(tab)">
