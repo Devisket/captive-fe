@@ -4,4 +4,5 @@ export interface Bank {
   bankShortName: string;
   bankDescription: string;
   createdDate: string;
+  accountNumberFormat: string | undefined;
 }

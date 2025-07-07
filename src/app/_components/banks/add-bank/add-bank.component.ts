@@ -1,9 +1,7 @@
 import {
   Component,
-  HostListener,
   inject,
   OnInit,
-  ViewChild,
 } from '@angular/core';
 import {
   FormControl,
@@ -42,12 +40,11 @@ export class AddBankComponent implements OnInit {
     bankName: new FormControl(null),
     shortName: new FormControl(null),
     description: new FormControl(null),
+    accountNumberFormat: new FormControl(null),
   });
 
   private bankService = inject(BanksService);
   private toastr = inject(ToastrService);
-  private router = inject(Router);
-  model: any = {};
 
   constructor(
     private dialogRef: DynamicDialogRef,
@@ -62,6 +59,7 @@ export class AddBankComponent implements OnInit {
         bankName: bank.bankName,
         shortName: bank.bankShortName,
         description: bank.bankDescription,
+        accountNumberFormat: bank.accountNumberFormat,
       });
     }
   }
