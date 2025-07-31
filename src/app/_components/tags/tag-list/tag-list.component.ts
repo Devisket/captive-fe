@@ -153,6 +153,8 @@ export class TagListComponent implements OnInit, OnDestroy {
     this.subscription$.add(
       this.store.select(TagFeature.selectTags).subscribe((tags) => {
         this.tags = tags.map((tag) => ({ ...tag }));
+
+        this.tags.sort((a, b) => a.tagName.localeCompare(b.tagName));
       })
     );
   }
@@ -181,6 +183,10 @@ export class TagListComponent implements OnInit, OnDestroy {
         bankInfoId: this.bankInfoId,
         tag: tag,
       },
+    });
+
+    ref.onClose.subscribe(() => {
+      this.store.dispatch(getTags({ bankInfoId: this.bankInfoId }));
     });
   }
 

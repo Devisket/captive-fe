@@ -45,9 +45,13 @@ export class BranchListComponent implements OnInit {
     console.log(this.bankId);
     if (this.bankId) {
       this.branchServices.getBranches(this.bankId).subscribe((data) => {
-        console.log(data);
+
         if (!data) return;
+        
         this.branches = data.branches;
+
+        this.branches.sort((a, b) => a.branchName.localeCompare(b.branchName));
+
       });
     }
   }

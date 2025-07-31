@@ -29,6 +29,7 @@ import {
   deleteTagMapping,
   deleteCheckInventory,
   setCheckInventoryActive,
+  getTags,
 } from '../_store/tag.actions';
 import { TagFeature } from '../_store/tag.reducers';
 import { SharedFeature } from '../../../_store/shared/shared.reducer';
@@ -93,7 +94,7 @@ export class TagDetailComponent implements OnInit, OnDestroy {
   branchSelectedAllFilter: boolean = false;
   productSelectedAllFilter: boolean = false;
   formCheckSelectedAllFilter: boolean = false;
-  isRepeatingFilter: boolean = true;
+  isRepeatingFilter: boolean = false;
   isActiveFilter: boolean = true;
 
   currentPage: number = 1;
@@ -196,6 +197,8 @@ export class TagDetailComponent implements OnInit, OnDestroy {
           this.totalRecords = totalRecords;
         })
     );
+
+    this.onSearchCheckInventory();
   }
 
   getBranchValues(branchId: string) {
@@ -211,7 +214,6 @@ export class TagDetailComponent implements OnInit, OnDestroy {
   }
 
   getFormCheckValues(formCheckId: string) {
-    console.log(formCheckId);
     const formCheck = this.formCheckOptions.find((f) => f.id === formCheckId);
     return formCheck?.value;
   }
@@ -299,22 +301,13 @@ export class TagDetailComponent implements OnInit, OnDestroy {
       },
     });
 
-    ref.onClose.subscribe((result) => {
-      if (result) {
-        this.tag.checkInventoryInitiated = true;
-        // Refresh check inventories
-        this.store.dispatch(
-          getCheckInventory({
-            query: {
-              tagId: this.tag.id!,
-              currentPage: this.currentPage,
-              pageSize: this.pageSize,
-              isActive: true,
-              isRepeating: true,
-            },
-          })
-        );
-      }
+    ref.onClose.subscribe(() => {
+      console.log('Check inventory initiated');
+       this.tag = { ...this.tag, checkInventoryInitiated: true};
+
+       const bankInfoId = this.bankInfoId;
+
+        this.store.dispatch(getTags({ bankInfoId }));
     });
   }
 
