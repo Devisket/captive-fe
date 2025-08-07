@@ -1,4 +1,4 @@
-<div class="card p-4">
+<div class="card p-4" style="background-color: azure;">
   <div class="flex flex-row gap-3 justify-content-center mb-4">
     <div class="field">
       <label for="fileName" class="block mb-2 font-medium">File Name</label>
@@ -39,6 +39,8 @@
       <button
         pButton
         type="button"
+        severity="success"
+        icon="pi pi-check"
         label="Save"
         (click)="onSaveConfiguration()"
       ></button>
