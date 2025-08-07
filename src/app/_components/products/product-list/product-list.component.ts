@@ -10,6 +10,7 @@ import {
   getAllProducts,
   deleteProduct,
   updateProduct,
+  resetProducts,
 } from '../_store/products/products.actions';
 import { SharedFeature } from '../../../_store/shared/shared.reducer';
 import { ProductsFeature } from '../_store/products/products.reducer';
@@ -78,6 +79,7 @@ export class ProductListComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.subscription$.unsubscribe();
+    this.store.dispatch(resetProducts());
   }
 
   openAddProductButtonClick(product?: Product) {
