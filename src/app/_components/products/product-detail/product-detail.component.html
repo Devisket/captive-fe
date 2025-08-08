@@ -46,17 +46,21 @@
             <div class="d-flex justify-content-center gap-2">
               <p-button
                 type="button"
+                size="small"
+                icon="pi pi-pen-to-square"
+                severity="secondary"
+                label="Edit"
+                class="mr-2"
                 (click)="openAddFormCheckDialog(formCheck)"
-                class="btn btn-warning btn-sm"
               >
-                <i class="fa fa-edit"></i> Edit
               </p-button>
               <p-button
                 type="button"
-                (click)="deleteFormCheck(formCheck.id, $event)"
-                class="btn btn-danger btn-sm"
-              >
-                <i class="fa fa-trash"></i> Delete
+                size="small"
+                severity="danger"
+                icon="pi pi-trash"  
+                label="Delete"
+                (click)="deleteFormCheck(formCheck.id, $event)">
               </p-button>
             </div>
           </td>
@@ -67,7 +71,7 @@
 
   <!-- Configuration Section -->
   <form [formGroup]="productConfigurationForm">
-    <div class="section-card">
+    <div class="section-card" style="background-color: azure;">
       <div class="section-header">
         <h4>Product Configuration</h4>
       </div>

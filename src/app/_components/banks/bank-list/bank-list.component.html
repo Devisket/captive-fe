@@ -1,21 +1,18 @@
-<div class="row">
-  <div class="d-flex mb-2 justify-content-between">
+  <div class="flex mb-2 justify-content-between align-items-center">
     <h2>Bank List</h2>
     <button
-      pButton
-      pRipple
-      label="Register New Bank"
-      icon="pi pi-plus"
-      class="p-button-success"
-      (click)="onCreateNewBank()"
-    ></button>
+        pButton
+        pRipple
+        label="Register New Bank"
+        icon="pi pi-plus"
+        severity="primary"
+        (click)="onCreateNewBank()"></button>
   </div>
-</div>
 
 <p-table
   [rowHover]="true"
   [value]="bankInfos"
-  class="p-datatable-sm"
+  [styleClass]="'p-datatable-sm'"
   [tableStyle]="{ 'min-width': '50rem' }"
 >
   <ng-template pTemplate="header">
@@ -24,7 +21,7 @@
       <th>Short Name</th>
       <th>Description</th>
       <th>Created Date</th>
-      <th>Actions</th>
+      <th class="text-center">Actions</th>
     </tr>
   </ng-template>
 
@@ -36,14 +33,22 @@
       <td>{{ bank.bankShortName }}</td>
       <td>{{ bank.bankDescription }}</td>
       <td>{{ bank.createdDate }}</td>
-      <td>
+      <td  class="text-center">
+        <p-button
+          icon="pi pi-eye"
+          severity="primary"
+          (click)="navigateToBank(bank)"
+          class="p-button-rounded p-button-info"
+        />
         <p-button
           icon="pi pi-pencil"
+          severity="secondary"
           (onClick)="onEditBank(bank)"
           class="p-button-rounded p-button-info mx-2"
         />
         <p-button
           icon="pi pi-trash"
+          severity="danger"
           (onClick)="onDeleteBank(bank)"
           class="p-button-rounded p-button-info"
         />

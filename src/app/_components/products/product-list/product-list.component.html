@@ -1,10 +1,14 @@
-<h1>Product List</h1>
+<div class="flex justify-content-between align-items-center mb-2">
+<h1>Product List
+</h1>
 <p-button
   type="button"
   label="Add Product"
+  size="small"
   icon="pi pi-plus"
-  (onClick)="openAddProductButtonClick()"
-></p-button>
+  class="ml-3"
+  (onClick)="openAddProductButtonClick()"></p-button>
+</div>
 <p-table
   [value]="products"
   [tableStyle]="{ 'min-width': '50rem' }"
@@ -30,7 +34,7 @@
       <td class="text-center">
         <p-cellEditor>
           <ng-template pTemplate="input">
-            <input pInputText type="text" [(ngModel)]="product.productName" />
+            <input pInputText type="text" class="text-center" [(ngModel)]="product.productName" />
           </ng-template>
           <ng-template pTemplate="output">
             <a
@@ -45,7 +49,7 @@
       <td class="text-center">
         <p-cellEditor>
           <ng-template pTemplate="input">
-            <input pInputText type="text" [(ngModel)]="product.productSequence" />
+            <input pInputText type="text" class="text-center" [(ngModel)]="product.productSequence" />
           </ng-template>
           <ng-template pTemplate="output">
               {{ product.productSequence }}
@@ -60,6 +64,8 @@
           <p-button
             type="button"
             label="Edit"
+            severity="secondary"
+            size="small"
             icon="pi pi-pencil"
             pInitEditableRow
             (onClick)="onRowEditInit(product)"
@@ -67,6 +73,8 @@
           <p-button
             type="button"
             label="Delete"
+            severity="danger"
+            size="small"
             icon="pi pi-trash"
             (click)="deleteProductType(product.productId, $event)"
           />
@@ -75,6 +83,8 @@
           <p-button
             type="button"
             label="Save"
+            severity="success"
+            size="small"
             icon="pi pi-check"
             (click)="onRowEditSave(product)"
             pSaveEditableRow
@@ -82,7 +92,9 @@
           <p-button
             type="button"
             label="Cancel"
+            severity="warning"
             icon="pi pi-times"
+            size="small"
             (click)="onCancelEdit(product)"
             pCancelEditableRow
           />

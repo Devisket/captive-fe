@@ -123,6 +123,7 @@
         <p-checkbox
           [binary]="true"
           [(ngModel)]="tag.isDefaultTag"
+          class="ng-invalid ng-dirty" 
           [disabled]="!editing"
           inputId="default-{{ tag.id }}"
         ></p-checkbox>
@@ -131,6 +132,7 @@
         <p-checkbox
           [binary]="true"
           [(ngModel)]="tag.searchByBranch"
+          class="ng-invalid ng-dirty" 
           [disabled]="!editing"
           (onChange)="onSearchOptionChange(tag, 'searchByBranch')"
           inputId="branch-{{ tag.id }}"
@@ -140,6 +142,7 @@
         <p-checkbox
           [binary]="true"
           [(ngModel)]="tag.searchByAccount"
+          class="ng-invalid ng-dirty" 
           [disabled]="!editing"
           (onChange)="onSearchOptionChange(tag, 'searchByAccount')"
           inputId="account-{{ tag.id }}"
@@ -149,6 +152,7 @@
         <p-checkbox
           [binary]="true"
           [(ngModel)]="tag.searchByFormCheck"
+          class="ng-invalid ng-dirty" 
           [disabled]="!editing"
           (onChange)="onSearchOptionChange(tag, 'searchByFormCheck')"
           inputId="formcheck-{{ tag.id }}"
@@ -158,6 +162,7 @@
         <p-checkbox
           [binary]="true"
           [(ngModel)]="tag.searchByProduct"
+          class="ng-invalid ng-dirty" 
           [disabled]="!editing"
           (onChange)="onSearchOptionChange(tag, 'searchByProduct')"
           inputId="product-{{ tag.id }}"
@@ -169,6 +174,7 @@
           [binary]="true"
           [(ngModel)]="tag.isLocked"
           [disabled]="!editing"
+          class="ng-invalid ng-dirty" 
           (onChange)="onSearchOptionChange(tag, 'searchByProduct')"
           inputId="product-{{ tag.id }}"
         ></p-checkbox>
@@ -180,6 +186,7 @@
             *ngIf="!editing && !tag.isLocked"
             pButton
             type="button"
+            severity="warning"
             icon="pi pi-lock"
             class="p-button-rounded p-button-text"
             (click)="onLockTag(tag)"
@@ -189,6 +196,7 @@
             *ngIf="!editing && !tag.isLocked"
             pButton
             type="button"
+            severity="primary"
             icon="pi pi-pencil"
             class="p-button-rounded p-button-text"
             pInitEditableRow
@@ -199,6 +207,7 @@
             *ngIf="!editing"
             pButton
             type="button"
+            severity="danger"
             icon="pi pi-trash"
             class="p-button-rounded p-button-text"
             (click)="onDeleteTag(tag)"
@@ -208,6 +217,7 @@
             *ngIf="editing"
             pButton
             type="button"
+            severity="success"
             icon="pi pi-check"
             class="p-button-rounded p-button-text p-button-success"
             pSaveEditableRow
@@ -218,6 +228,7 @@
             *ngIf="editing"
             pButton
             type="button"
+            severity="danger"
             icon="pi pi-times"
             class="p-button-rounded p-button-text p-button-danger"
             pCancelEditableRow
