@@ -25,6 +25,9 @@ import {
   releaseFloatingCheckOrder,
   getOrderFilesSuccess,
   processOrderFileSuccess,
+  pollOrderFiles,
+  pollOrderFilesSuccess,
+  pollOrderFilesFailure,
 } from './order-file.actions';
 export interface OrderFileState {
   orderFiles: OrderFile[];
@@ -120,6 +123,17 @@ export const orderFileReducer = createReducer(
     ...state,
     error,
     loading: false,
+  })),
+  // Polling reducers - no loading state changes
+  on(pollOrderFilesSuccess, (state, { orderFiles }) => ({
+    ...state,
+    orderFiles,
+    // Note: loading state remains unchanged
+  })),
+  on(pollOrderFilesFailure, (state, { error }) => ({
+    ...state,
+    error,
+    // Note: loading state remains unchanged
   }))
 );
 export const OrderFileFeature = createFeature({

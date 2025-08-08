@@ -6,6 +6,8 @@ export const getAllProducts = createAction(
   props<{ bankId: string }>()
 );
 
+export const resetProducts = createAction('[Products] Reset Products');
+
 export const getAllProductsSuccess = createAction(
   '[Products] Get All Products Success',
   props<{ products: Product[] }>()

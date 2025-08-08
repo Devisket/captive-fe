@@ -36,6 +36,7 @@ import {
   deleteFloatingCheckOrder,
   processAllOrderFiles,
   uploadOrderFiles,
+  pollOrderFiles,
 } from '../_store/order-file.actions';
 import { OrderFileFeature } from '../_store/order-file.reducers';
 @Component({
@@ -129,11 +130,15 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
   selectedFiles: File[] = [];
   orderFiles: OrderFile[] = [];
   visibleBatches: Set<string> = new Set();
+  expandedFiles: Set<string> = new Set();
   private refreshInterval: any;
+  private pendingAutoExpansion = false;
+  private statusPollingInterval: any;
   $subscription = new Subscription();
   bankInfoId: string = '';
 
   visibleDialog: boolean = false;
+  isPolling: boolean = false;
 
   constructor(private store: Store) {
     if (this.config.data) {
@@ -166,12 +171,27 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
         .select(OrderFileFeature.selectOrderFiles)
         .subscribe((orderFiles) => {
           if (orderFiles && orderFiles.length > 0) {
+            const previousFiles = this.orderFiles;
             this.orderFiles = orderFiles.map((orderFile) => ({ ...orderFile }));
+            
+            // Auto-expand files with validation errors on data load or after validation
+            this.autoExpandFilesWithErrors();
+            
+            // Reset the pending flag if it was set
+            if (this.pendingAutoExpansion) {
+              this.pendingAutoExpansion = false;
+            }
+            
+            // Start/stop polling based on processing files
+            this.manageStatusPolling();
           } else {
             this.orderFiles = [];
+            this.stopStatusPolling();
           }
         })
     );
+
+    // Removed WebSocket connection - using polling only
 
     // if (!this.batch) {
     //   const batchId = this.route.snapshot.paramMap.get('batchId')!;
@@ -185,6 +205,12 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.$subscription.unsubscribe();
     this.errorMessage = undefined;
+    
+    // Clean up intervals
+    this.stopStatusPolling();
+    if (this.refreshInterval) {
+      clearInterval(this.refreshInterval);
+    }
   }
 
   getBatch() {
@@ -200,6 +226,7 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
   }
 
   onValidateOrderFile(orderFileId: string): void {
+    this.pendingAutoExpansion = true;
     this.store.dispatch(
       validateOrderFile({
         bankId: this.bankInfoId,
@@ -291,6 +318,14 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
 
   onFileSelected(event: any): void {
     this.selectedFiles = Array.from(event.target.files);
+  }
+
+  clearSelection(): void {
+    this.selectedFiles = [];
+    const fileInput = document.getElementById('formFileMultiple') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
   }
 
   uploadOrderFile(): void {
@@ -395,11 +430,15 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
   }
 
   validateAll() {
+    this.pendingAutoExpansion = true;
     this.orderFileService
       .validateAllOrderFiles(this.bankInfoId, this.batch!.id)
       .subscribe({
         next: (data) => {
-          this.getOrderFiles();
+          // Use NgRx to refresh data so auto-expansion is triggered
+          this.store.dispatch(
+            getOrderFiles({ bankId: this.bankInfoId, batchId: this.batch!.id })
+          );
         },
       });
   }
@@ -430,5 +469,121 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
 
   areAllOrderFilesValid(): boolean {
     return this.orderFiles.every(file => file.status === 'Valid');
+  }
+
+
+  shouldShowStatusSpinner(orderFile: OrderFile): boolean {
+    return orderFile.status === 'Processing' || 
+           orderFile.status === 'GeneratingReport';
+  }
+
+
+  private hasProcessingFiles(): boolean {
+    return this.orderFiles.some(file => 
+      file.status === 'Processing' || 
+      file.status === 'GeneratingReport'
+    );
+  }
+
+  private manageStatusPolling(): void {
+    if (this.hasProcessingFiles()) {
+      this.startStatusPolling();
+    } else {
+      this.stopStatusPolling();
+    }
+  }
+
+  private startStatusPolling(): void {
+    // Don't start another interval if one is already running
+    if (this.statusPollingInterval) {
+      return;
+    }
+
+    this.isPolling = true;
+    
+    // Poll every 5 seconds for status updates
+    this.statusPollingInterval = setInterval(() => {
+      if (this.hasProcessingFiles()) {
+        this.refreshOrderFiles();
+      } else {
+        this.stopStatusPolling();
+      }
+    }, 5000);
+  }
+
+  private stopStatusPolling(): void {
+    if (this.statusPollingInterval) {
+      clearInterval(this.statusPollingInterval);
+      this.statusPollingInterval = null;
+      this.isPolling = false;
+    }
+  }
+
+  private refreshOrderFiles(): void {
+    if (this.bankInfoId && this.batch?.id) {
+      this.store.dispatch(
+        pollOrderFiles({ bankId: this.bankInfoId, batchId: this.batch.id })
+      );
+    }
+  }
+
+  private autoExpandFilesWithErrors(): void {
+    this.orderFiles.forEach(orderFile => {
+      if (this.hasValidationErrors(orderFile)) {
+        this.expandedFiles.add(orderFile.id);
+      }
+    });
+  }
+
+  hasValidationErrors(orderFile: OrderFile): boolean {
+    if (!orderFile.checkOrders || orderFile.checkOrders.length === 0) {
+      return false;
+    }
+    
+    return orderFile.checkOrders.some(checkOrder => 
+      !checkOrder.isValid && 
+      checkOrder.errorMessage && 
+      checkOrder.errorMessage.trim() !== ''
+    );
+  }
+
+  isFileExpanded(orderFileId: string): boolean {
+    return this.expandedFiles.has(orderFileId);
+  }
+
+  toggleFileExpansion(orderFileId: string): void {
+    if (this.expandedFiles.has(orderFileId)) {
+      this.expandedFiles.delete(orderFileId);
+    } else {
+      this.expandedFiles.add(orderFileId);
+    }
+  }
+
+  getSortedCheckOrders(checkOrders: CheckOrders[]): CheckOrders[] {
+    if (!checkOrders || !Array.isArray(checkOrders) || checkOrders.length === 0) {
+      return [];
+    }
+
+    // Create a copy to avoid mutating the original array
+    return [...checkOrders].sort((a, b) => {
+      // Ensure both objects exist and have required properties
+      if (!a || !b) return 0;
+      
+      // First, sort by error status - errors at top
+      const aHasError = a.isValid === false && a.errorMessage && a.errorMessage.trim() !== '';
+      const bHasError = b.isValid === false && b.errorMessage && b.errorMessage.trim() !== '';
+      
+      if (aHasError && !bHasError) {
+        return -1; // a comes first (has error)
+      }
+      if (!aHasError && bHasError) {
+        return 1; // b comes first (has error)
+      }
+      
+      // If both have same error status, sort by account number
+      const accountA = a.accountNumber || '';
+      const accountB = b.accountNumber || '';
+      return accountA.localeCompare(accountB);
+    });
   }
 }

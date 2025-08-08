@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import * as signalR from '@microsoft/signalr';
 import { CheckOrders } from '../_models/check-order';
 import { LogDto } from '../_models/log-dto';
+import { OrderFile } from '../_models/order-file';
 @Injectable({
   providedIn: 'root',
 })
@@ -16,17 +17,118 @@ export class OrderFilesService {
   queryUrl = environment.queryUrl;
 
   private hubConnection: signalR.HubConnection | undefined;
+  private orderFileStatusSubject = new Subject<OrderFile>();
+  public orderFileStatus$ = this.orderFileStatusSubject.asObservable();
 
-  startConnection() {
+  startConnection(batchId?: string) {
+    // Don't create a new connection if one already exists and is connected
+    if (this.hubConnection && this.hubConnection.state === signalR.HubConnectionState.Connected) {
+      console.log('SignalR connection already exists and is connected');
+      if (batchId) {
+        this.joinBatchGroup(batchId);
+      }
+      return;
+    }
+
+    // Stop existing connection if it exists
+    if (this.hubConnection) {
+      console.log('Stopping existing SignalR connection');
+      this.hubConnection.stop();
+    }
+
+    console.log('Creating new SignalR connection to:', this.baseCommandUrl + '/orderfile');
+    
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(this.baseCommandUrl + '/orderfile')
+      .configureLogging(signalR.LogLevel.Information)
       .build();
 
+    // Set up event listeners BEFORE starting the connection
+    this.hubConnection.on('orderFileStatusUpdate', (orderFile: OrderFile) => {
+      console.log('Received order file status update:', orderFile);
+      this.orderFileStatusSubject.next(orderFile);
+    });
+
+    this.hubConnection.on('testMessage', (message: string) => {
+      console.log('Test message received:', message);
+    });
+
+    // Handle connection closed
+    this.hubConnection.onclose((error) => {
+      console.log('SignalR connection closed:', error);
+    });
+
+    // Start the connection
     this.hubConnection
       .start()
-      .then(() => console.log('Connection started'))
-      .then(() => this.fetchConnectionId())
-      .catch((err) => console.log('Error while starting connection: ' + err));
+      .then(() => {
+        console.log('SignalR connection started successfully');
+        console.log('Connection state:', this.hubConnection?.state);
+        return this.fetchConnectionId();
+      })
+      .then(() => {
+        if (batchId) {
+          this.joinBatchGroup(batchId);
+        }
+      })
+      .catch((err) => {
+        console.error('Error while starting SignalR connection:', err);
+        console.error('Base URL:', this.baseCommandUrl);
+        console.error('Full URL:', this.baseCommandUrl + '/orderfile');
+      });
+  }
+
+  joinBatchGroup(batchId: string) {
+    if (this.hubConnection) {
+      console.log(`Attempting to join batch group: ${batchId}`);
+      this.hubConnection.invoke('JoinBatchGroup', batchId)
+        .then(() => {
+          console.log(`Successfully joined batch group: ${batchId}`);
+          console.log('Hub connection state:', this.hubConnection?.state);
+        })
+        .catch(err => console.error('Error joining batch group:', err));
+    } else {
+      console.error('Hub connection is not available when trying to join batch group');
+    }
+  }
+
+  leaveBatchGroup(batchId: string) {
+    if (this.hubConnection) {
+      this.hubConnection.invoke('LeaveBatchGroup', batchId)
+        .then(() => console.log(`Left batch group: ${batchId}`))
+        .catch(err => console.error('Error leaving batch group:', err));
+    }
+  }
+
+  stopConnection() {
+    if (this.hubConnection) {
+      this.hubConnection.stop()
+        .then(() => console.log('Connection stopped'))
+        .catch(err => console.error('Error stopping connection:', err));
+    }
+  }
+
+  testConnection() {
+    console.log('Testing connection...');
+    console.log('Hub connection state:', this.hubConnection?.state);
+    console.log('Base command URL:', this.baseCommandUrl);
+    
+    if (this.hubConnection && this.hubConnection.state === signalR.HubConnectionState.Connected) {
+      this.hubConnection.invoke('TestConnection', 'Hello from frontend')
+        .then(() => console.log('Test message sent successfully'))
+        .catch(err => console.error('Error sending test message:', err));
+    } else {
+      console.error('Hub connection is not available or not connected');
+      console.log('Current connection state:', this.hubConnection?.state);
+    }
+  }
+
+  getConnectionStatus() {
+    return {
+      state: this.hubConnection?.state,
+      baseUrl: this.baseCommandUrl,
+      connectionId: this.connectionId
+    };
   }
 
   getConnectionId = () => this.connectionId;

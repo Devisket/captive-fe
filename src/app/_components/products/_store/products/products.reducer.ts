@@ -7,6 +7,7 @@ import {
   deleteProductFailure,
   getAllProducts,
   getAllProductsSuccess,
+  resetProducts,
   updateProduct,
   updateProductFailure,
 } from './products.actions';
@@ -73,6 +74,14 @@ export const productsReducer = createReducer(
       isLoading: true,
     };
   }),
+  on(resetProducts, (state) => {
+    return {
+      ...state,
+      products: [],
+      isLoading: false,
+      error: null,
+    };
+  })
 );
 
 export const ProductsFeature = createFeature({
