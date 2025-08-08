@@ -262,7 +262,7 @@
               <p-table 
                 [value]="getSortedCheckOrders(orderFile.checkOrders)" 
                 dataKey="id"
-                styleClass="p-datatable-sm check-orders-table"
+                [styleClass]="'p-datatable-sm check-orders-table'"
                 [tableStyle]="{'min-width': '50rem'}">
                 <ng-template pTemplate="header">
                   <tr class="check-order-header">
@@ -278,17 +278,19 @@
                       <i class="pi pi-user me-2"></i>
                       <span class="fw-semibold">Account Name</span>
                     </th>
-                    <th class="text-center">
+                    <th class="text-center" pSortableColumn="quantity">
                       <i class="pi pi-hashtag me-2"></i>
                       <span class="fw-semibold">Quantity</span>
+                      <p-sortIcon class="text-white" field="quantity"></p-sortIcon>
                     </th>
                     <th>
                       <i class="pi pi-map-marker me-2"></i>
                       <span class="fw-semibold">Deliver To</span>
                     </th>
-                    <th>
+                    <th pSortableColumn="errorMessage">
                       <i class="pi pi-exclamation-triangle me-2"></i>
-                      <span class="fw-semibold">Error Message</span>
+                      <span class="fw-semibold">Error Message </span>
+                      <p-sortIcon class="text-white" field="errorMessage"></p-sortIcon>
                     </th>
                     <th class="text-center">
                       <i class="pi pi-cog me-2"></i>
@@ -397,7 +399,7 @@
       label="Process Batch"
       icon="pi pi-send"
       severity="success"
-      styleClass="batch-action-btn"
+      styleClass="batch-action-btn ml-3"
       [disabled]="!areAllOrderFilesValid()"
       (click)="processAll()"
       pTooltip="Process all validated order files"

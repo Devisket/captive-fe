@@ -21,7 +21,7 @@ currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
       <th pSortableColumn="brstn">BRSTN Code <p-sortIcon field="brstn"></p-sortIcon></th>
       <th pSortableColumn="branchCode">Branch Code <p-sortIcon field="branchCode"></p-sortIcon></th>
       <th pSortableColumn="branchAddress1">Branch Address <p-sortIcon field="branchAddress1"></p-sortIcon></th>
-      <th>Action</th>
+      <th class="text-center">Action</th>
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-branch>
@@ -34,7 +34,7 @@ currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
           <a dropdownToggle class="text-dark">{{ branch.branchAddress1 }}</a>
         </div>
       </td>
-      <td>
+      <td class="text-center">
         <p-button class="mr-2" icon="pi pi-pen-to-square" size="small" label="Edit" severity="secondary"/>
         <p-button severity="danger" class="py-0" label="Delete"  icon="pi pi-trash" size="small"/>
       </td>
