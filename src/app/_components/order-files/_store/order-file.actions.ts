@@ -152,6 +152,22 @@ export const validateAllOrderFilesError = createAction(
   props<{ error: any }>()
 );
 
+// Polling - no loading state
+export const pollOrderFiles = createAction(
+  '[Order File] Poll Order Files',
+  props<{ bankId: string; batchId: string }>()
+);
+
+export const pollOrderFilesSuccess = createAction(
+  '[Order File] Poll Order Files Success',
+  props<{ orderFiles: OrderFile[] }>()
+);
+
+export const pollOrderFilesFailure = createAction(
+  '[Order File] Poll Order Files Failure',
+  props<{ error: any }>()
+);
+
 
 
 

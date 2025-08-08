@@ -32,6 +32,9 @@ import {
   validateAllOrderFilesError,
   processAllOrderFiles,
   processAllOrderFilesError,
+  pollOrderFiles,
+  pollOrderFilesSuccess,
+  pollOrderFilesFailure,
 } from './order-file.actions';
 import { OrderFilesService } from '../../../_services/order-files.service';
 import { LogDto } from '../../../_models/log-dto';
@@ -235,5 +238,19 @@ export class OrderFileEffects {
       )
     )
   );
-  
+
+  // Polling effect - doesn't trigger loading state
+  pollOrderFiles$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(pollOrderFiles),
+      switchMap((action) =>
+        this.orderFileService.getOrderFiles(action.bankId, action.batchId).pipe(
+          map((response) =>
+            pollOrderFilesSuccess({ orderFiles: response.orderFiles })
+          ),
+          catchError((error) => of(pollOrderFilesFailure({ error })))
+        )
+      )
+    )
+  );
 }

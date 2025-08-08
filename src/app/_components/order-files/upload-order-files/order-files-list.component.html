@@ -8,29 +8,84 @@
 <div *ngIf="!batch"></div>
 <div class="file-container">
   @if(batch){
-  <div class="row">
-    <div class="col-6">
+  <div class="upload-section mb-4">
+    <div class="upload-card">
       <form
         id="uploadOrderFileForm"
         #uploadOrderFileForm="ngForm"
         autocomplete="off"
         (ngSubmit)="uploadOrderFile()"
       >
-        <div class="mb-3">
-          <!-- <label for="formFileMultiple" class="form-label">Select multiple files..</label> -->
-          <div class="input-group-text bg-white">
-            <p-button
-              type="submit"
-              label="Upload New Order Files"
-              class="btn btn-success input-group-text me-3 py-1 text-white"
-              id="basic-addon2"
-            />
+        <div class="upload-header mb-3">
+          <h5 class="mb-0">
+            <i class="pi pi-upload me-2 text-primary"></i>
+            Upload Order Files
+          </h5>
+          <small class="text-muted">Select one or more order files to upload to this batch</small>
+        </div>
+        
+        <div class="upload-content">
+          <div class="file-drop-zone" 
+               [class.has-files]="selectedFiles.length > 0"
+               (click)="fileInput.click()">
+            <div class="drop-zone-content">
+              <div class="drop-zone-icon mb-2">
+                <i class="pi pi-cloud-upload text-primary" style="font-size: 2rem;"></i>
+              </div>
+              <div class="drop-zone-text">
+                <p class="mb-1 fw-semibold">
+                  {{ selectedFiles.length > 0 ? selectedFiles.length + ' file(s) selected' : 'Click to select files' }}
+                </p>
+                <p class="small text-muted mb-0">
+                  {{ selectedFiles.length > 0 ? 'Click to change selection' : 'Supports multiple file selection' }}
+                </p>
+              </div>
+              @if(selectedFiles.length > 0) {
+                <div class="selected-files mt-2">
+                  <div class="file-list">
+                    @for(file of selectedFiles; track file.name) {
+                      <span class="file-tag">
+                        <i class="pi pi-file me-1"></i>
+                        {{ file.name }}
+                      </span>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+            
             <input
-              class="form-control form-control-sm"
+              #fileInput
+              class="file-input-hidden"
               type="file"
               id="formFileMultiple"
               (change)="onFileSelected($event)"
               multiple
+            />
+          </div>
+          
+          <div class="upload-actions mt-3">
+            <p-button
+              type="submit"
+              label="Upload Files"
+              icon="pi pi-upload"
+              severity="success"
+              styleClass="upload-btn"
+              [disabled]="selectedFiles.length === 0"
+              pTooltip="Upload selected files to batch"
+              tooltipPosition="top"
+            />
+            <p-button
+              type="button"
+              label="Clear Selection"
+              icon="pi pi-times"
+              severity="secondary"
+              [text]="true"
+              styleClass="clear-btn ms-2"
+              (click)="clearSelection()"
+              [disabled]="selectedFiles.length === 0"
+              pTooltip="Clear file selection"
+              tooltipPosition="top"
             />
           </div>
         </div>
@@ -56,161 +111,299 @@
   </div>
   }
 
-  <p-table
-    [value]="orderFiles"
-    dataKey="id"
-    [responsive]="true"
-    [columns]="orderFileCols"
-  >
-    <ng-template pTemplate="header" let-columns>
-      <tr>
-        <th *ngFor="let col of columns" [pSortableColumn]="col.field">
-          {{ col }}
+
+  <table class="custom-table" style="width: 100%; min-width: 65rem;">
+    <thead>
+      <tr class="table-header-row">
+        <th class="expand-column text-center">
+          <i class="pi pi-list text-muted"></i>
+        </th>
+        <th class="file-name-column text-center">
+          <div class="d-flex align-items-center justify-content-center">
+            <i class="pi pi-file"></i>
+            <span class="fw-semibold">File Name</span>
+          </div>
+        </th>
+        <th class="status-column text-center">
+          <div class="d-flex align-items-center justify-content-center">
+            <i class="pi pi-info-circle"></i>
+            <span class="fw-semibold">Status</span>
+          </div>
+        </th>
+        <th class="quantity-column text-center">
+          <div class="d-flex align-items-center justify-content-center">
+            <i class="pi pi-users"></i>
+            <span class="fw-semibold">Personal Qty</span>
+          </div>
+        </th>
+        <th class="quantity-column text-center">
+          <div class="d-flex align-items-center justify-content-center">
+            <i class="pi pi-building"></i>
+            <span class="fw-semibold">Commercial Qty</span>
+          </div>
+        </th>
+        <th class="action-column text-center">
+          <div class="d-flex align-items-center justify-content-center">
+            <i class="pi pi-cog"></i>
+            <span class="fw-semibold">Actions</span>
+          </div>
         </th>
       </tr>
-    </ng-template>
-
-    <ng-template pTemplate="body" let-orderFile let-expanded="expanded">
-      <tr [class.completed-row]="orderFile.status === 'Completed'">
-        <td>
-          <p-button
-            type="button"
-            pRipple
-            [pRowToggler]="orderFile"
-            [text]="true"
-            [rounded]="true"
-            [plain]="true"
-            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
-          />
-        </td>
-        <td>
-          <i *ngIf="orderFile.status === 'Completed'" class="pi pi-check-circle text-success me-2"></i>
-          {{ orderFile.fileName }}
-        </td>
-        <td>{{ orderFile.status }}</td>
-        <td>{{ orderFile.personalQuantity}}</td>
-        <td>{{ orderFile.commercialQuantity}}</td>
-        <td>
-          <p-button
-            label="Delete"
-            icon="pi pi-trash"
-            severity="danger"
-            (click)="onDeleteOrderFile(orderFile.id)"
-            styleClass="p-button-rounded p-button-raised p-button-sm custom-small-btn me-1"
-          >
-          </p-button>
-          <p-button
-            label="Validate"
-            icon="pi pi-check-circle"
-            severity="info"
-            (click)="onValidateOrderFile(orderFile.id)"
-            [disabled]="!canBeValidate(orderFile)"
-            styleClass="p-button-rounded p-button-raised p-button-sm custom-small-btn mx-1"
-          >
-          </p-button>
-          <p-button
-            label="Process"
-            icon="pi pi-play"
-            severity="success"
-            [disabled]="!canOrderFileBeProcess(orderFile)"
-            (click)="onProcessOrderFile(orderFile.id)"
-            styleClass="p-button-rounded p-button-raised p-button-sm custom-small-btn ms-1"
-          >
-          </p-button>
-        </td>
-      </tr>
-    </ng-template>
-
-    <ng-template pTemplate="rowexpansion" let-orderFile>
-      <tr>
-        <td colspan="7">
-          <div>
-            <p-table [value]="orderFile.checkOrders" dataKey="id">
-              <ng-template pTemplate="header">
-                <tr>
-                  <th *ngFor="let col of checkOrderCols">
-                    {{ col.columnName }}
-                  </th>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-checkOrder>
-                <tr
-                  [class.on-hold-row]="checkOrder.isOnHold"
-                  [pTooltip]="
-                    checkOrder.isOnHold ? 'This check order is on hold' : ''
-                  "
-                  tooltipPosition="top"
-                >
-                  <td>
-                    <i
-                      *ngIf="checkOrder.isOnHold"
-                      class="pi pi-exclamation-triangle text-warning me-2"
-                    ></i>
-                    {{ checkOrder.accountNumber }}
-                  </td>
-                  <td>{{ checkOrder.brstn }}</td>
-                  <td>{{ checkOrder.mainAccountName }}</td>
-                  <td>{{ checkOrder.quantity }}</td>
-                  <td>{{ checkOrder.deliverTo }}</td>
-                  <td>{{ checkOrder.errorMessage }}</td>
-                  <td>
-                    <p-button
-                      label="Hold"
-                      *ngIf="
-                        !checkOrder.isOnHold &&
-                        !checkOrder.isValid &&
-                        !orderFileIsCompleted(orderFile)
-                      "
-                      icon="pi pi-exclamation-triangle"
-                      severity="warning"
-                      (click)="onHoldCheckOrder(orderFile.id, checkOrder.id)"
-                      styleClass="p-button-rounded p-button-raised p-button-sm custom-small-btn me-1"
-                    />
-                    <p-button
-                      label="Edit"
-                      *ngIf="
-                        !checkOrder.isOnHold && !orderFileIsCompleted(orderFile)
-                      "
-                      icon="pi pi-pencil"
-                      severity="info"
-                      styleClass="p-button-rounded p-button-raised p-button-sm custom-small-btn me-1"
-                    />
-                    <p-button
-                      label="Delete"
-                      icon="pi pi-trash"
-                      *ngIf="!orderFileIsCompleted(orderFile)"
-                      severity="danger"
-                      (click)="onDeleteCheckOrder(orderFile.id, checkOrder.id)"
-                      styleClass="p-button-rounded p-button-raised p-button-sm custom-small-btn me-1"
-                    />
-                  </td>
-                </tr>
-              </ng-template>
-            </p-table>
-          </div>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let orderFile of orderFiles">
+        <!-- Main row -->
+        <tr 
+          class="order-file-row"
+          [class.completed-row]="orderFile.status === 'Completed'"
+          [class.processing-row]="shouldShowStatusSpinner(orderFile)"
+          [class.error-row]="hasValidationErrors(orderFile)">
+          <td class="expand-cell text-center">
+            <p-button
+              type="button"
+              pRipple
+              [text]="true"
+              [rounded]="true"
+              [plain]="true"
+              size="small"
+              [icon]="isFileExpanded(orderFile.id) ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+              (click)="toggleFileExpansion(orderFile.id)"
+              styleClass="expand-button"
+              [class.error-attention]="hasValidationErrors(orderFile)"
+            />
+          </td>
+          <td class="file-name-cell">
+            <div class="file-name-container d-flex align-items-center justify-content-center">
+              <div class="file-status-icon">
+                <i *ngIf="orderFile.status === 'Completed'" class="pi pi-check-circle text-success fs-5"></i>
+                <i *ngIf="shouldShowStatusSpinner(orderFile)" class="pi pi-spin pi-spinner text-primary fs-5"></i>
+                <i *ngIf="orderFile.status === 'Valid'" class="pi pi-verified text-info fs-5"></i>
+                <i *ngIf="orderFile.status === 'Invalid'" class="pi pi-times-circle text-danger fs-5"></i>
+                <i *ngIf="orderFile.status === 'Pending'" class="pi pi-clock text-warning fs-5"></i>
+                <i *ngIf="orderFile.status === 'Error'" class="pi pi-exclamation-triangle text-danger fs-5"></i>
+              </div>
+              <div class="file-info">
+                <div class="file-name fw-semibold text-center">{{ orderFile.fileName }}</div>
+                <div *ngIf="orderFile.errorMessage" class="error-message text-danger small mt-1 text-center">
+                  <i class="pi pi-info-circle me-1"></i>
+                  {{ orderFile.errorMessage }}
+                </div>
+                <div *ngIf="hasValidationErrors(orderFile)" class="validation-warning text-warning small mt-1 text-center">
+                  <i class="pi pi-exclamation-triangle me-1"></i>
+                  This file has validation errors - check details below
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="status-cell text-center">
+            <span [class]="'status-badge status-' + orderFile.status.toLowerCase()">
+              {{ orderFile.status === 'GeneratingReport' ? 'Generating Report' : orderFile.status }}
+            </span>
+          </td>
+          <td class="quantity-cell text-center">
+            <span class="quantity-value">{{ orderFile.personalQuantity || 0 }}</span>
+          </td>
+          <td class="quantity-cell text-center">
+            <span class="quantity-value">{{ orderFile.commercialQuantity || 0 }}</span>
+          </td>
+          <td class="action-cell">
+            <div class="action-buttons d-flex justify-content-center gap-1">
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                size="small"
+                [text]="true"
+                [rounded]="true"
+                (click)="onDeleteOrderFile(orderFile.id)"
+                pTooltip="Delete Order File"
+                tooltipPosition="top"
+                styleClass="action-btn delete-btn"
+              />
+              <p-button
+                icon="pi pi-check-circle"
+                severity="info"
+                size="small"
+                [text]="true"
+                [rounded]="true"
+                (click)="onValidateOrderFile(orderFile.id)"
+                [disabled]="!canBeValidate(orderFile)"
+                pTooltip="Validate Order File"
+                tooltipPosition="top"
+                styleClass="action-btn validate-btn"
+              />
+              <p-button
+                icon="pi pi-play"
+                severity="success"
+                size="small"
+                [text]="true"
+                [rounded]="true"
+                [disabled]="!canOrderFileBeProcess(orderFile)"
+                (click)="onProcessOrderFile(orderFile.id)"
+                pTooltip="Process Order File"
+                tooltipPosition="top"
+                styleClass="action-btn process-btn"
+              />
+            </div>
+          </td>
+        </tr>
+        
+        <!-- Expansion row -->
+        <tr *ngIf="isFileExpanded(orderFile.id)">
+          <td colspan="6" class="expansion-cell">
+            <div class="expansion-content">
+              <div class="expansion-header mb-3">
+                <h6 class="mb-0 text-primary">
+                  <i class="pi pi-list-check me-2"></i>
+                  Check Orders Details
+                </h6>
+                <small class="text-muted">{{ orderFile.checkOrders?.length || 0 }} check order(s)</small>
+              </div>
+              
+              <p-table 
+                [value]="getSortedCheckOrders(orderFile.checkOrders)" 
+                dataKey="id"
+                styleClass="p-datatable-sm check-orders-table"
+                [tableStyle]="{'min-width': '50rem'}">
+                <ng-template pTemplate="header">
+                  <tr class="check-order-header">
+                    <th>
+                      <i class="pi pi-credit-card me-2"></i>
+                      <span class="fw-semibold">Account Number</span>
+                    </th>
+                    <th>
+                      <i class="pi pi-building me-2"></i>
+                      <span class="fw-semibold">BRSTN</span>
+                    </th>
+                    <th>
+                      <i class="pi pi-user me-2"></i>
+                      <span class="fw-semibold">Account Name</span>
+                    </th>
+                    <th class="text-center">
+                      <i class="pi pi-hashtag me-2"></i>
+                      <span class="fw-semibold">Quantity</span>
+                    </th>
+                    <th>
+                      <i class="pi pi-map-marker me-2"></i>
+                      <span class="fw-semibold">Deliver To</span>
+                    </th>
+                    <th>
+                      <i class="pi pi-exclamation-triangle me-2"></i>
+                      <span class="fw-semibold">Error Message</span>
+                    </th>
+                    <th class="text-center">
+                      <i class="pi pi-cog me-2"></i>
+                      <span class="fw-semibold">Actions</span>
+                    </th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-checkOrder>
+                  <tr
+                    class="check-order-row"
+                    [class.on-hold-row]="checkOrder.isOnHold"
+                    [class.invalid-row]="!checkOrder.isValid"
+                    [pTooltip]="checkOrder.isOnHold ? 'This check order is on hold' : ''"
+                    tooltipPosition="top">
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <i *ngIf="checkOrder.isOnHold" class="pi pi-pause-circle text-warning me-2 fs-6"></i>
+                        <i *ngIf="!checkOrder.isValid && !checkOrder.isOnHold" class="pi pi-times-circle text-danger me-2 fs-6"></i>
+                        <i *ngIf="checkOrder.isValid" class="pi pi-check-circle text-success me-2 fs-6"></i>
+                        <span class="fw-medium">{{ checkOrder.accountNumber }}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="text-monospace">{{ checkOrder.brstn }}</span>
+                    </td>
+                    <td>
+                      <span class="fw-medium">{{ checkOrder.mainAccountName }}</span>
+                    </td>
+                    <td class="text-center">
+                      <span class="badge bg-light text-dark border">{{ checkOrder.quantity }}</span>
+                    </td>
+                    <td>
+                      <span class="text-truncate" style="max-width: 200px;">{{ checkOrder.deliverTo }}</span>
+                    </td>
+                    <td>
+                      <div *ngIf="checkOrder.errorMessage" class="error-message-container">
+                        <span class="text-danger small">{{ checkOrder.errorMessage }}</span>
+                      </div>
+                      <span *ngIf="!checkOrder.errorMessage" class="text-muted small">No errors</span>
+                    </td>
+                    <td>
+                      <div class="check-order-actions d-flex justify-content-center gap-1">
+                        <p-button
+                          icon="pi pi-pause"
+                          severity="warning"
+                          size="small"
+                          [text]="true"
+                          [rounded]="true"
+                          *ngIf="!checkOrder.isOnHold && !checkOrder.isValid && !orderFileIsCompleted(orderFile)"
+                          (click)="onHoldCheckOrder(orderFile.id, checkOrder.id)"
+                          pTooltip="Hold Check Order"
+                          tooltipPosition="top"
+                          styleClass="action-btn hold-btn"
+                        />
+                        <p-button
+                          icon="pi pi-pencil"
+                          severity="info"
+                          size="small"
+                          [text]="true"
+                          [rounded]="true"
+                          *ngIf="!checkOrder.isOnHold && !orderFileIsCompleted(orderFile)"
+                          pTooltip="Edit Check Order"
+                          tooltipPosition="top"
+                          styleClass="action-btn edit-btn"
+                        />
+                        <p-button
+                          icon="pi pi-trash"
+                          severity="danger"
+                          size="small"
+                          [text]="true"
+                          [rounded]="true"
+                          *ngIf="!orderFileIsCompleted(orderFile)"
+                          (click)="onDeleteCheckOrder(orderFile.id, checkOrder.id)"
+                          pTooltip="Delete Check Order"
+                          tooltipPosition="top"
+                          styleClass="action-btn delete-btn"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
   }
 </div>
-<div class="col-12 flex justify-content-end">
-  <p-button
-    type="button"
-    label="Validate Batch"
-    icon="pi pi-check-circle"
-    styleClass="p-button-rounded p-button-raised p-button-m custom-medium-btn mx-1"
-    (click)="validateAll()"
-    [disabled]="!canBeValidateByBatch(orderFiles)"
-  />
-  <p-button
-    type="button"
-    label="Process Batch"
-    icon="pi pi-play"
-    styleClass="p-button-rounded p-button-raised p-button-m custom-medium-btn mx-1"
-    [disabled]="!areAllOrderFilesValid()"
-    (click)="processAll()"
-  />
+<div class="col-12 d-flex justify-content-end mt-4">
+  <div class="batch-actions-container d-flex gap-3">
+    <p-button
+      type="button"
+      label="Validate Batch"
+      icon="pi pi-verified"
+      severity="info"
+      styleClass="batch-action-btn"
+      (click)="validateAll()"
+      [disabled]="!canBeValidateByBatch(orderFiles)"
+      pTooltip="Validate all order files in this batch"
+      tooltipPosition="top"
+    />
+    <p-button
+      type="button"
+      label="Process Batch"
+      icon="pi pi-send"
+      severity="success"
+      styleClass="batch-action-btn"
+      [disabled]="!areAllOrderFilesValid()"
+      (click)="processAll()"
+      pTooltip="Process all validated order files"
+      tooltipPosition="top"
+    />
+  </div>
 </div>
 <p-dialog
   [header]="'Warning' + '&nbsp;'"
