@@ -251,12 +251,28 @@
         <tr *ngIf="isFileExpanded(orderFile.id)">
           <td colspan="6" class="expansion-cell">
             <div class="expansion-content">
-              <div class="expansion-header mb-3">
-                <h6 class="mb-0 text-primary">
-                  <i class="pi pi-list-check me-2"></i>
-                  Check Orders Details
-                </h6>
-                <small class="text-muted">{{ orderFile.checkOrders?.length || 0 }} check order(s)</small>
+              <div class="expansion-header mb-3 d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="mb-0 text-primary">
+                    <i class="pi pi-list-check me-2"></i>
+                    Check Orders Details
+                  </h6>
+                  <small class="text-muted">{{ orderFile.checkOrders.length || 0 }} check order(s)</small>
+                </div>
+                <div *ngIf="!orderFileIsCompleted(orderFile)">
+                  <p-button
+                    label="Add Check Order"
+                    icon="pi pi-plus"
+                    severity="success"
+                    size="small"
+                    [text]="true"
+                    [rounded]="true"
+                    (click)="onAddCheckOrder(orderFile.id)"
+                    pTooltip="Add new check order to this file"
+                    tooltipPosition="left"
+                    styleClass="add-check-order-btn"
+                  />
+                </div>
               </div>
               
               <p-table 
@@ -350,6 +366,7 @@
                           [text]="true"
                           [rounded]="true"
                           *ngIf="!checkOrder.isOnHold && !orderFileIsCompleted(orderFile)"
+                          (click)="onEditCheckOrder(orderFile.id, checkOrder)"
                           pTooltip="Edit Check Order"
                           tooltipPosition="top"
                           styleClass="action-btn edit-btn"
@@ -445,3 +462,14 @@
     />
   </div>
 </p-dialog>
+
+<!-- Check Order Modal -->
+<app-add-check-order
+  [(visible)]="showCheckOrderModal"
+  [checkOrder]="selectedCheckOrder"
+  [bankId]="bankInfoId"
+  [batchId]="batch?.id || ''"
+  [orderFileId]="selectedOrderFileId"
+  (save)="onSaveCheckOrder($event)"
+  (cancel)="onCloseModal()"
+></app-add-check-order>

@@ -1,0 +1,120 @@
+.check-order-modal {
+  .p-dialog-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-600) 100%);
+    color: white;
+    border-radius: 6px 6px 0 0;
+    
+    .p-dialog-title {
+      font-weight: 600;
+      font-size: 1.25rem;
+    }
+    
+    .p-dialog-header-icon {
+      color: white;
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+  
+  .p-dialog-content {
+    padding: 2rem;
+    background: var(--surface-0);
+  }
+  
+  .p-dialog-footer {
+    padding: 1rem 2rem 2rem 2rem;
+    background: var(--surface-0);
+    border-top: 1px solid var(--surface-border);
+  }
+}
+
+.check-order-form {
+  .p-float-label {
+    margin-bottom: 1.5rem;
+    
+    input {
+      width: 100%;
+      transition: all 0.2s ease;
+      
+      &:focus {
+        box-shadow: 0 0 0 2px var(--primary-color);
+        border-color: var(--primary-color);
+      }
+      
+      &.ng-invalid.ng-touched {
+        border-color: var(--red-500);
+        
+        &:focus {
+          box-shadow: 0 0 0 2px var(--red-500);
+        }
+      }
+    }
+    
+    label {
+      font-weight: 500;
+      color: var(--text-color-secondary);
+      transition: all 0.2s ease;
+    }
+  }
+  
+  .p-error {
+    font-size: 0.875rem;
+    color: var(--red-500);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    
+    &::before {
+      content: " ";
+      font-size: 0.75rem;
+    }
+  }
+  
+  .border-bottom {
+    border-bottom: 2px solid var(--surface-border) !important;
+  }
+  
+  .text-primary {
+    color: var(--primary-color) !important;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .check-order-modal {
+    .p-dialog-content {
+      padding: 1rem;
+    }
+    
+    .p-dialog-footer {
+      padding: 1rem;
+    }
+  }
+}
+
+// Animation enhancements
+.check-order-form {
+  .grid > div {
+    animation: fadeInUp 0.3s ease-out;
+    animation-fill-mode: both;
+  }
+  
+  @for $i from 1 through 12 {
+    .grid > div:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.05}s;
+    }
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

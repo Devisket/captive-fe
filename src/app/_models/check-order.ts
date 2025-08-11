@@ -1,14 +1,20 @@
-export interface CheckOrders{
+export interface CheckOrders {
     id?:string;
+    checkType?:string;
+    formType?:string;    
     accountNumber:string;
     brstn:string;
-    mainAccountName?:string;
-    concode?:string;
+    branchCode?:string;
     quantity?:string;
     deliverTo?:string;
+    concode?:string;
     startingSeries?:string;
     endingSeries?:string;
+    mainAccountName?:string;
+    accountName1?:string;
+    accountName2?:string;
     isOnHold:boolean;
     isValid:boolean;
+    barcodeValue?:string;
     errorMessage?:string;
 }
