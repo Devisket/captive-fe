@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { CheckOrders } from "../_models/check-order";
-import { HttpClient } from "@microsoft/signalr";
+import { HttpClient } from "@angular/common/http";
 import { environment } from "../../environments/environment";
 
 @Injectable({
@@ -11,11 +11,12 @@ export class CheckOrderService{
     private http = inject(HttpClient);
     baseCommandUrl = environment.baseCommandUri;
 
-    saveCheckOrder(checkOrder: CheckOrders) {
-        const url = `${this.baseCommandUrl}/checkorder`;
+    saveCheckOrder(bankid:string, orderFileId:string, checkOrders: CheckOrders) {
+        const url = `${this.baseCommandUrl}/api/${bankid}/checkorder/floating`;
 
-        var request = JSON.stringify(checkOrder);
-
-        return this.http.post(url, {content: request});
+        return this.http.post(url, {
+          orderFileId,
+          checkOrders : [checkOrders]
+        });
     }
 }

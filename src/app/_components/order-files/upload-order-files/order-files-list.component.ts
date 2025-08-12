@@ -617,6 +617,12 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
     this.onCloseModal();
   }
 
+  onCheckOrderSaveSuccess(): void {
+    // Called when check order save is successful
+    this.validateAll();
+    this.onCloseModal();
+  }
+
   onCloseModal(): void {
     this.showCheckOrderModal = false;
     this.selectedCheckOrder = null;

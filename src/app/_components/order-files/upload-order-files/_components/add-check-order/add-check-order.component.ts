@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, Input, Output, EventEmitter } from "@angular/core";
+import { Component, OnInit, OnChanges, Input, Output, EventEmitter, OnDestroy } from "@angular/core";
 import { InputTextModule } from "primeng/inputtext";
 import { ButtonModule } from "primeng/button";
 import { FloatLabelModule } from "primeng/floatlabel";
@@ -6,6 +6,9 @@ import { DialogModule } from "primeng/dialog";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms"; 
 import { Store } from "@ngrx/store";
 import { CheckOrders } from "../../../../../_models/check-order";
+import { saveCheckOrder } from "../../../_store/check-order.actions";
+import { CheckOrderFeature } from "../../../_store/check-order.reducers";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: 'app-add-check-order',
@@ -20,7 +23,7 @@ import { CheckOrders } from "../../../../../_models/check-order";
     ReactiveFormsModule,
   ],
 })
-export class AddCheckOrderComponent implements OnInit, OnChanges {
+export class AddCheckOrderComponent implements OnInit, OnChanges, OnDestroy {
   @Input() visible: boolean = false;
   @Input() checkOrder: CheckOrders | null = null;
   @Input() bankId: string = '';
@@ -30,6 +33,9 @@ export class AddCheckOrderComponent implements OnInit, OnChanges {
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() save = new EventEmitter<CheckOrders>();
   @Output() cancel = new EventEmitter<void>();
+  @Output() saveSuccess = new EventEmitter<void>();
+
+  private subscription = new Subscription();
 
   formGroup = new FormGroup({
     id: new FormControl(''),
@@ -63,6 +69,25 @@ export class AddCheckOrderComponent implements OnInit, OnChanges {
       this.dialogTitle = 'Add Check Order';
       this.resetForm();
     }
+
+    this.subscription.add(
+      this.store.select(CheckOrderFeature.selectLoading).subscribe(loading => {
+        // Handle loading state if needed
+      })
+    );
+
+    this.subscription.add(
+      this.store.select(CheckOrderFeature.selectLastSavedResponse).subscribe(response => {
+        if (response) {
+          this.saveSuccess.emit();
+          this.onHide();
+        }
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   ngOnChanges(): void {
@@ -81,6 +106,7 @@ export class AddCheckOrderComponent implements OnInit, OnChanges {
 
   private populateForm(): void {
     if (this.checkOrder) {
+      console.log(this.checkOrder);
       this.formGroup.patchValue({
         id: this.checkOrder.id,
         accountNumber: this.checkOrder.accountNumber,
@@ -144,8 +170,16 @@ export class AddCheckOrderComponent implements OnInit, OnChanges {
         errorMessage: this.checkOrder?.errorMessage || undefined
       };
       
-      this.save.emit(checkOrderData);
-      this.onHide();
+      // Dispatch the action to save the check order
+      this.store.dispatch(saveCheckOrder({
+        checkOrder: checkOrderData,
+        bankId: this.bankId,
+        batchId: this.batchId,
+        orderFileId: this.orderFileId
+      }));
+      
+      // Also emit to parent for backward compatibility
+      //this.save.emit(checkOrderData);
     } else {
       this.markFormGroupTouched();
     }

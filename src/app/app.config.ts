@@ -29,6 +29,8 @@ import { TagFeature } from './_components/tags/_store/tag.reducers';
 import { TagEffects } from './_components/tags/_store/tag.effects';
 import { OrderFileFeature } from './_components/order-files/_store/order-file.reducers';
 import { OrderFileEffects } from './_components/order-files/_store/order-file.effects';
+import { CheckOrderFeature } from './_components/order-files/_store/check-order.reducers';
+import { CheckOrderEffects } from './_components/order-files/_store/check-order.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -52,6 +54,7 @@ export const appConfig: ApplicationConfig = {
       batch: BatchFeature.reducer,
       tag: TagFeature.reducer,
       orderFiles: OrderFileFeature.reducer,
+      checkOrder: CheckOrderFeature.reducer,
     }),
     provideEffects([
       ProductsEffects,
@@ -62,6 +65,7 @@ export const appConfig: ApplicationConfig = {
       SharedEffects,
       TagEffects,
       OrderFileEffects,
+      CheckOrderEffects,
     ]),
   ],
 };
