@@ -1,0 +1,245 @@
+<p-dialog
+  [header]="dialogTitle"
+  [(visible)]="visible"
+  (onHide)="onHide()"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="check-order-modal"
+  [style]="{ width: '700px', maxWidth: '90vw' }"
+>
+  <ng-template pTemplate="content">
+    <form [formGroup]="formGroup" class="check-order-form">
+      <div class="grid">
+        <!-- Account Number -->
+        <div class="col-12 md:col-6">
+          <p-floatLabel>
+            <input 
+              pInputText 
+              id="accountNumber" 
+              formControlName="accountNumber"
+              [class.ng-invalid]="isFieldInvalid('accountNumber')"
+              class="w-full"
+            />
+            <label for="accountNumber">Account Number *</label>
+          </p-floatLabel>
+          <small 
+            *ngIf="isFieldInvalid('accountNumber')" 
+            class="p-error block mt-1"
+          >
+            Account Number is required
+          </small>
+        </div>
+
+        <!-- BRSTN -->
+        <div class="col-12 md:col-6">
+          <p-floatLabel>
+            <input 
+              pInputText 
+              id="brstn" 
+              formControlName="brstn"
+              [class.ng-invalid]="isFieldInvalid('brstn')"
+              class="w-full"
+            />
+            <label for="brstn">BRSTN *</label>
+          </p-floatLabel>
+          <small 
+            *ngIf="isFieldInvalid('brstn')" 
+            class="p-error block mt-1"
+          >
+            BRSTN is required
+          </small>
+        </div>
+
+        <!-- Main Account Name -->
+        <div class="col-12 md:col-6">
+          <p-floatLabel>
+            <input 
+              pInputText 
+              id="mainAccountName" 
+              formControlName="mainAccountName"
+              class="w-full"
+            />
+            <label for="mainAccountName">Main Account Name</label>
+          </p-floatLabel>
+        </div>
+
+        <!-- Quantity -->
+        <div class="col-12 md:col-6">
+          <p-floatLabel>
+            <input 
+              pInputText 
+              id="quantity" 
+              formControlName="quantity"
+              type="number"
+              min="1"
+              [class.ng-invalid]="isFieldInvalid('quantity')"
+              class="w-full"
+            />
+            <label for="quantity">Quantity</label>
+          </p-floatLabel>
+          <small 
+            *ngIf="isFieldInvalid('quantity')" 
+            class="p-error block mt-1"
+          >
+            Quantity must be at least 1
+          </small>
+        </div>
+
+        <!-- Deliver To -->
+        <div class="col-12">
+          <p-floatLabel>
+            <input 
+              pInputText 
+              id="deliverTo" 
+              formControlName="deliverTo"
+              [class.ng-invalid]="isFieldInvalid('deliverTo')"
+              class="w-full"
+            />
+            <label for="deliverTo">Deliver To</label>
+          </p-floatLabel>
+          <small 
+            *ngIf="isFieldInvalid('deliverTo')" 
+            class="p-error block mt-1"
+          >
+            Invalid deliver to address
+          </small>
+        </div>
+
+        <!-- Additional Fields Section -->
+        <div class="col-12">
+          <div class="text-lg font-semibold mb-3 text-primary border-bottom pb-2">
+            <i class="pi pi-info-circle mr-2"></i>
+            Additional Information
+          </div>
+        </div>
+
+        <!-- Check Type -->
+        <div class="col-12 md:col-6">
+          <p-floatLabel>
+            <input 
+              pInputText 
+              id="checkType" 
+              formControlName="checkType"
+              class="w-full"
+            />
+            <label for="checkType">Check Type</label>
+          </p-floatLabel>
+        </div>
+
+        <!-- Form Type -->
+        <div class="col-12 md:col-6">
+          <p-floatLabel>
+            <input 
+              pInputText 
+              id="formType" 
+              formControlName="formType"
+              class="w-full"
+            />
+            <label for="formType">Form Type</label>
+          </p-floatLabel>
+        </div>
+
+        <!-- Branch Code -->
+        <div class="col-12 md:col-6">
+          <p-floatLabel>
+            <input 
+              pInputText 
+              id="branchCode" 
+              formControlName="branchCode"
+              class="w-full"
+            />
+            <label for="branchCode">Branch Code</label>
+          </p-floatLabel>
+        </div>
+
+        <!-- Concode -->
+        <div class="col-12 md:col-6">
+          <p-floatLabel>
+            <input 
+              pInputText 
+              id="concode" 
+              formControlName="concode"
+              class="w-full"
+            />
+            <label for="concode">Concode</label>
+          </p-floatLabel>
+        </div>
+
+        <!-- Starting Series -->
+        <div class="col-12 md:col-6">
+          <p-floatLabel>
+            <input 
+              pInputText 
+              id="startingSeries" 
+              formControlName="startingSeries"
+              class="w-full"
+            />
+            <label for="startingSeries">Starting Series</label>
+          </p-floatLabel>
+        </div>
+
+        <!-- Ending Series -->
+        <div class="col-12 md:col-6">
+          <p-floatLabel>
+            <input 
+              pInputText 
+              id="endingSeries" 
+              formControlName="endingSeries"
+              class="w-full"
+            />
+            <label for="endingSeries">Ending Series</label>
+          </p-floatLabel>
+        </div>
+
+        <!-- Account Name 1 -->
+        <div class="col-12 md:col-6">
+          <p-floatLabel>
+            <input 
+              pInputText 
+              id="accountName1" 
+              formControlName="accountName1"
+              class="w-full"
+            />
+            <label for="accountName1">Account Name 1</label>
+          </p-floatLabel>
+        </div>
+
+        <!-- Account Name 2 -->
+        <div class="col-12 md:col-6">
+          <p-floatLabel>
+            <input 
+              pInputText 
+              id="accountName2" 
+              formControlName="accountName2"
+              class="w-full"
+            />
+            <label for="accountName2">Account Name 2</label>
+          </p-floatLabel>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-content-end gap-2">
+      <p-button 
+        label="Cancel" 
+        icon="pi pi-times" 
+        severity="secondary" 
+        [text]="true"
+        (onClick)="onCancel()"
+        styleClass="p-button-sm"
+      />
+      <p-button 
+        [label]="isEditMode ? 'Update' : 'Save'" 
+        [icon]="isEditMode ? 'pi pi-check' : 'pi pi-save'" 
+        severity="primary" 
+        (onClick)="onSave()"
+        [disabled]="formGroup.invalid"
+        styleClass="p-button-sm"
+      />
+    </div>
+  </ng-template>
+</p-dialog>

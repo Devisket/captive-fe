@@ -23,6 +23,7 @@ import { CheckOrders } from '../../../_models/check-order';
 import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
 import { PanelModule } from 'primeng/panel';
+import { AddCheckOrderComponent } from './_components/add-check-order/add-check-order.component';
 import { LogType } from '../../../_models/constants';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { Store } from '@ngrx/store';
@@ -53,6 +54,7 @@ import { OrderFileFeature } from '../_store/order-file.reducers';
     DialogModule,
     TooltipModule,
     PanelModule,
+    AddCheckOrderComponent,
   ],
   templateUrl: './order-files-list.component.html',
   styleUrl: './order-files-list.component.scss',
@@ -139,6 +141,11 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
 
   visibleDialog: boolean = false;
   isPolling: boolean = false;
+  
+  // Modal state
+  showCheckOrderModal: boolean = false;
+  selectedCheckOrder: CheckOrders | null = null;
+  selectedOrderFileId: string = '';
 
   constructor(private store: Store) {
     if (this.config.data) {
@@ -585,5 +592,40 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
       const accountB = b.accountNumber || '';
       return accountA.localeCompare(accountB);
     });
+  }
+
+  // Modal handling methods
+  onEditCheckOrder(orderFileId: string, checkOrder: CheckOrders): void {
+    this.selectedOrderFileId = orderFileId;
+    this.selectedCheckOrder = { ...checkOrder };
+    this.showCheckOrderModal = true;
+  }
+
+  onAddCheckOrder(orderFileId: string): void {
+    this.selectedOrderFileId = orderFileId;
+    this.selectedCheckOrder = null;
+    this.showCheckOrderModal = true;
+  }
+
+  onSaveCheckOrder(checkOrderData: CheckOrders): void {
+    // TODO: Implement save functionality
+    // This would dispatch an action to save/update the check order
+    console.log('Saving check order:', checkOrderData);
+    console.log('Order File ID:', this.selectedOrderFileId);
+    
+    // For now, just close the modal
+    this.onCloseModal();
+  }
+
+  onCheckOrderSaveSuccess(): void {
+    // Called when check order save is successful
+    this.validateAll();
+    this.onCloseModal();
+  }
+
+  onCloseModal(): void {
+    this.showCheckOrderModal = false;
+    this.selectedCheckOrder = null;
+    this.selectedOrderFileId = '';
   }
 }
