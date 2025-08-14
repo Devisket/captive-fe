@@ -515,7 +515,7 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
       } else {
         this.stopStatusPolling();
       }
-    }, 5000);
+    }, 25000);
   }
 
   private stopStatusPolling(): void {
