@@ -1,0 +1,37 @@
+<h1>Batch List</h1>
+<p-button label="Add Batch" icon="pi pi-plus" (onClick)="onAddBatch()"></p-button>
+<div class="flex flex-column">
+  <p-table [value]="batches">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>#</th>
+        <th>Batch</th>
+        <th>No of Files</th>
+        <th>Created Date</th>
+        <th>Status</th>
+        <th>Delivery Date</th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-batch>
+      <tr>
+        <td>{{ batch.orderNumber }}</td>
+        <td>
+          <a href="javascript:void(0)" 
+             class="text-primary cursor-pointer hover:underline"
+             (click)="showBatchDetail(batch)">
+            {{ batch.batchName }}
+          </a>
+        </td>
+        <td>{{ batch.noOfFiles }}</td>
+        <td>{{ batch.createdDate | dateTransform:'MM/dd/yyyy' }}</td>
+        <td>{{ batch.batchFileStatus }}</td>
+        <td>{{ batch.deliveryDate | dateTransform:'MM/dd/yyyy' }}</td>
+        <td>
+          <p-button label="Delete" (onClick)="onDeleteBatch(batch.id)" [outlined]="true" severity="danger" />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+

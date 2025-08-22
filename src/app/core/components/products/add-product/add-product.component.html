@@ -1,0 +1,21 @@
+<form class="formgrid grid" [formGroup]="formGroup">
+  <div class="field col-12">
+    <label class="mx-5" for="productName">Product Name</label>
+    <input pInputText id="productName" formControlName="productName" placeholder="Product ABC" />
+  </div>
+  <div class="field col-12">
+    <label class="mx-5" for="productSequence">Product Sequence</label>
+    <input pInputText id="productSequence" formControlName="productSequence" placeholder="Product Sequence Number" />
+  </div>
+  <div class="field col-12">
+    <label class="mx-5" for="productSequence">Printer File Name</label>
+    <input pInputText id="productSequence" formControlName="customizeFileName" />
+  </div>
+</form>
+<p-button
+type="button"
+class="align-items-center"
+label="Save Product"
+icon="pi pi-check"
+(click)="onSaveProduct()"
+></p-button>

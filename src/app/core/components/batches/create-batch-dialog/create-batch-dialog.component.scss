@@ -1,0 +1,23 @@
+.create-batch-dialog {
+  min-width: 400px;
+  
+  .field {
+    display: flex;
+    flex-direction: column;
+    
+    label {
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+    
+    .p-error {
+      margin-top: 0.25rem;
+      font-size: 0.875rem;
+    }
+  }
+  
+  .p-inputtext.ng-invalid.ng-touched,
+  .p-calendar.ng-invalid.ng-touched {
+    border-color: #f87171;
+  }
+}

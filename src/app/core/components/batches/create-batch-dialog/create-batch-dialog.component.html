@@ -1,0 +1,68 @@
+<div class="create-batch-dialog p-4">
+  <form [formGroup]="batchForm" (ngSubmit)="onSave()">
+    
+    <!-- Auto Generate Toggle -->
+    <div class="field mb-4">
+      <label class="block mb-2 font-semibold">Auto Generate Batch Name</label>
+      <p-inputSwitch 
+        formControlName="autoGenerateName"
+        (onChange)="onAutoGenerateToggle()">
+      </p-inputSwitch>
+    </div>
+
+    <!-- Batch Name Field -->
+    <div class="field mb-4">
+      <label for="batchName" class="block mb-2 font-semibold">Batch Name</label>
+      <input 
+        pInputText 
+        id="batchName"
+        formControlName="batchName"
+        placeholder="Enter batch name"
+        class="w-full"
+        [class.ng-invalid]="batchForm.get('batchName')?.invalid && batchForm.get('batchName')?.touched"
+      />
+      <small 
+        *ngIf="batchForm.get('batchName')?.invalid && batchForm.get('batchName')?.touched" 
+        class="p-error">
+        Batch name is required
+      </small>
+    </div>
+
+    <!-- Delivery Date Picker -->
+    <div class="field mb-4">
+      <label for="deliveryDate" class="block mb-2 font-semibold">Delivery Date</label>
+      <p-calendar 
+        id="deliveryDate"
+        formControlName="deliveryDate"
+        [showIcon]="true"
+        dateFormat="mm/dd/yy"
+        placeholder="Select delivery date"
+        class="w-full"
+        [class.ng-invalid]="batchForm.get('deliveryDate')?.invalid && batchForm.get('deliveryDate')?.touched">
+      </p-calendar>
+      <small 
+        *ngIf="batchForm.get('deliveryDate')?.invalid && batchForm.get('deliveryDate')?.touched" 
+        class="p-error">
+        Delivery date is required
+      </small>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex justify-content-end gap-2 mt-4">
+      <button 
+        pButton 
+        type="button" 
+        label="Cancel" 
+        class="p-button-secondary" 
+        (click)="onCancel()">
+      </button>
+      <button 
+        pButton 
+        type="submit" 
+        label="Save" 
+        [disabled]="batchForm.invalid">
+      </button>
+    </div>
+
+  </form>
+</div>
