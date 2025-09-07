@@ -1,14 +1,14 @@
 <div class="grid">
   <div class="col">
     <div class="row">
-      <div class="d-flex mb-2 justify-content-between">
+      <div class="flex mb-2 justify-content-between">
         <h2>Bank List</h2>
         <button
           pButton
           pRipple
-          label="Register New Bank"
+          label="New Bank"
           icon="pi pi-plus"
-          class="p-button-success"
+          class="p-button-success p-2"
           (click)="onCreateNewBank()"
         ></button>
       </div>
@@ -20,7 +20,7 @@
           <tr>
             <th>Bank Name</th>
             <th>Short Name</th>
-            <th>Description</th>
+            <th>Account Number Format</th>
             <th>Created Date</th>
             <th>Actions</th>
           </tr>
@@ -37,8 +37,8 @@
               >
             </td>
             <td>{{ bank.bankShortName }}</td>
-            <td>{{ bank.bankDescription }}</td>
-            <td>{{ bank.createdDate }}</td>
+            <td>{{ bank.accountNumberFormat }}</td>
+            <td>{{ bank.createdDate | dateTransform:'MMM-dd-yyyy' }}</td>
             <td>
               <p-button
                 icon="pi pi-pencil"

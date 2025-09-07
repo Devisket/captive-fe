@@ -1,14 +1,10 @@
-<h1>Branch List</h1>
-<p-button label="Add Branch" icon="pi pi-plus" (onClick)="onAddBranch()"></p-button>
-<p-table 
-[paginator]="true"
-[rows]="5"
-[scrollable]="true"
-[scrollHeight]="'500px'"
-[tableStyle]="{ 'min-width': '50rem' }"
-[rowsPerPageOptions]="[5, 10, 20]"
-[paginatorDropdownAppendTo]="'body'"
-[value]="branches">
+<div class="flex justify-content-between">
+  <h1 class="align-items-center">Branch List</h1>
+  <p-button class="flex align-items-center" label="Add Branch" icon="pi pi-plus" (onClick)="onAddBranch()"></p-button>
+</div>
+<p-table [paginator]="true" [rows]="5" [scrollable]="true" [scrollHeight]="'500px'"
+  [tableStyle]="{ 'min-width': '50rem' }" [rowsPerPageOptions]="[5, 10, 20]" [paginatorDropdownAppendTo]="'body'"
+  [value]="branches">
   <ng-template pTemplate="header">
     <tr>
       <th pSortableColumn="branchName">Branch Name <p-sortIcon field="branchName"></p-sortIcon></th>

@@ -14,11 +14,12 @@ import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { DialogService } from 'primeng/dynamicdialog';
 import { AddBankComponent } from '../add-bank/add-bank.component';
+import { DateTransformPipe } from "../../../../shared/pipes/date-transform.pipe";
 
 @Component({
   selector: 'app-bank-list',
   standalone: true,
-  imports: [ButtonModule, RippleModule, FormsModule, TableModule],
+  imports: [ButtonModule, RippleModule, FormsModule, TableModule, DateTransformPipe],
   providers: [DialogService],
   templateUrl: './bank-list.component.html',
   styleUrl: './bank-list.component.scss',
