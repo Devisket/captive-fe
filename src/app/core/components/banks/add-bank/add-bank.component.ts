@@ -52,7 +52,7 @@ export class AddBankComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (this.config.data.bank) {
+    if (this.config.data) {
       const { bank } = this.config.data;
       this.formGroup.patchValue({
         id: bank.id,

@@ -1,48 +1,24 @@
 <form [formGroup]="formGroup">
-  <hr />
-  <div class="field mt-5">
-    <label for="shortName">Short Name</label>
-    <span class="p-float-label">
-      <input
-        class="w-full"
-        pInputText
-        id="shortName"
-        formControlName="shortName"
-      />
-    </span>
-  </div>
-  <div class="field mt-5">
-    <label for="bankName">Bank Name</label>
-    <span class="p-float-label">
-      <input
-        class="w-full"
-        pInputText
-        id="bankName"
-        formControlName="bankName"
-      />
-    </span>
-  </div>
-  <div class="field mt-5">
-    <label for="description">Bank Description</label>
-    <span class="p-float-label">
-      <input
-        class="w-full"
-        pInputText
-        id="description"
-        formControlName="description"
-      />
-    </span>
+  <div class="formgrid grid">
+    <div class="field col mt-5">
+      <label for="bankName">Bank Name</label>
+      <span class="p-float-label">
+        <input class="w-full" pInputText id="bankName" formControlName="bankName" />
+      </span>
+    </div>
+
+    <div class="field  col mt-5">
+      <label for="shortName">Short Name</label>
+      <span class="p-float-label">
+        <input class="w-full" pInputText id="shortName" formControlName="shortName" />
+      </span>
+    </div>
   </div>
 
   <div class="field mt-5">
     <label for="accountNumberFormat">Account Number Format</label>
     <span class="p-float-label">
-      <input
-        class="w-full"
-        pInputText
-        id="accountNumberFormat"
-        formControlName="accountNumberFormat"
-      />
+      <input class="w-full" pInputText id="accountNumberFormat" formControlName="accountNumberFormat" />
     </span>
   </div>
 </form>

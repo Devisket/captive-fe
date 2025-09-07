@@ -2,8 +2,8 @@ import { Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AccountService } from './core/_services/account.service';
 import { FooterComponent } from './shared/components/footer/footer.component';
-import { NgxSpinnerComponent } from 'ngx-spinner';
 import { ApplicationHeaderComponent } from './shared/components/header/app-header.component';
+import { LoadingComponent } from './shared/components/loading/loading.component';
 import { ToastModule } from 'primeng/toast';
 @Component({
   selector: 'app-root',
@@ -12,7 +12,7 @@ import { ToastModule } from 'primeng/toast';
     RouterOutlet,
     ApplicationHeaderComponent,
     FooterComponent,
-    NgxSpinnerComponent,
+    LoadingComponent,
     ToastModule,
   ],
   templateUrl: './app.component.html',

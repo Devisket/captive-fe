@@ -179,6 +179,8 @@ export class AddCheckOrderComponent implements OnInit, OnChanges, OnDestroy {
         batchId: this.batchId,
         orderFileId: this.orderFileId
       }));
+
+      this.onHide();
       
       // Also emit to parent for backward compatibility
       //this.save.emit(checkOrderData);
