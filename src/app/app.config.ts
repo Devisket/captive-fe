@@ -7,6 +7,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideToastr } from 'ngx-toastr';
 import { jwtInterceptor } from './_interceptor/jwt.interceptor';
 import { errorInterceptor } from './_interceptor/error.interceptor';
+import { loadingInterceptor } from './_interceptor/loading.interceptor';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MessageService } from 'primeng/api';
 import { provideStore, StoreModule } from '@ngrx/store';
@@ -35,7 +36,7 @@ export const appConfig: ApplicationConfig = {
     MessageService,
     provideRouter(appRoutes),
     provideHttpClient(
-      withInterceptors([jwtInterceptor, errorInterceptor])
+      withInterceptors([loadingInterceptor, jwtInterceptor, errorInterceptor])
     ),
     provideAnimations(),
     provideToastr({

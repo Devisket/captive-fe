@@ -47,7 +47,7 @@
               />
               <p-button
                 icon="pi pi-trash"
-                (onClick)="onDeleteBank(bank)"
+                (onClick)="deleteBank(bank, $event)"
                 class="p-button-rounded p-button-info"
               />
             </td>
@@ -57,3 +57,4 @@
     </div>
   </div>
 </div>
+<p-confirmDialog />

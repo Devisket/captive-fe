@@ -15,12 +15,14 @@ import { RippleModule } from 'primeng/ripple';
 import { DialogService } from 'primeng/dynamicdialog';
 import { AddBankComponent } from '../add-bank/add-bank.component';
 import { DateTransformPipe } from "../../../../shared/pipes/date-transform.pipe";
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog'
 
 @Component({
   selector: 'app-bank-list',
   standalone: true,
-  imports: [ButtonModule, RippleModule, FormsModule, TableModule, DateTransformPipe],
-  providers: [DialogService],
+  imports: [ButtonModule, RippleModule, FormsModule, TableModule, DateTransformPipe, ConfirmDialogModule],
+  providers: [DialogService, ConfirmationService],
   templateUrl: './bank-list.component.html',
   styleUrl: './bank-list.component.scss',
 })
@@ -32,8 +34,9 @@ export class BankListComponent implements OnInit {
     private toastr: ToastrService,
     private router: Router,
     private store: Store,
-    private dialogService: DialogService
-  ) {}
+    private dialogService: DialogService,
+    private confirmationService: ConfirmationService
+  ) { }
 
   ngOnInit(): void {
     this.getBanks();
@@ -58,19 +61,21 @@ export class BankListComponent implements OnInit {
     });
   }
 
-  deleteBank(bankId: any, event: Event) {
-    if (!confirm('Confirm Deletion!')) {
-      event.preventDefault();
-      return;
-    }
-    this.bankService.deleteBank(bankId).subscribe({
-      error: (error) => {
-        this.toastr.error(error.error);
-        console.log(error.error);
-      },
-      next: (response) => {
-        this.toastr.success('Successfully deleted bank.');
-        this.bankInfos = this.bankInfos.filter((bank) => bank.id !== bankId);
+  deleteBank(bank: Bank, event: Event) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: 'Are you sure you want to delete this bank?',
+      accept: () => {
+        this.bankService.deleteBank(bank.id).subscribe({
+          error: (error) => {
+            this.toastr.error(error.error);
+            console.log(error.error);
+          },
+          next: (response) => {
+            this.toastr.success('Successfully deleted bank.');
+            this.bankInfos = this.bankInfos.filter((bank) => bank.id !== bank.id);
+          },
+        })
       },
     });
   }
