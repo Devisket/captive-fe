@@ -9,3 +9,10 @@ export const enum LogType {
   Warning,
   Error
 }
+
+export enum BranchStatus{
+  Acitve,
+  Closing,
+  Inactive,
+  Closed
+}

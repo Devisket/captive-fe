@@ -8,6 +8,8 @@ import {
   setSelectedProductId,
   getBankValuesSuccess,
 } from './shared.actions';
+import { getAllBranches } from '../../core/store/branch/branch.actions';
+import { BankValues } from '../../_models/values/bankValues';
 
 const reducer = createReducer(
   initialState,
@@ -48,7 +50,11 @@ const reducer = createReducer(
 export const SharedFeature = createFeature({
   name: 'shared',
   reducer: reducer,
-  extraSelectors: ({ selectSelectedBankInfoId, selectSelectedProductId }) => ({
+  extraSelectors: ({
+    selectSelectedBankInfoId,
+    selectSelectedProductId,
+    selectBankValues,
+  }) => ({
     selectSelectedBankInfoId: createSelector(
       selectSelectedBankInfoId,
       (selectedBankInfoId: string | null) => {
@@ -65,6 +71,13 @@ export const SharedFeature = createFeature({
           return sessionStorage.getItem('selectedProductId');
         }
         return selectedProductId;
+      }
+    ),
+    getAllBranches: createSelector(
+      selectBankValues,
+      (bankValue: BankValues | null) => {
+        if (!bankValue) return [];
+        return bankValue.branchValues;
       }
     ),
   }),

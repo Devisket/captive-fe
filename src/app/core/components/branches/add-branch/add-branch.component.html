@@ -1,8 +1,159 @@
-<form
-  class="formgrid grid"
-  [formGroup]="formGroup"
-  (ngSubmit)="onSubmit()">
+<div class="flex flex-column mt-5">
+  <form class="formgrid grid" [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+    <input pInputText type="text" formControlName="id" type="hidden" />
 
-  
+    <!--Branch Name-->
+    <div class="field col-12 mb-3">
+      <p-floatLabel>
+        <input
+          id="branchName"
+          pInputText
+          type="text"
+          formControlName="branchName"
+          class="w-full"
+        />
+        <label for="branchName">Branch Name</label>
+      </p-floatLabel>
+    </div>
 
-</form>
+    <!--Branch Code & BRSTN Code-->
+    <div class="field col-6 my-3">
+      <p-floatLabel>
+        <input
+          id="branchCode"
+          pInputText
+          type="text"
+          formControlName="branchCode"
+          class="w-full"
+        />
+        <label for="branchCode">Branch Code</label>
+      </p-floatLabel>
+    </div>
+
+    <!--BRSTN Code-->
+    <div class="field col-6 my-3">
+      <p-floatLabel>
+        <input
+          id="brstnCode"
+          pInputText
+          type="text"
+          formControlName="brstnCode"
+          class="w-full"
+        />
+        <label for="brstnCode">BRSTN Code</label>
+      </p-floatLabel>
+    </div>
+
+    <!--Branch Status-->
+    <div class="field col-6 my-3">
+      <p-floatLabel>
+        <p-dropdown
+          [options]="dropDownValue"
+          optionLabel="name"
+          optionValue="code"
+          formControlName="branchStatus"
+          class="w-full"
+          placeholder="Select a Status"
+        />
+        <label for="branchStatus">Branch Status</label>
+      </p-floatLabel>
+    </div>
+
+    <!--Merging Branch ID-->
+    <div class="field col-6 my-3">
+      <div *ngIf="FormBranchStatus === BranchStatus.Closing">
+        <p-floatLabel>
+          <input
+            id="mergingBranchId"
+            pInputText
+            type="text"
+            formControlName="mergingBranchId"
+            placeholder="Select a Branch"
+            class="w-full"
+          />
+          <label for="mergingBranchId">Merging Branch</label>
+        </p-floatLabel>
+        <button (click)="openBranchSelectorDialog()">Select Branch To Merge</button>
+      </div>
+    </div>
+
+    <!--Address-->
+    <div class="col-12">
+      <h4 class="border-bottom-2">Address</h4>
+    </div>
+
+    <!--Address 1-->
+    <div class="field col-6 my-3">
+      <p-floatLabel>
+        <input
+          id="branchAddress1"
+          pInputText
+          type="text"
+          formControlName="branchAddress1"
+          class="w-full"
+        />
+        <label for="branchAddress1">Address 1</label>
+      </p-floatLabel>
+    </div>
+
+    <!--Address 2-->
+    <div class="field col-6 my-3">
+      <p-floatLabel>
+        <input
+          id="branchAddress2"
+          pInputText
+          type="text"
+          formControlName="branchAddress2"
+          class="w-full"
+        />
+        <label for="branchAddress2">Address 2</label>
+      </p-floatLabel>
+    </div>
+
+    <!--Address 3-->
+    <div class="field col-6 my-3">
+      <p-floatLabel>
+        <input
+          id="branchAddress3"
+          pInputText
+          type="text"
+          formControlName="branchAddress3"
+          class="w-full"
+        />
+        <label for="branchAddress3">Address 3</label>
+      </p-floatLabel>
+    </div>
+
+    <!--Address 4-->
+    <div class="field col-6 my-3">
+      <p-floatLabel>
+        <input
+          id="branchAddress4"
+          pInputText
+          type="text"
+          formControlName="branchAddress4"
+          class="w-full"
+        />
+        <label for="branchAddress4">Address 4</label>
+      </p-floatLabel>
+    </div>
+
+    <!--Address 5-->
+    <div class="field col-12 my-3">
+      <p-floatLabel>
+        <input
+          id="branchAddress5"
+          pInputText
+          type="text"
+          formControlName="branchAddress5"
+          class="w-full"
+        /><label for="branchAddress5">Address 5</label>
+      </p-floatLabel>
+    </div>
+  </form>
+
+  <!--Submit Button-->
+  <div class="flex justify-content-end mt-3">
+    <p-button label="Submit" (onClick)="onSubmit()"></p-button>
+  </div>
+</div>

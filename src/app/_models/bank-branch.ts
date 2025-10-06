@@ -1,3 +1,5 @@
+import { BranchStatus } from "./constants"
+
 export interface BankBranch {
     id:string,
     branchName: string
@@ -9,5 +11,5 @@ export interface BankBranch {
     branchAddress4: string
     branchAddress5: string
     mergingBranchId: string
-    branchStatus: string
+    branchStatus: BranchStatus
 }
