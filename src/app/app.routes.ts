@@ -9,8 +9,7 @@ import { ProductDetailComponent } from './core/components/products/product-detai
 import { BranchListComponent } from './core/components/branches/branch-list/branch-list.component';
 import { ProductListComponent } from './core/components/products/product-list/product-list.component';
 import { BatchListComponent } from './core/components/batches/batch-list/batch-list.component';
-import { CheckInventoryListComponent } from './core/components/check-inventory/check-inventory-list/check-inventory-list.component';
-import { TagListComponent } from './core/components/tags/tag-list/tag-list.component';
+import { CheckInventoryManagementComponent } from './core/components/check-inventory/check-inventory-management/check-inventory-management.component';
 export const appRoutes: Routes = [
   { path: '', component: BankListComponent },
   {
@@ -25,14 +24,7 @@ export const appRoutes: Routes = [
       // },
       // { path: 'edit-profile', component: EditProfileComponent},
       // { path: 'register-bank', component: AddBankComponent },
-      // { path: 'add-check-validation/:bankId', component: AddCheckValidationComponent },
-      // { path: 'edit-check-validation/:checkValidationId/bank/:bankId', component: EditCheckValidationComponent },
-      // { path: 'tag-list/:checkValidationId/bank/:bankId', component: TagListComponent },
-      // { path: 'add-tag/:checkValidationId/bank/:bankId', component: AddTagComponent },
-      // { path: 'add-tag-mapping/:tagId/checkValidation/:checkValidationId/bank/:bankId', component: AddTagMappingComponent },
-      // { path: 'edit-tag/:tagId/checkValidation/:checkValidationId/bank/:bankId', component: EditTagComponent },
       // { path: 'add-product-type/:id', component: AddProductComponent },
-      // { path: 'check-validation-list/:id', component: CheckValidationListComponent },
       // { path: 'edit-product/:id/bank/:bankId', component: EditProductComponent },
       // { path: 'add-form-check/:id/bank/:bankId', component: AddFormCheckComponent },
       // { path: 'edit-form-check/:id/product/:productId/bank/:bankId', component: EditFormCheckComponent },
@@ -68,8 +60,8 @@ export const bankDetailsRoutes: Routes = [
         component: ProductDetailComponent,
       },
       {
-        path: 'check-validations',
-        component: TagListComponent,
+        path: 'check-inventory',
+        component: CheckInventoryManagementComponent,
       },
       {
         path: 'batches',

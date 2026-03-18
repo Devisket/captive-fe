@@ -1,6 +1,6 @@
 export interface CheckInventory {
   id?: string;
-  tagId: string;
+  bankId: string;
   seriesPattern: string;
   warningSeries: number;
   numberOfPadding: number;
@@ -9,12 +9,13 @@ export interface CheckInventory {
   currentSeries: number;
   isRepeating: boolean;
   isActive: boolean;
+  accountNumber?: string;
   mappingData: CheckInventoryMappingData;
 }
 
 export interface CheckInventoryViewData {
   id?: string;
-  tagId: string;
+  bankId: string;
   seriesPattern: string;
   warningSeries: number;
   numberOfPadding: number;
@@ -23,30 +24,29 @@ export interface CheckInventoryViewData {
   currentSeries: number;
   isRepeating: boolean;
   isActive: boolean;
+  accountNumber?: string;
   viewMappingData: CheckInventoryViewMappingData;
-
 }
 
 export interface CheckInventoryMappingData {
-  branchIds?:string[];
-  productIds?:string[];
-  formCheckType?:string[];
-}
-
-export interface CheckInventoryViewMappingData {
-  branches?:string[];
-  products?:string[];
-  formCheckTypes?:string[];
-
-}
-
-export interface CheckInventoryQueryRequest {
-  tagId: string;
   branchIds?: string[];
   productIds?: string[];
   formCheckType?: string[];
-  isActive: boolean;
-  isRepeating: boolean;
+}
+
+export interface CheckInventoryViewMappingData {
+  branches?: string[];
+  products?: string[];
+  formCheckTypes?: string[];
+}
+
+export interface CheckInventoryQueryRequest {
+  bankId: string;
+  branchIds?: string[];
+  productIds?: string[];
+  formCheckType?: string[];
+  isActive?: boolean;
+  isRepeating?: boolean;
   currentPage: number;
   pageSize: number;
 }
@@ -54,4 +54,11 @@ export interface CheckInventoryQueryRequest {
 export interface CheckInventoryResponse {
   checkInventories: CheckInventory[];
   totalCount: number;
+}
+
+export interface ImportCheckInventoryResult {
+  created: number;
+  deprecated: number;
+  errors: string[];
+  warnings: string[];
 }

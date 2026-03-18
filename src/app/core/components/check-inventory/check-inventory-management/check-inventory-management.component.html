@@ -1,0 +1,290 @@
+<div class="grid">
+
+  <!-- Sidebar Filters -->
+  <div class="col-12 md:col-3">
+    <div class="card p-3">
+      <div class="flex justify-content-between align-items-center mb-3">
+        <h5 class="m-0">Filters</h5>
+        <button
+          *ngIf="hasActiveFilters"
+          pButton
+          label="Clear"
+          icon="pi pi-times"
+          class="p-button-text p-button-sm p-button-danger"
+          (click)="onReset()"
+        ></button>
+      </div>
+
+      <div class="field">
+        <label class="block font-medium mb-1">Branch</label>
+        <p-multiSelect
+          [options]="bankValues?.branchValues"
+          [(ngModel)]="selectedBranchFilter"
+          optionLabel="value"
+          optionValue="id"
+          placeholder="All branches"
+          [showToggleAll]="true"
+          appendTo="body"
+          class="w-full"
+          (onChange)="onFilterChange()"
+        ></p-multiSelect>
+      </div>
+
+      <div class="field">
+        <label class="block font-medium mb-1">Product</label>
+        <p-multiSelect
+          [options]="bankValues?.productValues"
+          [(ngModel)]="selectedProductFilter"
+          optionLabel="value"
+          optionValue="id"
+          placeholder="All products"
+          [showToggleAll]="true"
+          appendTo="body"
+          class="w-full"
+          (onChange)="onFilterChange()"
+        ></p-multiSelect>
+      </div>
+
+      <div class="field">
+        <label class="block font-medium mb-1">Form Check Type</label>
+        <p-multiSelect
+          [options]="formCheckOptions"
+          [(ngModel)]="selectedFormCheckFilter"
+          optionLabel="value"
+          optionValue="id"
+          placeholder="All types"
+          appendTo="body"
+          class="w-full"
+          (onChange)="onFilterChange()"
+        ></p-multiSelect>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Inventory List -->
+  <div class="col-12 md:col-9">
+    <div class="card p-3">
+      <div class="flex justify-content-between align-items-center mb-3">
+        <div class="flex align-items-center gap-2">
+          <h5 class="m-0">Check Inventories</h5>
+          <p-tag *ngIf="hasActiveFilters" value="Filtered" severity="info" [rounded]="true"></p-tag>
+        </div>
+        <div class="flex gap-2">
+          <input #fileInput type="file" accept=".csv" style="display:none" (change)="onFileSelected($event)" />
+          <button
+            pButton
+            label="Import CSV"
+            icon="pi pi-upload"
+            class="p-button-outlined"
+            [loading]="isImporting"
+            (click)="triggerImport()"
+          ></button>
+          <button pButton label="Add Inventory" icon="pi pi-plus" (click)="openAddDialog()"></button>
+        </div>
+      </div>
+
+      <p-table [value]="checkInventories" [tableStyle]="{ 'min-width': '60rem' }" [rowHover]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Series Pattern</th>
+            <th>Range</th>
+            <th>Branches</th>
+            <th>Products</th>
+            <th>Form Types</th>
+            <th>Account</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-inv>
+          <tr>
+            <td>{{ inv.seriesPattern }}</td>
+            <td>{{ inv.startingSeries }} – {{ inv.endingSeries }}</td>
+            <td>
+              <span *ngIf="!inv.viewMappingData?.branches?.length" class="text-500 text-sm">All</span>
+              <span *ngFor="let b of inv.viewMappingData?.branches; let last = last">
+                {{ b }}<span *ngIf="!last">, </span>
+              </span>
+            </td>
+            <td>
+              <span *ngIf="!inv.viewMappingData?.products?.length" class="text-500 text-sm">All</span>
+              <span *ngFor="let p of inv.viewMappingData?.products; let last = last">
+                {{ p }}<span *ngIf="!last">, </span>
+              </span>
+            </td>
+            <td>
+              <span *ngIf="!inv.viewMappingData?.formCheckTypes?.length" class="text-500 text-sm">All</span>
+              <span *ngFor="let f of inv.viewMappingData?.formCheckTypes; let last = last">
+                {{ f }}<span *ngIf="!last">, </span>
+              </span>
+            </td>
+            <td>{{ inv.accountNumber || '—' }}</td>
+            <td>
+              <p-tag
+                *ngIf="inv.isDeprecated"
+                value="Deprecated"
+                severity="danger"
+              ></p-tag>
+              <p-tag
+                *ngIf="!inv.isDeprecated && inv.isActive"
+                value="Active"
+                severity="success"
+              ></p-tag>
+              <p-tag
+                *ngIf="!inv.isDeprecated && !inv.isActive"
+                value="Inactive"
+                severity="secondary"
+              ></p-tag>
+            </td>
+            <td>
+              <button
+                pButton
+                icon="pi pi-check-circle"
+                class="p-button-text p-button-success mr-1"
+                pTooltip="Set Active"
+                [disabled]="inv.isActive"
+                (click)="onSetActive(inv)"
+              ></button>
+              <button
+                pButton
+                icon="pi pi-pencil"
+                class="p-button-text mr-1"
+                pTooltip="Edit"
+                (click)="openEditDialog(inv)"
+              ></button>
+              <button
+                pButton
+                icon="pi pi-trash"
+                class="p-button-text p-button-danger"
+                pTooltip="Delete"
+                (click)="onDelete(inv)"
+              ></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="8" class="text-center text-500 py-4">No check inventories found.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <p-paginator
+        [rows]="pageSize"
+        [totalRecords]="totalRecords"
+        [rowsPerPageOptions]="[10, 20, 30]"
+        (onPageChange)="onPageChange($event)"
+        class="mt-2"
+      ></p-paginator>
+    </div>
+  </div>
+
+</div>
+
+<!-- CSV Preview Dialog -->
+<p-dialog
+  header="CSV Preview"
+  [(visible)]="showCsvPreview"
+  [modal]="true"
+  [style]="{ width: '90vw' }"
+  [closable]="false"
+>
+  <p class="text-500 text-sm mb-3">Review the {{ csvPreviewRows.length }} row(s) below before submitting.</p>
+  <div style="overflow-x: auto;">
+    <table class="w-full text-sm" style="border-collapse: collapse;">
+      <thead>
+        <tr style="background: var(--surface-100);">
+          <th class="p-2 text-left" style="border: 1px solid var(--surface-300);">#</th>
+          <th class="p-2 text-left" style="border: 1px solid var(--surface-300);">Series Pattern</th>
+          <th class="p-2 text-left" style="border: 1px solid var(--surface-300);">Padding</th>
+          <th class="p-2 text-left" style="border: 1px solid var(--surface-300);">Starting</th>
+          <th class="p-2 text-left" style="border: 1px solid var(--surface-300);">Ending</th>
+          <th class="p-2 text-left" style="border: 1px solid var(--surface-300);">Warning</th>
+          <th class="p-2 text-left" style="border: 1px solid var(--surface-300);">Repeating</th>
+          <th class="p-2 text-left" style="border: 1px solid var(--surface-300);">BRSTN Codes</th>
+          <th class="p-2 text-left" style="border: 1px solid var(--surface-300);">Product Codes</th>
+          <th class="p-2 text-left" style="border: 1px solid var(--surface-300);">Form Check Types</th>
+          <th class="p-2 text-left" style="border: 1px solid var(--surface-300);">Account No.</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of csvPreviewRows; let i = index" [style.background]="i % 2 === 0 ? 'var(--surface-0)' : 'var(--surface-50)'">
+          <td class="p-2" style="border: 1px solid var(--surface-300);">{{ i + 1 }}</td>
+          <td class="p-2" style="border: 1px solid var(--surface-300);">{{ row.seriesPattern || '—' }}</td>
+          <td class="p-2" style="border: 1px solid var(--surface-300);">{{ row.numberOfPadding }}</td>
+          <td class="p-2" style="border: 1px solid var(--surface-300);">{{ row.startingSeries }}</td>
+          <td class="p-2" style="border: 1px solid var(--surface-300);">{{ row.endingSeries || '—' }}</td>
+          <td class="p-2" style="border: 1px solid var(--surface-300);">{{ row.warningSeries || '—' }}</td>
+          <td class="p-2" style="border: 1px solid var(--surface-300);">{{ row.isRepeating }}</td>
+          <td class="p-2" style="border: 1px solid var(--surface-300);">
+            <span *ngIf="!row.brSTNCodes" class="text-500">All</span>
+            <span *ngIf="row.brSTNCodes">{{ row.brSTNCodes }}</span>
+          </td>
+          <td class="p-2" style="border: 1px solid var(--surface-300);">
+            <span *ngIf="!row.productCodes" class="text-500">All</span>
+            <span *ngIf="row.productCodes">{{ row.productCodes }}</span>
+          </td>
+          <td class="p-2" style="border: 1px solid var(--surface-300);">
+            <span *ngIf="!row.formCheckTypes" class="text-500">All</span>
+            <span *ngIf="row.formCheckTypes">{{ row.formCheckTypes }}</span>
+          </td>
+          <td class="p-2" style="border: 1px solid var(--surface-300);">{{ row.accountNumber || '—' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button pButton label="Cancel" icon="pi pi-times" class="p-button-text" (click)="cancelImport()"></button>
+    <button pButton label="Confirm Import" icon="pi pi-check" (click)="confirmImport()"></button>
+  </ng-template>
+</p-dialog>
+
+<!-- Import Result Dialog -->
+<p-dialog
+  header="Import Result"
+  [(visible)]="showImportResult"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+  [closable]="true"
+>
+  <div *ngIf="importResult">
+    <div class="flex gap-4 mb-3">
+      <div class="text-center">
+        <div class="text-2xl font-bold text-green-500">{{ importResult.created }}</div>
+        <div class="text-sm text-500">Created</div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold text-orange-500">{{ importResult.deprecated }}</div>
+        <div class="text-sm text-500">Deprecated</div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold text-red-500">{{ importResult.errors.length }}</div>
+        <div class="text-sm text-500">Errors</div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold text-yellow-500">{{ importResult.warnings.length }}</div>
+        <div class="text-sm text-500">Warnings</div>
+      </div>
+    </div>
+
+    <div *ngIf="importResult.errors.length" class="mb-3">
+      <h6 class="font-semibold text-red-500 mt-0 mb-1">Errors</h6>
+      <ul class="m-0 pl-3">
+        <li *ngFor="let e of importResult.errors" class="text-sm mb-1">{{ e }}</li>
+      </ul>
+    </div>
+
+    <div *ngIf="importResult.warnings.length">
+      <h6 class="font-semibold text-yellow-500 mt-0 mb-1">Warnings</h6>
+      <ul class="m-0 pl-3">
+        <li *ngFor="let w of importResult.warnings" class="text-sm mb-1">{{ w }}</li>
+      </ul>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button pButton label="Close" (click)="showImportResult = false"></button>
+  </ng-template>
+</p-dialog>
