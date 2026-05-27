@@ -10,16 +10,18 @@ import {
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Subscription } from 'rxjs';
 import { CheckInventory } from '../../../../../_models/check-inventory';
+import { BankValues } from '../../../../../_models/values/bankValues';
+import { ValuesDto } from '../../../../../_models/values/valuesDto';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
+import { MultiSelectModule } from 'primeng/multiselect';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
-import {
-  addNewCheckInventory,
-  initiateCheckInventory,
-} from '../../../../store/tag/tag.actions';
+import { addNewCheckInventory, updateCheckInventory } from '../../../../store/tag/tag.actions';
+import { SharedFeature } from '../../../../../shared/_store/shared.reducer';
+
 @Component({
   selector: 'app-add-check-inventory',
   templateUrl: './add-check-inventory.component.html',
@@ -31,28 +33,36 @@ import {
     CheckboxModule,
     ButtonModule,
     InputTextModule,
+    MultiSelectModule,
     CommonModule,
   ],
 })
 export class AddCheckInventoryComponent implements OnInit, OnDestroy {
   constructor(
     private dialogRef: DynamicDialogRef,
-    private DynamicDialogConfig: DynamicDialogConfig,
+    private dialogConfig: DynamicDialogConfig,
     private store: Store
   ) {}
 
-  tagId: string = '';
   bankId: string = '';
+  bankValues: BankValues | undefined;
+  subscription$ = new Subscription();
+
+  formCheckOptions: ValuesDto[] = [
+    { id: 'Personal', value: 'Personal' },
+    { id: 'Commercial', value: 'Commercial' },
+  ];
 
   formGroup = new FormGroup(
     {
       id: new FormControl(''),
+      branchIds: new FormControl<string[]>([]),
+      productIds: new FormControl<string[]>([]),
+      formCheckType: new FormControl<string[]>([]),
+      accountNumber: new FormControl(''),
       seriesPattern: new FormControl(''),
       warningSeries: new FormControl(0, [Validators.required]),
-      numberOfPadding: new FormControl(0, [
-        Validators.required,
-        Validators.min(1),
-      ]),
+      numberOfPadding: new FormControl(0, [Validators.required, Validators.min(1)]),
       startingSeries: new FormControl(0, [Validators.required]),
       endingSeries: new FormControl(0, [Validators.required]),
       isRepeating: new FormControl(false),
@@ -63,87 +73,85 @@ export class AddCheckInventoryComponent implements OnInit, OnDestroy {
           const form = control as FormGroup;
           const start = form.get('startingSeries')?.value;
           const end = form.get('endingSeries')?.value;
-          if (start > end) {
-            return { startGreaterThanEnd: true };
-          }
-          return null;
+          return start > end ? { startGreaterThanEnd: true } : null;
         },
         (control: AbstractControl): ValidationErrors | null => {
           const form = control as FormGroup;
           const warning = form.get('warningSeries')?.value;
           const start = form.get('startingSeries')?.value;
           const end = form.get('endingSeries')?.value;
-
-          if (warning < start) {
-            return { warningLessThanStart: true };
-          }
-          if (warning >= end) {
-            return { warningGreaterThanOrEqualEnd: true };
-          }
+          if (warning < start) return { warningLessThanStart: true };
+          if (warning >= end) return { warningGreaterThanOrEqualEnd: true };
           return null;
         },
       ],
     }
   );
 
-  suscription$ = new Subscription();
-
   ngOnInit(): void {
-    this.tagId = this.DynamicDialogConfig.data.tagId;
-    this.bankId = this.DynamicDialogConfig.data.bankId;
+    this.bankId = this.dialogConfig.data.bankId;
 
-    // Subscribe to series pattern changes to convert to uppercase
+    this.subscription$.add(
+      this.store.select(SharedFeature.selectBankValues).subscribe((bankValues) => {
+        this.bankValues = bankValues ?? undefined;
+      })
+    );
+
     this.formGroup.get('seriesPattern')?.valueChanges.subscribe((value) => {
       if (value) {
-        const upperValue = value.toUpperCase();
-        if (value !== upperValue) {
-          this.formGroup.patchValue(
-            {
-              seriesPattern: upperValue,
-            },
-            { emitEvent: false }
-          );
-        }
+        const upper = value.toUpperCase();
+        if (value !== upper) this.formGroup.patchValue({ seriesPattern: upper }, { emitEvent: false });
       }
     });
 
-    if (this.DynamicDialogConfig.data.checkInventory) {
-      console.log(this.DynamicDialogConfig.data.checkInventory);
-      this.formGroup.patchValue(this.DynamicDialogConfig.data.checkInventory);
+    if (this.dialogConfig.data.checkInventory) {
+      const inv: CheckInventory = this.dialogConfig.data.checkInventory;
+      this.formGroup.patchValue({
+        id: inv.id ?? '',
+        branchIds: inv.mappingData?.branchIds ?? [],
+        productIds: inv.mappingData?.productIds ?? [],
+        formCheckType: inv.mappingData?.formCheckType ?? [],
+        accountNumber: inv.accountNumber ?? '',
+        seriesPattern: inv.seriesPattern,
+        warningSeries: inv.warningSeries,
+        numberOfPadding: inv.numberOfPadding,
+        startingSeries: inv.startingSeries,
+        endingSeries: inv.endingSeries,
+        isRepeating: inv.isRepeating,
+      });
     }
   }
+
   onSubmit() {
-    if (this.formGroup.valid) {
-      const checkInventory: CheckInventory = {
-        id: this.formGroup.value.id || undefined,
-        tagId: this.tagId,
-        currentSeries: 0,
-        isActive: true,
-        seriesPattern: this.formGroup.value.seriesPattern || '',
-        warningSeries: this.formGroup.value.warningSeries || 0,
-        numberOfPadding: this.formGroup.value.numberOfPadding || 0,
-        startingSeries: this.formGroup.value.startingSeries || 0,
-        endingSeries: this.formGroup.value.endingSeries || 0,
-        isRepeating: this.formGroup.value.isRepeating || false,
-        mappingData: {
-          branchIds: [],
-          productIds: [],
-          formCheckType: [],
-        },
-      };
+    if (!this.formGroup.valid) return;
 
-      if (this.DynamicDialogConfig.data.initiateCheckInventory) {
-        this.store.dispatch(
-          initiateCheckInventory({ tagId: this.tagId, checkInventory })
-        );
-      } else {
-        this.store.dispatch(
-          addNewCheckInventory({ tagId: this.tagId, checkInventory })
-        );
-      }
+    const val = this.formGroup.value;
+    const checkInventory: CheckInventory = {
+      id: val.id || undefined,
+      bankId: this.bankId,
+      currentSeries: 0,
+      isActive: true,
+      seriesPattern: val.seriesPattern || '',
+      warningSeries: val.warningSeries || 0,
+      numberOfPadding: val.numberOfPadding || 0,
+      startingSeries: val.startingSeries || 0,
+      endingSeries: val.endingSeries || 0,
+      isRepeating: val.isRepeating || false,
+      accountNumber: val.accountNumber || undefined,
+      mappingData: {
+        branchIds: val.branchIds ?? [],
+        productIds: val.productIds ?? [],
+        formCheckType: val.formCheckType ?? [],
+      },
+    };
 
-      this.dialogRef.close(checkInventory);
+    if (val.id) {
+      this.store.dispatch(updateCheckInventory({ bankId: this.bankId, checkInventory }));
+    } else {
+      this.store.dispatch(addNewCheckInventory({ bankId: this.bankId, checkInventory }));
     }
+
+    this.dialogRef.close(checkInventory);
   }
 
   onClose() {
@@ -151,6 +159,6 @@ export class AddCheckInventoryComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.suscription$.unsubscribe();
+    this.subscription$.unsubscribe();
   }
 }

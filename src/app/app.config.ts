@@ -50,7 +50,7 @@ export const appConfig: ApplicationConfig = {
       productConfiguration: ProductConfigurationFeature.reducer,
       branch: BranchFeature.reducer,
       batch: BatchFeature.reducer,
-      tag: TagFeature.reducer,
+      checkInventory: TagFeature.reducer,
       orderFiles: OrderFileFeature.reducer,
       checkOrder: CheckOrderFeature.reducer,
     }),

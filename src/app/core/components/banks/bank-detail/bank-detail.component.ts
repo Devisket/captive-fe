@@ -37,7 +37,7 @@ export class BankDetailComponent implements OnInit {
     { name: 'Branches', route: 'branches' },
     { name: 'Products', route: 'products' },
     { name: 'Batches', route: 'batches' },
-    { name: 'Check Validations', route: 'check-validations' },
+    { name: 'Check Inventory', route: 'check-inventory' },
   ];
 
   constructor(private store: Store, private router: Router) {}
