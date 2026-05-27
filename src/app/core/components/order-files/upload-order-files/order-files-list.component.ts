@@ -38,6 +38,7 @@ import {
   processAllOrderFiles,
   uploadOrderFiles,
   pollOrderFiles,
+  updateOrderFileStatusDetail,
 } from '../../../store/order-file/order-file.actions';
 import { OrderFileFeature } from '../../../store/order-file/order-file.reducers';
 @Component({
@@ -141,7 +142,7 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
 
   visibleDialog: boolean = false;
   isPolling: boolean = false;
-  
+
   // Modal state
   showCheckOrderModal: boolean = false;
   selectedCheckOrder: CheckOrders | null = null;
@@ -198,25 +199,37 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
         })
     );
 
-    // Removed WebSocket connection - using polling only
+    // Enable real-time SignalR updates for this batch
+    if (this.batch?.id) {
+      this.orderFileService.startConnection(this.batch.id);
+      this.$subscription.add(
+        this.orderFileService.orderFileStatus$.subscribe((orderFile) => {
+          // Update status/statusDetail immediately for the spinner + badge
+          this.store.dispatch(updateOrderFileStatusDetail({ orderFile }));
 
-    // if (!this.batch) {
-    //   const batchId = this.route.snapshot.paramMap.get('batchId')!;
-    //   this.orderFileService.startConnection();
-    //   this.batchService.startConnection(batchId);
-    //   this.getBatch();
-    // }
-    // this.getOrderFiles();
+          // When a file reaches Pending or Completed, do a full refresh to load
+          // the check orders (floating records) that the backend extracted
+          if (orderFile.status === 'Pending' || orderFile.status === 'Completed') {
+            this.store.dispatch(pollOrderFiles({ bankId: this.bankInfoId, batchId: this.batch!.id }));
+          }
+        })
+      );
+    }
   }
 
   ngOnDestroy(): void {
     this.$subscription.unsubscribe();
     this.errorMessage = undefined;
-    
+
     // Clean up intervals
     this.stopStatusPolling();
     if (this.refreshInterval) {
       clearInterval(this.refreshInterval);
+    }
+
+    // Leave SignalR group
+    if (this.batch?.id) {
+      this.orderFileService.leaveBatchGroup(this.batch.id);
     }
   }
 

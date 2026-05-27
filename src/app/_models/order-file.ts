@@ -11,4 +11,5 @@ export interface OrderFile {
   errorMessage:string
   checkOrders:CheckOrders[]
   isValid: boolean
+  statusDetail?: string
 }

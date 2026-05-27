@@ -152,6 +152,12 @@ export const validateAllOrderFilesError = createAction(
   props<{ error: any }>()
 );
 
+// Real-time SignalR status detail update (no HTTP call)
+export const updateOrderFileStatusDetail = createAction(
+  '[Order File] Update Status Detail',
+  props<{ orderFile: OrderFile }>()
+);
+
 // Polling - no loading state
 export const pollOrderFiles = createAction(
   '[Order File] Poll Order Files',

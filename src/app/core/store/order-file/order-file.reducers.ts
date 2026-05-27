@@ -28,6 +28,7 @@ import {
   pollOrderFiles,
   pollOrderFilesSuccess,
   pollOrderFilesFailure,
+  updateOrderFileStatusDetail,
 } from './order-file.actions';
 export interface OrderFileState {
   orderFiles: OrderFile[];
@@ -45,12 +46,22 @@ export const initialState: OrderFileState = {
   log: undefined,
 };
 
+// Preserve any live statusDetail from SignalR when merging fresh API data
+function mergeStatusDetail(fresh: OrderFile[] | null, existing: OrderFile[]): OrderFile[] {
+  if (!fresh) return existing;
+  return fresh.map(f => {
+    const prior = existing.find(e => e.id === f.id);
+    const keepDetail = prior?.statusDetail && (f.status === 'Processing' || f.status === 'GeneratingReport');
+    return keepDetail ? { ...f, statusDetail: prior!.statusDetail } : f;
+  });
+}
+
 export const orderFileReducer = createReducer(
   initialState,
   on(getOrderFiles, (state) => ({ ...state, loading: true })),
   on(getOrderFilesSuccess, (state, { orderFiles }) => ({
     ...state,
-    orderFiles,
+    orderFiles: mergeStatusDetail(orderFiles, state.orderFiles),
     loading: false,
   })),
   on(getOrderFilesFailure, (state, { error }) => ({
@@ -127,13 +138,21 @@ export const orderFileReducer = createReducer(
   // Polling reducers - no loading state changes
   on(pollOrderFilesSuccess, (state, { orderFiles }) => ({
     ...state,
-    orderFiles,
-    // Note: loading state remains unchanged
+    orderFiles: mergeStatusDetail(orderFiles, state.orderFiles),
   })),
   on(pollOrderFilesFailure, (state, { error }) => ({
     ...state,
     error,
     // Note: loading state remains unchanged
+  })),
+  on(updateOrderFileStatusDetail, (state, { orderFile }) => ({
+    ...state,
+    orderFiles: state.orderFiles.map(f => {
+      if (f.id !== orderFile.id) return f;
+      const inProgress = orderFile.status === 'Processing' || orderFile.status === 'GeneratingReport';
+      const statusDetail = (inProgress && !orderFile.statusDetail) ? f.statusDetail : orderFile.statusDetail;
+      return { ...f, status: orderFile.status, statusDetail };
+    }),
   }))
 );
 export const OrderFileFeature = createFeature({

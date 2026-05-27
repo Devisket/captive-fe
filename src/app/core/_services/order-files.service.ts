@@ -45,7 +45,6 @@ export class OrderFilesService {
 
     // Set up event listeners BEFORE starting the connection
     this.hubConnection.on('orderFileStatusUpdate', (orderFile: OrderFile) => {
-      console.log('Received order file status update:', orderFile);
       this.orderFileStatusSubject.next(orderFile);
     });
 

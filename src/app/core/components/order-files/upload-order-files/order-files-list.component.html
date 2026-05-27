@@ -252,6 +252,14 @@
                   : orderFile.status
               }}
             </span>
+            <div
+              *ngIf="orderFile.statusDetail"
+              class="text-primary small mt-1"
+              style="font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; margin: auto"
+            >
+              <i class="pi pi-spin pi-spinner me-1" style="font-size: 0.65rem"></i>
+              {{ orderFile.statusDetail }}
+            </div>
           </td>
           <td class="quantity-cell text-center">
             <span class="quantity-value">{{

@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 import * as signalR from '@microsoft/signalr';
+import { BatchJob } from '../../_models/batch-job';
 @Injectable({
   providedIn: 'root',
 })
@@ -56,8 +57,20 @@ export class BatchesService {
     return this.http.get<any>(this.queryUrl + bankId + '/Batch');
   }
 
-  deleteBatch(bankId:any, batchId:any) :Observable<any> 
+  deleteBatch(bankId:any, batchId:any) :Observable<any>
   {
     return this.http.delete<any>(this.commandUrl +  `${bankId}/Batch/${batchId}`);
+  }
+
+  processBatch(bankId: string, batchId: string): Observable<{ jobId: string }> {
+    return this.http.post<{ jobId: string }>(this.commandUrl + `${bankId}/Batch/${batchId}/process`, null);
+  }
+
+  getBatchJobStatus(bankId: string, batchId: string): Observable<BatchJob> {
+    return this.http.get<BatchJob>(this.queryUrl + `${bankId}/Batch/${batchId}/job`);
+  }
+
+  confirmBatchProcess(bankId: string, batchId: string): Observable<{ jobId: string }> {
+    return this.http.post<{ jobId: string }>(this.commandUrl + `${bankId}/Batch/${batchId}/process/confirm`, null);
   }
 }
