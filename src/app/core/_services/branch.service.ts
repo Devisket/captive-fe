@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
-import { BankBranch } from '../../_models/bank-branch';
+import { BankBranch, ImportBranchResult } from '../../_models/bank-branch';
 
 @Injectable({
   providedIn: 'root'
@@ -32,5 +32,14 @@ export class BranchService {
 
   deleteBranch(bankId: any, branchId: any) {
     return this.http.delete(this.commandUrl + "BankInfo/" + bankId + "/branch/" + branchId);
+  }
+
+  importBranches(bankId: string, file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<ImportBranchResult>(
+      this.commandUrl + `BankInfo/${bankId}/branch/import`,
+      formData
+    );
   }
 }

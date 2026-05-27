@@ -1,7 +1,25 @@
-<div class="flex justify-content-between">
+<div class="flex justify-content-between mb-3">
   <h1 class="align-items-center">Branch List</h1>
-  <p-button class="flex align-items-center" label="Add Branch" icon="pi pi-plus" (onClick)="onAddBranch()"></p-button>
+  <div class="flex gap-2 align-items-center">
+    <input #fileInput type="file" accept=".csv" style="display:none" (change)="onFileSelected($event)" />
+    <p-button
+      label="Download CSV"
+      icon="pi pi-download"
+      [outlined]="true"
+      [disabled]="branches.length === 0"
+      (onClick)="downloadCsv()"
+    ></p-button>
+    <p-button
+      label="Import CSV"
+      icon="pi pi-upload"
+      [outlined]="true"
+      [loading]="isImporting"
+      (onClick)="triggerImport()"
+    ></p-button>
+    <p-button label="Add Branch" icon="pi pi-plus" (onClick)="onAddBranch()"></p-button>
+  </div>
 </div>
+
 <p-table [paginator]="true" [rows]="5" [scrollable]="true" [scrollHeight]="'500px'"
   [tableStyle]="{ 'min-width': '50rem' }" [rowsPerPageOptions]="[5, 10, 20]" [paginatorDropdownAppendTo]="'body'"
   [value]="branches">
@@ -17,7 +35,7 @@
   <ng-template pTemplate="body" let-branch>
     <tr>
       <td>{{ branch.branchName }}</td>
-      <td>{{ branch.brstn }}</td>
+      <td>{{ branch.brstnCode }}</td>
       <td>{{ branch.branchCode }}</td>
       <td>
         <div dropdown class="dropdown" style="min-width: 300px">
@@ -31,3 +49,81 @@
     </tr>
   </ng-template>
 </p-table>
+
+<!-- CSV Preview Dialog -->
+<p-dialog
+  header="CSV Preview"
+  [(visible)]="showCsvPreview"
+  [modal]="true"
+  [style]="{ width: '80vw' }"
+  [closable]="false"
+>
+  <p class="text-500 text-sm mb-3">Review the {{ csvPreviewRows.length }} row(s) below before importing.</p>
+  <div style="overflow-x: auto;">
+    <table class="w-full text-sm" style="border-collapse: collapse;">
+      <thead>
+        <tr style="background: var(--surface-100);">
+          <th class="p-2 text-left" style="border: 1px solid var(--surface-300);">#</th>
+          <th class="p-2 text-left" style="border: 1px solid var(--surface-300);">BRSTN Code</th>
+          <th class="p-2 text-left" style="border: 1px solid var(--surface-300);">Branch Name</th>
+          <th class="p-2 text-left" style="border: 1px solid var(--surface-300);">Branch Code</th>
+          <th class="p-2 text-left" style="border: 1px solid var(--surface-300);">Address 1</th>
+          <th class="p-2 text-left" style="border: 1px solid var(--surface-300);">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of csvPreviewRows; let i = index"
+            [style.background]="i % 2 === 0 ? 'var(--surface-0)' : 'var(--surface-50)'">
+          <td class="p-2" style="border: 1px solid var(--surface-300);">{{ i + 1 }}</td>
+          <td class="p-2" style="border: 1px solid var(--surface-300);">{{ row.brstnCode }}</td>
+          <td class="p-2" style="border: 1px solid var(--surface-300);">{{ row.branchName }}</td>
+          <td class="p-2" style="border: 1px solid var(--surface-300);">{{ row.branchCode || '—' }}</td>
+          <td class="p-2" style="border: 1px solid var(--surface-300);">{{ row.branchAddress1 || '—' }}</td>
+          <td class="p-2" style="border: 1px solid var(--surface-300);">{{ row.branchStatus || 'Active' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button pButton label="Cancel" icon="pi pi-times" class="p-button-text" (click)="cancelImport()"></button>
+    <button pButton label="Confirm Import" icon="pi pi-check" (click)="confirmImport()"></button>
+  </ng-template>
+</p-dialog>
+
+<!-- Import Result Dialog -->
+<p-dialog
+  header="Import Result"
+  [(visible)]="showImportResult"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  [closable]="true"
+>
+  <div *ngIf="importResult">
+    <div class="flex gap-4 mb-3">
+      <div class="text-center">
+        <div class="text-2xl font-bold text-green-500">{{ importResult.created }}</div>
+        <div class="text-sm text-500">Created</div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold text-blue-500">{{ importResult.updated }}</div>
+        <div class="text-sm text-500">Updated</div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold text-red-500">{{ importResult.errors.length }}</div>
+        <div class="text-sm text-500">Errors</div>
+      </div>
+    </div>
+
+    <div *ngIf="importResult.errors.length" class="mb-2">
+      <h6 class="font-semibold text-red-500 mt-0 mb-1">Errors</h6>
+      <ul class="m-0 pl-3">
+        <li *ngFor="let e of importResult.errors" class="text-sm mb-1">{{ e }}</li>
+      </ul>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button pButton label="Close" (click)="showImportResult = false"></button>
+  </ng-template>
+</p-dialog>

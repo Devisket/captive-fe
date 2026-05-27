@@ -13,3 +13,9 @@ export interface BankBranch {
     mergingBranchId: string
     branchStatus: BranchStatus
 }
+
+export interface ImportBranchResult {
+    created: number;
+    updated: number;
+    errors: string[];
+}
