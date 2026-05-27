@@ -73,4 +73,8 @@ export class BatchesService {
   confirmBatchProcess(bankId: string, batchId: string): Observable<{ jobId: string }> {
     return this.http.post<{ jobId: string }>(this.commandUrl + `${bankId}/Batch/${batchId}/process/confirm`, null);
   }
+
+  cancelBatchProcess(bankId: string, batchId: string): Observable<void> {
+    return this.http.post<void>(this.commandUrl + `${bankId}/Batch/${batchId}/process/cancel`, null);
+  }
 }

@@ -31,6 +31,9 @@ export const confirmBatchProcess = createAction('[Batch] Confirm Batch Process',
 export const confirmBatchProcessSuccess = createAction('[Batch] Confirm Batch Process Success', props<{ jobId: string, batchId: string }>());
 export const confirmBatchProcessFailure = createAction('[Batch] Confirm Batch Process Failure', props<{ error: any }>());
 
+export const cancelBatchProcess = createAction('[Batch] Cancel Batch Process', props<{ bankId: string, batchId: string }>());
+export const cancelBatchProcessFailure = createAction('[Batch] Cancel Batch Process Failure', props<{ error: any }>());
+
 export const clearBatchJob = createAction('[Batch] Clear Batch Job', props<{ batchId: string }>());
 
 // Per-batch order file tracking

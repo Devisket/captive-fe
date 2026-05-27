@@ -10,6 +10,7 @@ import { BranchListComponent } from './core/components/branches/branch-list/bran
 import { ProductListComponent } from './core/components/products/product-list/product-list.component';
 import { BatchListComponent } from './core/components/batches/batch-list/batch-list.component';
 import { CheckInventoryManagementComponent } from './core/components/check-inventory/check-inventory-management/check-inventory-management.component';
+import { UploadOrderFilesComponent } from './core/components/order-files/upload-order-files/order-files-list.component';
 export const appRoutes: Routes = [
   { path: '', component: BankListComponent },
   {
@@ -69,7 +70,7 @@ export const bankDetailsRoutes: Routes = [
       },
       {
         path: 'batch-detail/:batchId',
-        component: BatchListComponent,
+        component: UploadOrderFilesComponent,
       },
     ],
   },

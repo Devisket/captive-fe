@@ -30,7 +30,7 @@
           <!-- Progress bar shown while job is running -->
           @if(isBatchProcessing(batch.id)) {
             <div class="mt-1">
-              <div class="d-flex align-items-center justify-content-between mb-1">
+              <div class="flex align-items-center justify-content-between mb-1">
                 <small class="text-primary">
                   <i class="pi pi-spin pi-spinner me-1" style="font-size: 0.75rem"></i>
                   {{ getJobForBatch(batch.id)?.currentStep || 'Processing...' }}
@@ -47,7 +47,7 @@
             @if(getOrderFilesForBatch(batch.id).length > 0) {
               <div class="mt-2">
                 @for(file of getOrderFilesForBatch(batch.id); track file.id) {
-                  <div class="d-flex align-items-center gap-1 mt-1" style="font-size: 0.75rem">
+                  <div class="flex align-items-center gap-1 mt-1" style="font-size: 0.75rem">
                     <i class="pi pi-file text-muted" style="font-size: 0.7rem; flex-shrink: 0"></i>
                     <span class="text-muted text-truncate" style="max-width: 120px" [title]="file.fileName">{{ file.fileName }}</span>
                     <span class="text-primary ms-auto text-nowrap">
@@ -74,7 +74,7 @@
         </td>
         <td>{{ batch.deliveryDate | dateTransform:'MM/dd/yyyy' }}</td>
         <td>
-          <div class="d-flex gap-2">
+          <div class="flex gap-2">
             <p-button
               label="Process"
               icon="pi pi-send"
@@ -112,7 +112,7 @@
   [closable]="false"
 >
   <ng-template pTemplate="header">
-    <div class="d-flex align-items-center">
+    <div class="flex align-items-center">
       <i class="pi pi-exclamation-triangle me-2" style="font-size: 1.25rem; color: #f59e0b"></i>
       <span class="fw-bold" style="font-size: 1.1rem">Inventory Warning</span>
     </div>
@@ -120,13 +120,13 @@
   <p class="text-muted mb-3">The following inventory warnings were detected. Do you want to proceed?</p>
   <ul class="list-group mb-3">
     @for(warning of activeWarningJob?.warnings; track warning) {
-      <li class="list-group-item list-group-item-warning d-flex align-items-start">
+      <li class="list-group-item list-group-item-warning flex align-items-start">
         <i class="pi pi-exclamation-triangle me-2 mt-1 text-warning"></i>
         <span>{{ warning }}</span>
       </li>
     }
   </ul>
-  <div class="d-flex justify-content-end gap-2">
+  <div class="flex justify-content-end gap-2">
     <p-button
       label="Cancel"
       severity="secondary"

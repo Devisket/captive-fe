@@ -3,7 +3,7 @@ import { Batch } from '../../../../_models/batch';
 import { BatchJob } from '../../../../_models/batch-job';
 import { OrderFile } from '../../../../_models/order-file';
 import { ToastrService } from 'ngx-toastr';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
@@ -20,13 +20,13 @@ import {
   processBatch,
   pollBatchJob,
   confirmBatchProcess,
+  cancelBatchProcess,
   clearBatchJob,
   pollBatchOrderFiles,
   updateOrderFileDetailForBatch,
 } from '../../../store/batch/batch.actions';
 import { BatchFeature } from '../../../store/batch/batch.reducer';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { UploadOrderFilesComponent } from '../../order-files/upload-order-files/order-files-list.component';
 import { DateTransformPipe } from '../../../../shared/pipes/date-transform.pipe';
 import { CreateBatchDialogComponent } from '../create-batch-dialog/create-batch-dialog.component';
 import { OrderFilesService } from '../../../_services/order-files.service';
@@ -42,6 +42,7 @@ import { OrderFilesService } from '../../../_services/order-files.service';
 export class BatchListComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private store: Store,
     private dialogService: DialogService
   ) {}
@@ -80,6 +81,10 @@ export class BatchListComponent implements OnInit, OnDestroy {
         this.jobs = jobs;
         Object.entries(jobs).forEach(([batchId, job]) => {
           if (job.status === 'Running' || job.status === 'Pending') {
+            if (this.activeWarningBatchId === batchId) {
+              this.showWarningDialog = false;
+              this.activeWarningBatchId = null;
+            }
             this.startJobPolling(batchId);
             this.ensureSignalRForBatch(batchId);
           } else {
@@ -153,7 +158,7 @@ export class BatchListComponent implements OnInit, OnDestroy {
   onCancelBatchProcess() {
     this.showWarningDialog = false;
     if (this.activeWarningBatchId) {
-      this.store.dispatch(clearBatchJob({ batchId: this.activeWarningBatchId }));
+      this.store.dispatch(cancelBatchProcess({ bankId: this.bankId, batchId: this.activeWarningBatchId }));
       this.activeWarningBatchId = null;
     }
   }
@@ -176,15 +181,7 @@ export class BatchListComponent implements OnInit, OnDestroy {
   }
 
   showBatchDetail(batch: Batch) {
-    this.ref = this.dialogService.open(UploadOrderFilesComponent, {
-      header: `Batch Details - ${batch.batchName}`,
-      width: '90%',
-      height: '90%',
-      data: {
-        batch: batch,
-        bankId: this.bankId
-      }
-    });
+    this.router.navigate(['../batch-detail', batch.id], { relativeTo: this.route });
   }
 
   getOrderFilesForBatch(batchId: string): OrderFile[] {

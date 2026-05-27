@@ -29,6 +29,7 @@ import {
   pollOrderFilesSuccess,
   pollOrderFilesFailure,
   updateOrderFileStatusDetail,
+  clearOrderFiles,
 } from './order-file.actions';
 export interface OrderFileState {
   orderFiles: OrderFile[];
@@ -153,7 +154,8 @@ export const orderFileReducer = createReducer(
       const statusDetail = (inProgress && !orderFile.statusDetail) ? f.statusDetail : orderFile.statusDetail;
       return { ...f, status: orderFile.status, statusDetail };
     }),
-  }))
+  })),
+  on(clearOrderFiles, () => ({ ...initialState }))
 );
 export const OrderFileFeature = createFeature({
   name: 'orderFiles',

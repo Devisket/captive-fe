@@ -1,6 +1,10 @@
 <div class="flex justify-content-between mb-3">
   <h1 class="align-items-center">Branch List</h1>
   <div class="flex gap-2 align-items-center">
+    <span class="p-input-icon-left">
+      <i class="pi pi-search"></i>
+      <input pInputText type="text" placeholder="Search branches..." (input)="dt.filterGlobal($any($event.target).value, 'contains')" />
+    </span>
     <input #fileInput type="file" accept=".csv" style="display:none" (change)="onFileSelected($event)" />
     <p-button
       label="Download CSV"
@@ -20,9 +24,9 @@
   </div>
 </div>
 
-<p-table [paginator]="true" [rows]="5" [scrollable]="true" [scrollHeight]="'500px'"
+<p-table #dt [paginator]="true" [rows]="5" [scrollable]="true" [scrollHeight]="'500px'"
   [tableStyle]="{ 'min-width': '50rem' }" [rowsPerPageOptions]="[5, 10, 20]" [paginatorDropdownAppendTo]="'body'"
-  [value]="branches">
+  [value]="branches" [globalFilterFields]="['branchName', 'brstnCode', 'branchCode', 'branchAddress1']">
   <ng-template pTemplate="header">
     <tr>
       <th pSortableColumn="branchName">Branch Name <p-sortIcon field="branchName"></p-sortIcon></th>

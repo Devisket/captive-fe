@@ -9,9 +9,10 @@ import { DialogService, DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { SharedFeature } from '../../../../shared/_store/shared.reducer';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
 import { AddBranchComponent } from '../add-branch/add-branch.component';
 
 interface BranchCsvPreviewRow {
@@ -25,12 +26,13 @@ interface BranchCsvPreviewRow {
 @Component({
   selector: 'app-branch-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableModule, ButtonModule, DialogModule],
+  imports: [CommonModule, FormsModule, TableModule, ButtonModule, DialogModule, InputTextModule],
   templateUrl: './branch-list.component.html',
   styleUrl: './branch-list.component.scss',
 })
 export class BranchListComponent implements OnInit {
   @ViewChild('fileInput') fileInputRef!: ElementRef<HTMLInputElement>;
+  @ViewChild('dt') dt!: Table;
 
   private branchServices = inject(BranchService);
   branches: BankBranch[] = [];

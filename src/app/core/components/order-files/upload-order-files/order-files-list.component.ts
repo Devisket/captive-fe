@@ -4,9 +4,10 @@ import {
   inject,
   OnDestroy,
   OnInit,
+  Optional,
   ViewChild,
 } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BanksService } from '../../../_services/banks.service';
 import { BatchesService } from '../../../_services/batches.service';
 import { Batch } from '../../../../_models/batch';
@@ -15,14 +16,14 @@ import { OrderFilesService } from '../../../_services/order-files.service';
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { OrderFile } from '../../../../_models/order-file';
-import { HttpHeaders } from '@angular/common/http';
-import { Subscription } from 'rxjs';
+import { Subscription, filter, map, take } from 'rxjs';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { CheckOrders } from '../../../../_models/check-order';
 import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
 import { PanelModule } from 'primeng/panel';
+import { ProgressBarModule } from 'primeng/progressbar';
 import { AddCheckOrderComponent } from './_components/add-check-order/add-check-order.component';
 import { LogType } from '../../../../_models/constants';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
@@ -35,12 +36,17 @@ import {
   holdFloatingCheckOrder,
   releaseFloatingCheckOrder,
   deleteFloatingCheckOrder,
-  processAllOrderFiles,
   uploadOrderFiles,
   pollOrderFiles,
   updateOrderFileStatusDetail,
+  clearOrderFiles,
 } from '../../../store/order-file/order-file.actions';
 import { OrderFileFeature } from '../../../store/order-file/order-file.reducers';
+import { BatchFeature } from '../../../store/batch/batch.reducer';
+import { getAllBatches, processBatch, confirmBatchProcess, cancelBatchProcess, pollBatchJob, pollBatchOrderFiles } from '../../../store/batch/batch.actions';
+import { BatchJob } from '../../../../_models/batch-job';
+import { SharedFeature } from '../../../../shared/_store/shared.reducer';
+
 @Component({
   selector: 'app-order-file-list',
   standalone: true,
@@ -55,6 +61,7 @@ import { OrderFileFeature } from '../../../store/order-file/order-file.reducers'
     DialogModule,
     TooltipModule,
     PanelModule,
+    ProgressBarModule,
     AddCheckOrderComponent,
   ],
   templateUrl: './order-files-list.component.html',
@@ -78,43 +85,16 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
   ];
 
   checkOrderCols = [
-    {
-      columnName: 'Account Number',
-      value: 'accountNumber',
-    },
-    {
-      columnName: 'BRSTN',
-      value: 'brstn',
-    },
-    {
-      columnName: 'Name',
-      value: 'mainAccountName',
-    },
-    {
-      columnName: 'Quantity',
-      value: 'quantity',
-    },
-    {
-      columnName: 'Deliver To',
-      value: 'deliverTo',
-    },
-    {
-      columnName: 'Error Message',
-      value: 'errorMessage',
-    },
-    {
-      columnName: 'Action',
-      value: '',
-    },
+    { columnName: 'Account Number', value: 'accountNumber' },
+    { columnName: 'BRSTN', value: 'brstn' },
+    { columnName: 'Name', value: 'mainAccountName' },
+    { columnName: 'Quantity', value: 'quantity' },
+    { columnName: 'Deliver To', value: 'deliverTo' },
+    { columnName: 'Error Message', value: 'errorMessage' },
+    { columnName: 'Action', value: '' },
   ];
 
-  displayedColumns = [
-    'accountNumber',
-    'brstn',
-    'quantity',
-    'deliverTo',
-    'error',
-  ];
+  displayedColumns = ['accountNumber', 'brstn', 'quantity', 'deliverTo', 'error'];
 
   dialogData = {
     dialogTitle: 'Warning',
@@ -123,11 +103,11 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
   };
 
   route = inject(ActivatedRoute);
+  router = inject(Router);
   bankService = inject(BanksService);
   batchService = inject(BatchesService);
   orderFileService = inject(OrderFilesService);
   toastr = inject(ToastrService);
-  config = inject(DynamicDialogConfig);
   batch?: Batch;
   model: any = {};
   selectedFiles: File[] = [];
@@ -137,30 +117,86 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
   private refreshInterval: any;
   private pendingAutoExpansion = false;
   private statusPollingInterval: any;
+  private jobPollingInterval: any = null;
   $subscription = new Subscription();
   bankInfoId: string = '';
+  isPageMode = false;
 
   visibleDialog: boolean = false;
   isPolling: boolean = false;
+  currentBatchJob: BatchJob | null = null;
+  showInventoryWarningDialog: boolean = false;
 
   // Modal state
   showCheckOrderModal: boolean = false;
   selectedCheckOrder: CheckOrders | null = null;
   selectedOrderFileId: string = '';
 
-  constructor(private store: Store) {
-    if (this.config.data) {
+  errorMessage: string | undefined = undefined;
+
+  constructor(private store: Store, @Optional() private config: DynamicDialogConfig) {
+    if (this.config?.data) {
       this.bankInfoId = this.config.data.bankId;
       this.batch = this.config.data.batch;
     }
   }
 
-  errorMessage: string | undefined = undefined;
-
   ngOnInit(): void {
-    this.store.dispatch(
-      getOrderFiles({ bankId: this.bankInfoId, batchId: this.batch?.id! })
+    this.setupCommonSubscriptions();
+
+    if (!this.batch) {
+      this.isPageMode = true;
+      this.initPageMode();
+    } else {
+      this.initBatchDependentParts();
+    }
+  }
+
+  private initPageMode(): void {
+    const batchId = this.route.snapshot.paramMap.get('batchId')!;
+
+    this.$subscription.add(
+      this.store.select(SharedFeature.selectSelectedBankInfoId).pipe(
+        filter((id): id is string => !!id),
+        take(1)
+      ).subscribe(bankId => {
+        this.bankInfoId = bankId;
+        this.store.dispatch(getAllBatches({ bankId }));
+
+        this.$subscription.add(
+          this.store.select(BatchFeature.selectBatches).pipe(
+            map(batches => batches.find(b => b.id === batchId)),
+            filter((b): b is Batch => !!b),
+            take(1)
+          ).subscribe(batch => {
+            this.batch = batch;
+            this.initBatchDependentParts();
+          })
+        );
+      })
     );
+  }
+
+  private initBatchDependentParts(): void {
+    this.store.dispatch(clearOrderFiles());
+    this.store.dispatch(
+      getOrderFiles({ bankId: this.bankInfoId, batchId: this.batch!.id })
+    );
+
+    if (this.batch?.id) {
+      this.orderFileService.startConnection(this.batch.id);
+      this.$subscription.add(
+        this.orderFileService.orderFileStatus$.subscribe((orderFile) => {
+          this.store.dispatch(updateOrderFileStatusDetail({ orderFile }));
+          if (orderFile.status === 'Pending' || orderFile.status === 'Completed') {
+            this.store.dispatch(pollOrderFiles({ bankId: this.bankInfoId, batchId: this.batch!.id }));
+          }
+        })
+      );
+    }
+  }
+
+  private setupCommonSubscriptions(): void {
     this.$subscription.add(
       this.store.select(OrderFileFeature.selectLog).subscribe((log) => {
         console.log(log);
@@ -173,64 +209,60 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
         }
       })
     );
-
     this.$subscription.add(
-      this.store
-        .select(OrderFileFeature.selectOrderFiles)
-        .subscribe((orderFiles) => {
-          if (orderFiles && orderFiles.length > 0) {
-            const previousFiles = this.orderFiles;
-            this.orderFiles = orderFiles.map((orderFile) => ({ ...orderFile }));
-            
-            // Auto-expand files with validation errors on data load or after validation
-            this.autoExpandFilesWithErrors();
-            
-            // Reset the pending flag if it was set
-            if (this.pendingAutoExpansion) {
-              this.pendingAutoExpansion = false;
-            }
-            
-            // Start/stop polling based on processing files
-            this.manageStatusPolling();
-          } else {
-            this.orderFiles = [];
-            this.stopStatusPolling();
+      this.store.select(OrderFileFeature.selectOrderFiles).subscribe((orderFiles) => {
+        if (orderFiles && orderFiles.length > 0) {
+          this.orderFiles = orderFiles.map((orderFile) => ({ ...orderFile }));
+          this.autoExpandFilesWithErrors();
+          if (this.pendingAutoExpansion) {
+            this.pendingAutoExpansion = false;
           }
-        })
+          this.manageStatusPolling();
+        } else {
+          this.orderFiles = [];
+          this.stopStatusPolling();
+        }
+      })
     );
+    this.$subscription.add(
+      this.store.select(BatchFeature.selectJobs).subscribe((jobs) => {
+        const batchId = this.batch?.id;
+        if (!batchId) return;
+        const job = jobs[batchId] ?? null;
+        this.currentBatchJob = job;
 
-    // Enable real-time SignalR updates for this batch
-    if (this.batch?.id) {
-      this.orderFileService.startConnection(this.batch.id);
-      this.$subscription.add(
-        this.orderFileService.orderFileStatus$.subscribe((orderFile) => {
-          // Update status/statusDetail immediately for the spinner + badge
-          this.store.dispatch(updateOrderFileStatusDetail({ orderFile }));
-
-          // When a file reaches Pending or Completed, do a full refresh to load
-          // the check orders (floating records) that the backend extracted
-          if (orderFile.status === 'Pending' || orderFile.status === 'Completed') {
-            this.store.dispatch(pollOrderFiles({ bankId: this.bankInfoId, batchId: this.batch!.id }));
+        if (job?.status === 'Pending' || job?.status === 'Running') {
+          this.startJobPolling(batchId);
+        } else {
+          this.stopJobPolling();
+          if (job?.status === 'AwaitingConfirmation') {
+            this.showInventoryWarningDialog = true;
+          } else {
+            this.showInventoryWarningDialog = false;
           }
-        })
-      );
-    }
+          if (job?.status === 'Completed') {
+            this.store.dispatch(getOrderFiles({ bankId: this.bankInfoId, batchId }));
+          }
+        }
+      })
+    );
   }
 
   ngOnDestroy(): void {
     this.$subscription.unsubscribe();
     this.errorMessage = undefined;
-
-    // Clean up intervals
     this.stopStatusPolling();
+    this.stopJobPolling();
     if (this.refreshInterval) {
       clearInterval(this.refreshInterval);
     }
-
-    // Leave SignalR group
     if (this.batch?.id) {
       this.orderFileService.leaveBatchGroup(this.batch.id);
     }
+  }
+
+  goBack(): void {
+    this.router.navigate(['batches'], { relativeTo: this.route.parent });
   }
 
   getBatch() {
@@ -264,23 +296,6 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
         orderFileId: orderFileId,
       })
     );
-
-    // this.orderFileService.processOrderFile(orderFileId).subscribe({
-    //   next: (returnLog: any) => {
-    //     this.toastr.success('Process successfully.');
-    //     this.getOrderFiles();
-    //     if (returnLog.logMessage !== '') {
-    //       this.dialogData.dialogType = LogType.Warning;
-    //       this.dialogData.dialogMessage = returnLog.logMessage;
-    //       this.visibleDialog = true;
-    //     }
-    //   },
-    //   error: (err) => {
-    //     this.dialogData.dialogType = LogType.Error;
-    //     this.dialogData.dialogMessage = err.error.message;
-    //     this.visibleDialog = true;
-    //   },
-    // });
   }
 
   onHoldCheckOrder(orderFileId: string, checkOrderId: string): void {
@@ -317,16 +332,6 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
   }
 
   onDeleteOrderFile(orderFileId: string): void {
-    // this.$subscription.add(
-    //   this.orderFileService.deleteOrderFile(orderFileId).subscribe({
-    //     next: (_) => {
-    //       this.toastr.success('Successfully deleted order file');
-    //     },
-    //     error: (error) => this.toastr.error(`Error on deletion: ${error}`),
-    //     complete: () => window.location.reload(),
-    //   })
-    // );
-
     this.store.dispatch(
       deleteOrderFile({
         bankId: this.bankInfoId,
@@ -360,28 +365,14 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
       if (this.batch) {
         formData.append('batchId', this.batch?.id);
       }
-
-
       this.store.dispatch(uploadOrderFiles({ formData, bankId: this.bankInfoId, batchId: this.batch!.id }));
-
-
-      // this.orderFileService.uploadOrderFiles(formData).subscribe({
-            // next: (_) => {
-            // this.toastr.success('Successfulyy uploaded new order files.');
-      //   },
-      //   error: (error) => this.toastr.error('Not saved'),
-      //   complete: () => window.location.reload(),
-      // });
     }
   }
 
-  refreshView() {
-    // Your logic to refresh the view
-  }
+  refreshView() {}
 
   getOrderFiles() {
     const batchId = this.batch?.id;
-
     this.orderFileService
       .getOrderFiles(this.bankInfoId, batchId)
       .subscribe((data) => {
@@ -403,11 +394,9 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
               (checkOrder: CheckOrders) =>
                 !checkOrder.isValid && checkOrder.errorMessage !== ''
             );
-            console.log(invalidCheckOrders);
             invalidCheckOrders.forEach((invalidCheckOrder: CheckOrders) => {
               this.dialogData.dialogType = LogType.Error;
-              this.dialogData.dialogMessage =
-                invalidCheckOrder.errorMessage ?? '';
+              this.dialogData.dialogMessage = invalidCheckOrder.errorMessage ?? '';
               this.visibleDialog = true;
             });
           }
@@ -425,7 +414,6 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
 
   canBeProcess(orderFile: OrderFile): boolean {
     if (!orderFile.checkOrders) return false;
-
     return orderFile.checkOrders.some((x) => !x.isValid && !x.isOnHold);
   }
 
@@ -446,7 +434,26 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
   }
 
   processAll() {
-    this.store.dispatch(processAllOrderFiles({ bankId: this.bankInfoId, batchId: this.batch!.id }));
+    this.store.dispatch(processBatch({ bankId: this.bankInfoId, batchId: this.batch!.id }));
+  }
+
+  isBatchJobProcessing(): boolean {
+    return !!this.currentBatchJob &&
+      (this.currentBatchJob.status === 'Pending' || this.currentBatchJob.status === 'Running');
+  }
+
+  get activeWarningMessages(): string[] {
+    return this.currentBatchJob?.warnings ?? [];
+  }
+
+  onConfirmBatchProcess(): void {
+    this.showInventoryWarningDialog = false;
+    this.store.dispatch(confirmBatchProcess({ bankId: this.bankInfoId, batchId: this.batch!.id }));
+  }
+
+  onCancelBatchProcess(): void {
+    this.showInventoryWarningDialog = false;
+    this.store.dispatch(cancelBatchProcess({ bankId: this.bankInfoId, batchId: this.batch!.id }));
   }
 
   validateAll() {
@@ -454,25 +461,20 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
     this.orderFileService
       .validateAllOrderFiles(this.bankInfoId, this.batch!.id)
       .subscribe({
-        next: (data) => {
-          // Use NgRx to refresh data so auto-expansion is triggered
+        next: (_) => {
           this.store.dispatch(
             getOrderFiles({ bankId: this.bankInfoId, batchId: this.batch!.id })
           );
         },
       });
   }
+
   canBeValidateByBatch(orderFiles: OrderFile[]): boolean {
-    return (
-      orderFiles.filter((x) => x.status !== 'Valid' && x.status !== 'Completed')
-        .length > 0
-    );
+    return orderFiles.filter((x) => x.status !== 'Valid' && x.status !== 'Completed').length > 0;
   }
+
   canBeProcessByBatch(orderFiles: OrderFile[]): boolean {
-    return (
-      orderFiles.filter((x) => x.status !== 'Valid' && x.status !== 'Completed')
-        .length > 0
-    );
+    return orderFiles.filter((x) => x.status !== 'Valid' && x.status !== 'Completed').length > 0;
   }
 
   canBeValidate(orderFile: OrderFile): boolean {
@@ -488,23 +490,32 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
   }
 
   areAllOrderFilesValid(): boolean {
-    if(!this.orderFiles || this.orderFiles.length === 0)
-      return false;
-
+    if (!this.orderFiles || this.orderFiles.length === 0) return false;
     return this.orderFiles.every(file => file.status === 'Valid');
   }
 
-
   shouldShowStatusSpinner(orderFile: OrderFile): boolean {
-    return orderFile.status === 'Processing' || 
-           orderFile.status === 'GeneratingReport';
+    return orderFile.status === 'Processing' || orderFile.status === 'GeneratingReport';
   }
 
+  private startJobPolling(batchId: string): void {
+    if (this.jobPollingInterval) return;
+    this.jobPollingInterval = setInterval(() => {
+      this.store.dispatch(pollBatchJob({ bankId: this.bankInfoId, batchId }));
+      this.store.dispatch(pollBatchOrderFiles({ bankId: this.bankInfoId, batchId }));
+    }, 3000);
+  }
+
+  private stopJobPolling(): void {
+    if (this.jobPollingInterval) {
+      clearInterval(this.jobPollingInterval);
+      this.jobPollingInterval = null;
+    }
+  }
 
   private hasProcessingFiles(): boolean {
-    return this.orderFiles.some(file => 
-      file.status === 'Processing' || 
-      file.status === 'GeneratingReport'
+    return this.orderFiles.some(file =>
+      file.status === 'Processing' || file.status === 'GeneratingReport'
     );
   }
 
@@ -517,14 +528,8 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
   }
 
   private startStatusPolling(): void {
-    // Don't start another interval if one is already running
-    if (this.statusPollingInterval) {
-      return;
-    }
-
+    if (this.statusPollingInterval) return;
     this.isPolling = true;
-    
-    // Poll every 5 seconds for status updates
     this.statusPollingInterval = setInterval(() => {
       if (this.hasProcessingFiles()) {
         this.refreshOrderFiles();
@@ -559,13 +564,10 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
   }
 
   hasValidationErrors(orderFile: OrderFile): boolean {
-    if (!orderFile.checkOrders || orderFile.checkOrders.length === 0) {
-      return false;
-    }
-    
-    return orderFile.checkOrders.some(checkOrder => 
-      !checkOrder.isValid && 
-      checkOrder.errorMessage && 
+    if (!orderFile.checkOrders || orderFile.checkOrders.length === 0) return false;
+    return orderFile.checkOrders.some(checkOrder =>
+      !checkOrder.isValid &&
+      checkOrder.errorMessage &&
       checkOrder.errorMessage.trim() !== ''
     );
   }
@@ -583,34 +585,19 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
   }
 
   getSortedCheckOrders(checkOrders: CheckOrders[]): CheckOrders[] {
-    if (!checkOrders || !Array.isArray(checkOrders) || checkOrders.length === 0) {
-      return [];
-    }
-
-    // Create a copy to avoid mutating the original array
+    if (!checkOrders || !Array.isArray(checkOrders) || checkOrders.length === 0) return [];
     return [...checkOrders].sort((a, b) => {
-      // Ensure both objects exist and have required properties
       if (!a || !b) return 0;
-      
-      // First, sort by error status - errors at top
       const aHasError = a.isValid === false && a.errorMessage && a.errorMessage.trim() !== '';
       const bHasError = b.isValid === false && b.errorMessage && b.errorMessage.trim() !== '';
-      
-      if (aHasError && !bHasError) {
-        return -1; // a comes first (has error)
-      }
-      if (!aHasError && bHasError) {
-        return 1; // b comes first (has error)
-      }
-      
-      // If both have same error status, sort by account number
+      if (aHasError && !bHasError) return -1;
+      if (!aHasError && bHasError) return 1;
       const accountA = a.accountNumber || '';
       const accountB = b.accountNumber || '';
       return accountA.localeCompare(accountB);
     });
   }
 
-  // Modal handling methods
   onEditCheckOrder(orderFileId: string, checkOrder: CheckOrders): void {
     this.selectedOrderFileId = orderFileId;
     this.selectedCheckOrder = { ...checkOrder };
@@ -624,17 +611,12 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
   }
 
   onSaveCheckOrder(checkOrderData: CheckOrders): void {
-    // TODO: Implement save functionality
-    // This would dispatch an action to save/update the check order
     console.log('Saving check order:', checkOrderData);
     console.log('Order File ID:', this.selectedOrderFileId);
-    
-    // For now, just close the modal
     this.onCloseModal();
   }
 
   onCheckOrderSaveSuccess(): void {
-    // Called when check order save is successful
     this.validateAll();
     this.onCloseModal();
   }

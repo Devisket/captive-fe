@@ -18,6 +18,9 @@ import {
   confirmBatchProcess,
   confirmBatchProcessSuccess,
   confirmBatchProcessFailure,
+  cancelBatchProcess,
+  cancelBatchProcessFailure,
+  clearBatchJob,
   pollBatchOrderFiles,
   pollBatchOrderFilesSuccess,
   pollBatchOrderFilesFailure,
@@ -128,6 +131,18 @@ export class BatchEffects {
         this.batchesService.confirmBatchProcess(bankId, batchId).pipe(
           map(({ jobId }) => confirmBatchProcessSuccess({ jobId, batchId })),
           catchError((error) => of(confirmBatchProcessFailure({ error })))
+        )
+      )
+    )
+  );
+
+  cancelBatchProcess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(cancelBatchProcess),
+      exhaustMap(({ bankId, batchId }) =>
+        this.batchesService.cancelBatchProcess(bankId, batchId).pipe(
+          map(() => clearBatchJob({ batchId })),
+          catchError((error) => of(cancelBatchProcessFailure({ error })))
         )
       )
     )

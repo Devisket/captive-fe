@@ -174,6 +174,8 @@ export const pollOrderFilesFailure = createAction(
   props<{ error: any }>()
 );
 
+export const clearOrderFiles = createAction('[Order File] Clear Order Files');
+
 
 
 

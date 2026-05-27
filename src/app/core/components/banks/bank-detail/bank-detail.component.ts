@@ -53,12 +53,17 @@ export class BankDetailComponent implements OnInit {
         })
     );
     // Set initial active tab based on current route
-    const currentRoute =
-      this.route.snapshot.firstChild?.routeConfig?.path || 'branches';
-    this.router.navigate([currentRoute], { relativeTo: this.route });
-    const tabIndex = this.tabs.findIndex((tab) => tab.route === currentRoute);
-    if (tabIndex !== -1) {
-      this.activeTabIndex = tabIndex;
+    const childPath = this.route.snapshot.firstChild?.routeConfig?.path || '';
+    if (childPath.startsWith('batch-detail')) {
+      // On batch detail page - highlight Batches tab without re-navigating
+      this.activeTabIndex = this.tabs.findIndex((tab) => tab.route === 'batches');
+    } else {
+      const currentRoute = childPath || 'branches';
+      this.router.navigate([currentRoute], { relativeTo: this.route });
+      const tabIndex = this.tabs.findIndex((tab) => tab.route === currentRoute);
+      if (tabIndex !== -1) {
+        this.activeTabIndex = tabIndex;
+      }
     }
   }
 
