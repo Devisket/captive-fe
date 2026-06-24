@@ -201,6 +201,19 @@ export class CheckInventoryManagementComponent implements OnInit, OnDestroy {
     return this.bankValues?.productValues.find((p) => p.id === id)?.value;
   }
 
+  downloadActiveCsv(): void {
+    this.tagsService.exportActiveCheckInventory(this.bankId).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'check-inventory-active.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+      },
+    });
+  }
+
   triggerImport(): void {
     this.fileInputRef.nativeElement.value = '';
     this.fileInputRef.nativeElement.click();

@@ -62,4 +62,8 @@ export class TagsService {
       formData
     );
   }
+
+  exportActiveCheckInventory(bankId: string) {
+    return this.http.get(this.queryUrl + bankId + '/CheckInventory/export', { responseType: 'blob' });
+  }
 }

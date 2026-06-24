@@ -74,6 +74,13 @@
           <input #fileInput type="file" accept=".csv" style="display:none" (change)="onFileSelected($event)" />
           <button
             pButton
+            label="Export Active Check Inventory"
+            icon="pi pi-download"
+            class="p-button-outlined p-button-success"
+            (click)="downloadActiveCsv()"
+          ></button>
+          <button
+            pButton
             label="Import CSV"
             icon="pi pi-upload"
             class="p-button-outlined"
