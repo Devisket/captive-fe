@@ -253,6 +253,13 @@
               <div class="file-info">
                 <div class="file-name fw-semibold text-center">
                   {{ orderFile.fileName }}
+                  <span
+                    *ngIf="orderFile.isCustom"
+                    class="custom-file-tag ms-1"
+                    pTooltip="Check orders were keyed in manually"
+                    tooltipPosition="top"
+                    >Custom</span
+                  >
                 </div>
                 <div
                   *ngIf="orderFile.errorMessage"
@@ -354,7 +361,7 @@
                     Check Orders Details
                   </h6>
                   <small class="text-muted"
-                    >{{ orderFile.checkOrders.length || 0 }} check
+                    >{{ orderFile.checkOrders ? orderFile.checkOrders.length : 0 }} check
                     order(s)</small
                   >
                 </div>
@@ -529,6 +536,13 @@
                     </td>
                   </tr>
                 </ng-template>
+                <ng-template pTemplate="emptymessage">
+                  <tr>
+                    <td colspan="7" class="text-center text-muted py-3">
+                      No check orders yet. Use "Add Check Order" to key them in.
+                    </td>
+                  </tr>
+                </ng-template>
               </p-table>
             </div>
           </td>
@@ -541,10 +555,14 @@
 <div class="col-12 flex gap-3 justify-content-end mt-4">
    <p-button
       type="button"
-      label="Create Special Order"
+      label="Create Custom Order File"
+      icon="pi pi-file-edit"
       severity="info"
+      [outlined]="true"
       styleClass="batch-action-btn"
-      pTooltip="Validate all order files in this batch"
+      (click)="onCreateCustomOrderFile()"
+      [disabled]="!batch || isBatchJobProcessing()"
+      pTooltip="Key in check orders manually as a new order file in this batch"
       tooltipPosition="top"
     />
  <p-button
@@ -639,6 +657,14 @@
     <p-button label="Proceed Anyway" severity="warning" icon="pi pi-send" (onClick)="onConfirmBatchProcess()" />
   </div>
 </p-dialog>
+
+<!-- Custom Order File Dialog -->
+<app-custom-order-file-dialog
+  [(visible)]="showCustomOrderFileDialog"
+  [bankId]="bankInfoId"
+  [batchId]="batch?.id || ''"
+  (created)="onCustomOrderFileCreated($event)"
+></app-custom-order-file-dialog>
 
 <!-- Check Order Modal -->
 <app-add-check-order

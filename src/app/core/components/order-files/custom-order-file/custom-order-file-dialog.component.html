@@ -1,0 +1,200 @@
+<p-dialog
+  header="Create Custom Order File"
+  [modal]="true"
+  [visible]="visible"
+  (visibleChange)="$event ? null : close()"
+  [style]="{ width: '95vw', maxWidth: '1400px' }"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="custom-order-file-dialog"
+>
+  <p class="text-muted small mb-3">
+    Key in check orders for a product. The custom order file is added to this batch and goes
+    through the same validation, processing and report generation as an uploaded order file.
+  </p>
+
+  <!-- File details -->
+  <div class="file-details grid mb-3">
+    <div class="col-12 md:col-4 field">
+      <label for="customProduct" class="block mb-1 fw-semibold">Product <span class="text-danger">*</span></label>
+      <p-dropdown
+        inputId="customProduct"
+        [options]="products"
+        [(ngModel)]="selectedProductId"
+        (onChange)="onProductChange()"
+        placeholder="Select product"
+        [filter]="true"
+        filterBy="label"
+        appendTo="body"
+        styleClass="w-full"
+        [class.ng-invalid]="submitted && !selectedProductId"
+        [class.ng-dirty]="submitted && !selectedProductId"
+        [emptyMessage]="loadingLookups ? 'Loading...' : 'No products found'"
+      />
+    </div>
+    <div class="col-12 md:col-5 field">
+      <label for="customFileName" class="block mb-1 fw-semibold">File Name</label>
+      <input
+        pInputText
+        id="customFileName"
+        [(ngModel)]="fileName"
+        maxlength="200"
+        class="w-full"
+        placeholder="Leave blank to auto-generate (CUSTOM_<product>_<timestamp>)"
+      />
+    </div>
+    <div class="col-12 md:col-3 field flex align-items-end justify-content-end">
+      <small class="text-muted" *ngIf="selectedProductId && !loadingFormChecks && formChecks.length === 0">
+        <i class="pi pi-exclamation-triangle text-warning me-1"></i>
+        This product has no form checks configured.
+      </small>
+    </div>
+  </div>
+
+  <!-- Check orders -->
+  <div class="flex justify-content-between align-items-center mb-2">
+    <div>
+      <h6 class="mb-0 text-primary">
+        <i class="pi pi-list-check me-2"></i>Check Orders
+      </h6>
+      <small class="text-muted">{{ rows.length }} row(s)</small>
+    </div>
+    <p-button
+      label="Add Row"
+      icon="pi pi-plus"
+      severity="success"
+      size="small"
+      [text]="true"
+      (onClick)="addRow()"
+    />
+  </div>
+
+  <div class="rows-wrapper">
+    <table class="custom-order-table">
+      <thead>
+        <tr>
+          <th class="col-index">#</th>
+          <th class="col-text">Account No. <span class="req">*</span></th>
+          <th class="col-name">Account Name 1 <span class="req">*</span></th>
+          <th class="col-name">Account Name 2</th>
+          <th>BRSTN <span class="req">*</span></th>
+          <th>Check / Form Type <span class="req">*</span></th>
+          <th class="col-qty">Qty <span class="req">*</span></th>
+          <th>Deliver To</th>
+          <th class="col-text">Concode</th>
+          <th class="col-text">Starting Series</th>
+          <th class="col-text">Ending Series</th>
+          <th class="col-actions"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of rows; let i = index; trackBy: trackRow" [class.row-error]="submitted && rowErrors(row).length > 0">
+          <td class="col-index text-muted">{{ i + 1 }}</td>
+          <td>
+            <input pInputText [(ngModel)]="row.accountNumber" class="w-full p-inputtext-sm"
+              [class.ng-invalid]="isInvalid(row, 'accountNumber')" [class.ng-dirty]="isInvalid(row, 'accountNumber')" />
+          </td>
+          <td>
+            <input pInputText [(ngModel)]="row.accountName1" class="w-full p-inputtext-sm"
+              [class.ng-invalid]="isInvalid(row, 'accountName1')" [class.ng-dirty]="isInvalid(row, 'accountName1')" />
+          </td>
+          <td>
+            <input pInputText [(ngModel)]="row.accountName2" class="w-full p-inputtext-sm" />
+          </td>
+          <td class="col-brstn">
+            <p-dropdown
+              [options]="branches"
+              [(ngModel)]="row.brstn"
+              placeholder="Select"
+              [filter]="true"
+              filterBy="label"
+              appendTo="body"
+              styleClass="w-full p-inputtext-sm"
+              [class.ng-invalid]="isInvalid(row, 'brstn')"
+              [class.ng-dirty]="isInvalid(row, 'brstn')"
+            />
+          </td>
+          <td class="col-formcheck">
+            <p-dropdown
+              [options]="formChecks"
+              [(ngModel)]="row.formCheckId"
+              [placeholder]="selectedProductId ? 'Select' : 'Select product first'"
+              [disabled]="!selectedProductId"
+              appendTo="body"
+              styleClass="w-full p-inputtext-sm"
+              [class.ng-invalid]="isInvalid(row, 'formCheckId')"
+              [class.ng-dirty]="isInvalid(row, 'formCheckId')"
+            />
+          </td>
+          <td class="col-qty">
+            <p-inputNumber
+              [(ngModel)]="row.quantity"
+              [min]="1"
+              [useGrouping]="false"
+              inputStyleClass="w-full p-inputtext-sm"
+              [class.ng-invalid]="isInvalid(row, 'quantity')"
+              [class.ng-dirty]="isInvalid(row, 'quantity')"
+            />
+          </td>
+          <td class="col-brstn">
+            <p-dropdown
+              [options]="branches"
+              [(ngModel)]="row.deliverTo"
+              placeholder="Same branch"
+              [filter]="true"
+              filterBy="label"
+              [showClear]="true"
+              appendTo="body"
+              styleClass="w-full p-inputtext-sm"
+            />
+          </td>
+          <td>
+            <input pInputText [(ngModel)]="row.concode" class="w-full p-inputtext-sm" />
+          </td>
+          <td>
+            <input pInputText [(ngModel)]="row.startingSeries" class="w-full p-inputtext-sm"
+              [class.ng-invalid]="isInvalid(row, 'startingSeries')" [class.ng-dirty]="isInvalid(row, 'startingSeries')" />
+          </td>
+          <td>
+            <input pInputText [(ngModel)]="row.endingSeries" class="w-full p-inputtext-sm"
+              [class.ng-invalid]="isInvalid(row, 'endingSeries')" [class.ng-dirty]="isInvalid(row, 'endingSeries')" />
+          </td>
+          <td class="col-actions">
+            <div class="flex gap-1 justify-content-center">
+              <p-button icon="pi pi-copy" size="small" severity="secondary" [text]="true" [rounded]="true"
+                pTooltip="Duplicate row" tooltipPosition="top" (onClick)="duplicateRow(row)" />
+              <p-button icon="pi pi-trash" size="small" severity="danger" [text]="true" [rounded]="true"
+                pTooltip="Remove row" tooltipPosition="top" (onClick)="removeRow(row)" />
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="rows.length === 0">
+          <td colspan="12" class="text-center text-muted py-4">
+            No check orders. You can still create the file and add check orders later.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="hasDuplicateAccounts" class="text-warning small mt-2">
+    <i class="pi pi-exclamation-triangle me-1"></i>
+    The same account number appears more than once in this file.
+  </div>
+
+  <div *ngIf="errorMessage" class="error-box mt-3">
+    <i class="pi pi-times-circle me-2"></i>{{ errorMessage }}
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Cancel" severity="secondary" [text]="true" (onClick)="close()" [disabled]="saving" />
+    <p-button
+      [label]="rows.length ? 'Create & Validate' : 'Create'"
+      icon="pi pi-check"
+      severity="success"
+      (onClick)="submit()"
+      [loading]="saving"
+      [disabled]="!canSubmit"
+    />
+  </ng-template>
+</p-dialog>

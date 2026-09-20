@@ -15,7 +15,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { OrderFilesService } from '../../../_services/order-files.service';
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
-import { OrderFile } from '../../../../_models/order-file';
+import { CreateCustomOrderFileResponse, OrderFile } from '../../../../_models/order-file';
 import { Subscription, filter, map, take } from 'rxjs';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -25,6 +25,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { PanelModule } from 'primeng/panel';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { AddCheckOrderComponent } from './_components/add-check-order/add-check-order.component';
+import { CustomOrderFileDialogComponent } from '../custom-order-file/custom-order-file-dialog.component';
 import { LogType } from '../../../../_models/constants';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { Store } from '@ngrx/store';
@@ -63,6 +64,7 @@ import { SharedFeature } from '../../../../shared/_store/shared.reducer';
     PanelModule,
     ProgressBarModule,
     AddCheckOrderComponent,
+    CustomOrderFileDialogComponent,
   ],
   templateUrl: './order-files-list.component.html',
   styleUrl: './order-files-list.component.scss',
@@ -128,6 +130,7 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
   showInventoryWarningDialog: boolean = false;
 
   // Modal state
+  showCustomOrderFileDialog: boolean = false;
   showCheckOrderModal: boolean = false;
   selectedCheckOrder: CheckOrders | null = null;
   selectedOrderFileId: string = '';
@@ -596,6 +599,24 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
       const accountB = b.accountNumber || '';
       return accountA.localeCompare(accountB);
     });
+  }
+
+  onCreateCustomOrderFile(): void {
+    this.showCustomOrderFileDialog = true;
+  }
+
+  onCustomOrderFileCreated(response: CreateCustomOrderFileResponse): void {
+    this.toastr.success(`Custom order file "${response.fileName}" created`);
+    this.expandedFiles.add(response.orderFileId);
+
+    if (response.checkOrderCount > 0) {
+      // Validate right away so the user sees errors the same way as an uploaded file
+      this.onValidateOrderFile(response.orderFileId);
+    } else {
+      this.store.dispatch(
+        getOrderFiles({ bankId: this.bankInfoId, batchId: this.batch!.id })
+      );
+    }
   }
 
   onEditCheckOrder(orderFileId: string, checkOrder: CheckOrders): void {

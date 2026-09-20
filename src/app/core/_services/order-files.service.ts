@@ -5,7 +5,11 @@ import { Observable, Subject } from 'rxjs';
 import * as signalR from '@microsoft/signalr';
 import { CheckOrders } from '../../_models/check-order';
 import { LogDto } from '../../_models/log-dto';
-import { OrderFile } from '../../_models/order-file';
+import {
+  CreateCustomOrderFileRequest,
+  CreateCustomOrderFileResponse,
+  OrderFile,
+} from '../../_models/order-file';
 @Injectable({
   providedIn: 'root',
 })
@@ -152,6 +156,13 @@ export class OrderFilesService {
 
   uploadOrderFiles(request: any) {
     return this.http.post(this.commandUrl + 'OrderFile/upload', request);
+  }
+
+  createCustomOrderFile(request: CreateCustomOrderFileRequest) {
+    return this.http.post<CreateCustomOrderFileResponse>(
+      this.commandUrl + 'OrderFile/custom',
+      request
+    );
   }
 
   processOrderFile(id: string) {
