@@ -1,5 +1,8 @@
-<h1>Batch List</h1>
-<p-button label="Add Batch" icon="pi pi-plus" (onClick)="onAddBatch()"></p-button>
+<div class="flex justify-content-between mb-3">
+  <h1>Batch List</h1>
+  <p-button label="Add Batch" icon="pi pi-plus" (onClick)="onAddBatch()"></p-button>
+</div>
+
 <div class="flex flex-column">
   <p-table [value]="batches">
     <ng-template pTemplate="header">

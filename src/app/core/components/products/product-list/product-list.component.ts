@@ -42,6 +42,8 @@ export class ProductListComponent implements OnInit {
   clonedProduct: Product | undefined = undefined;
 
   subscription$: Subscription = new Subscription();
+
+  maxSequenceNo: Number = 0;
   constructor(private store: Store, private dialogService: DialogService) {
     this.products$ = this.store.select(ProductsFeature.selectProducts);
   }
@@ -50,6 +52,8 @@ export class ProductListComponent implements OnInit {
     this.subscription$.add(
       this.products$.subscribe((products) => {
         this.products = products.map((product) => ({ ...product }));
+
+        this.maxSequenceNo = this.products == null || this.products.length == 0 ? 0 :  Math.max(...this.products.map(p => p.productSequence));
       })
     );
 
@@ -98,6 +102,7 @@ export class ProductListComponent implements OnInit {
       data: {
         productId: product?.productId,
         bankId: this.bankId,
+        sequenceNo: this.maxSequenceNo
       },
     });
   }

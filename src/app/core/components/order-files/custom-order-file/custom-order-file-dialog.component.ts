@@ -39,8 +39,8 @@ interface FormCheckOption extends SelectOption {
 interface CustomCheckOrderRow {
   key: number;
   accountNumber: string;
-  accountName1: string;
-  accountName2: string;
+  accountName1: string | null;
+  accountName2: string | null;
   brstn: string | null;
   formCheckId: string | null;
   quantity: number | null;
@@ -225,7 +225,6 @@ export class CustomOrderFileDialogComponent implements OnChanges, OnDestroy {
   rowErrors(row: CustomCheckOrderRow): string[] {
     const errors: string[] = [];
     if (!row.accountNumber?.trim()) errors.push('Account number is required');
-    if (!row.accountName1?.trim()) errors.push('Account name is required');
     if (!row.brstn) errors.push('BRSTN is required');
     if (!row.formCheckId) errors.push('Check / form type is required');
     if (!row.quantity || row.quantity <= 0) errors.push('Quantity must be greater than 0');
@@ -240,8 +239,6 @@ export class CustomOrderFileDialogComponent implements OnChanges, OnDestroy {
     switch (field) {
       case 'accountNumber':
         return !row.accountNumber?.trim();
-      case 'accountName1':
-        return !row.accountName1?.trim();
       case 'brstn':
         return !row.brstn;
       case 'formCheckId':
@@ -286,7 +283,7 @@ export class CustomOrderFileDialogComponent implements OnChanges, OnDestroy {
 
     const checkOrders: CustomCheckOrderInput[] = this.rows.map((row) => {
       const formCheck = this.formChecks.find((fc) => fc.value === row.formCheckId)!;
-      const accountName1 = row.accountName1.trim();
+      const accountName1 = row.accountName1?.trim() ?? '';
       const accountName2 = row.accountName2?.trim() ?? '';
       return {
         accountNumber: row.accountNumber.trim(),
