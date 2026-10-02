@@ -62,6 +62,17 @@
   .col-actions {
     width: 6rem;
   }
+
+  .col-ending {
+    min-width: 9rem;
+    white-space: nowrap;
+
+    .auto-series {
+      font-family: monospace;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+  }
 }
 
 ::ng-deep .custom-order-table .p-inputnumber,

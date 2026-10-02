@@ -30,6 +30,7 @@ import {
   pollOrderFilesFailure,
   updateOrderFileStatusDetail,
   clearOrderFiles,
+  deleteOrderFile,
 } from './order-file.actions';
 export interface OrderFileState {
   orderFiles: OrderFile[];
@@ -48,8 +49,9 @@ export const initialState: OrderFileState = {
 };
 
 // Preserve any live statusDetail from SignalR when merging fresh API data
-function mergeStatusDetail(fresh: OrderFile[] | null, existing: OrderFile[]): OrderFile[] {
-  if (!fresh) return existing;
+// The API returns `orderFiles: null` when the batch has no order files, so null means "empty".
+function mergeStatusDetail(fresh: OrderFile[] | null | undefined, existing: OrderFile[]): OrderFile[] {
+  if (!fresh) return [];
   return fresh.map(f => {
     const prior = existing.find(e => e.id === f.id);
     const keepDetail = prior?.statusDetail && (f.status === 'Processing' || f.status === 'GeneratingReport');
@@ -60,6 +62,11 @@ function mergeStatusDetail(fresh: OrderFile[] | null, existing: OrderFile[]): Or
 export const orderFileReducer = createReducer(
   initialState,
   on(getOrderFiles, (state) => ({ ...state, loading: true })),
+  // Remove the file right away; the list is re-fetched after the delete (and restored if it fails)
+  on(deleteOrderFile, (state, { orderFileId }) => ({
+    ...state,
+    orderFiles: state.orderFiles.filter((f) => f.id !== orderFileId),
+  })),
   on(getOrderFilesSuccess, (state, { orderFiles }) => ({
     ...state,
     orderFiles: mergeStatusDetail(orderFiles, state.orderFiles),
@@ -152,7 +159,9 @@ export const orderFileReducer = createReducer(
       if (f.id !== orderFile.id) return f;
       const inProgress = orderFile.status === 'Processing' || orderFile.status === 'GeneratingReport';
       const statusDetail = (inProgress && !orderFile.statusDetail) ? f.statusDetail : orderFile.statusDetail;
-      return { ...f, status: orderFile.status, statusDetail };
+      // Carry the error message so failures (e.g. barcode generation) show immediately
+      const errorMessage = orderFile.errorMessage ?? f.errorMessage;
+      return { ...f, status: orderFile.status, statusDetail, errorMessage };
     }),
   })),
   on(clearOrderFiles, () => ({ ...initialState }))

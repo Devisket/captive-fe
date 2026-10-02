@@ -191,7 +191,7 @@ export class UploadOrderFilesComponent implements OnInit, OnDestroy {
       this.$subscription.add(
         this.orderFileService.orderFileStatus$.subscribe((orderFile) => {
           this.store.dispatch(updateOrderFileStatusDetail({ orderFile }));
-          if (orderFile.status === 'Pending' || orderFile.status === 'Completed') {
+          if (orderFile.status === 'Pending' || orderFile.status === 'Completed' || orderFile.status === 'Error') {
             this.store.dispatch(pollOrderFiles({ bankId: this.bankInfoId, batchId: this.batch!.id }));
           }
         })

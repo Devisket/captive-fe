@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, ofType, createEffect } from '@ngrx/effects';
-import { catchError, map, switchMap } from 'rxjs';
+import { catchError, map, mergeMap, switchMap } from 'rxjs';
 import { of } from 'rxjs';
 import {
   getOrderFilesFailure,
@@ -111,8 +111,24 @@ export class OrderFileEffects {
       ofType(deleteOrderFile),
       switchMap(({ orderFileId, bankId, batchId }) =>
         this.orderFileService.deleteOrderFile(orderFileId).pipe(
-          map(() => validateAllOrderFiles({ bankId, batchId })),
-          catchError((error) => of(deleteOrderFileFailure({ error })))
+          // Refresh the list right away so the deleted file disappears, then re-validate
+          // the remaining files (which refreshes the list again once done).
+          mergeMap(() => [
+            getOrderFiles({ bankId, batchId }),
+            validateAllOrderFiles({ bankId, batchId }),
+          ]),
+          catchError((error) => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail:
+                error?.error?.Message ??
+                error?.error?.message ??
+                'Failed to delete the order file.',
+            });
+            // Refresh anyway so the list reflects the actual state on the server
+            return of(deleteOrderFileFailure({ error }), getOrderFiles({ bankId, batchId }));
+          })
         )
       )
     )

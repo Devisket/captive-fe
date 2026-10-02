@@ -82,8 +82,14 @@
           <th class="col-qty">Qty <span class="req">*</span></th>
           <th>Deliver To</th>
           <th class="col-text">Concode</th>
-          <th class="col-text">Starting Series</th>
-          <th class="col-text">Ending Series</th>
+          <th class="col-text">
+            Starting Series
+            <i class="pi pi-info-circle ms-1" pTooltip="Optional. Leave blank to take the series from the check inventory." tooltipPosition="top"></i>
+          </th>
+          <th class="col-text">
+            Ending Series
+            <i class="pi pi-info-circle ms-1" pTooltip="Generated during processing: starting series + (Qty x form check quantity) - 1." tooltipPosition="top"></i>
+          </th>
           <th class="col-actions"></th>
         </tr>
       </thead>
@@ -153,11 +159,23 @@
           </td>
           <td>
             <input pInputText [(ngModel)]="row.startingSeries" class="w-full p-inputtext-sm"
+              placeholder="Optional (e.g. A0000001)"
+              [pTooltip]="startingSeriesError(row) ?? ''" tooltipPosition="top"
               [class.ng-invalid]="isInvalid(row, 'startingSeries')" [class.ng-dirty]="isInvalid(row, 'startingSeries')" />
           </td>
-          <td>
-            <input pInputText [(ngModel)]="row.endingSeries" class="w-full p-inputtext-sm"
-              [class.ng-invalid]="isInvalid(row, 'endingSeries')" [class.ng-dirty]="isInvalid(row, 'endingSeries')" />
+          <td class="col-ending">
+            <ng-container *ngIf="hasStartingSeries(row); else fromInventory">
+              <ng-container *ngIf="computedEndingSeries(row) as endingSeries; else pendingEnding">
+                <div class="auto-series">{{ endingSeries }}</div>
+                <small class="text-muted">{{ totalChecks(row) }} checks</small>
+              </ng-container>
+              <ng-template #pendingEnding>
+                <small class="text-muted">Auto-generated</small>
+              </ng-template>
+            </ng-container>
+            <ng-template #fromInventory>
+              <small class="text-muted"><i class="pi pi-box me-1"></i>From inventory</small>
+            </ng-template>
           </td>
           <td class="col-actions">
             <div class="flex gap-1 justify-content-center">

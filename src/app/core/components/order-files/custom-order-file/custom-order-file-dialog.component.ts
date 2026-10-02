@@ -34,6 +34,14 @@ interface SelectOption {
 interface FormCheckOption extends SelectOption {
   checkType: string;
   formType: string;
+  /** Number of checks per booklet for this form check */
+  quantity: number;
+}
+
+interface ParsedSeries {
+  prefix: string;
+  number: number;
+  width: number;
 }
 
 interface CustomCheckOrderRow {
@@ -46,8 +54,8 @@ interface CustomCheckOrderRow {
   quantity: number | null;
   deliverTo: string | null;
   concode: string;
+  /** Optional. When blank, the series is taken from the check inventory during processing. */
   startingSeries: string;
-  endingSeries: string;
 }
 
 @Component({
@@ -159,6 +167,7 @@ export class CustomOrderFileDialogComponent implements OnChanges, OnDestroy {
             value: fc.id,
             checkType: fc.checkType,
             formType: fc.formType,
+            quantity: Number(fc.quantity) || 0,
             label:
               `${fc.checkType} / ${fc.formType}` +
               (fc.description ? ` - ${fc.description}` : '') +
@@ -191,7 +200,6 @@ export class CustomOrderFileDialogComponent implements OnChanges, OnDestroy {
       key: ++this.rowKey,
       accountNumber: '',
       startingSeries: '',
-      endingSeries: '',
     };
     this.rows = [...this.rows.slice(0, index + 1), copy, ...this.rows.slice(index + 1)];
   }
@@ -216,8 +224,57 @@ export class CustomOrderFileDialogComponent implements OnChanges, OnDestroy {
       deliverTo: null,
       concode: '',
       startingSeries: '',
-      endingSeries: '',
     };
+  }
+
+  // ---------- Series ----------
+
+  /** Splits a series such as "A0000001" into its prefix ("A") and numeric part (1, width 7). */
+  private parseSeries(value: string | null | undefined): ParsedSeries | null {
+    const match = /^(.*?)(\d+)$/.exec(value?.trim() ?? '');
+    if (!match || match[2].length > 15) return null;
+    return { prefix: match[1], number: Number(match[2]), width: match[2].length };
+  }
+
+  private formCheckOf(row: CustomCheckOrderRow): FormCheckOption | undefined {
+    return this.formChecks.find((fc) => fc.value === row.formCheckId);
+  }
+
+  hasStartingSeries(row: CustomCheckOrderRow): boolean {
+    return !!row.startingSeries?.trim();
+  }
+
+  /** Total number of checks for the row: order quantity x form check (booklet) quantity. */
+  totalChecks(row: CustomCheckOrderRow): number | null {
+    const formCheck = this.formCheckOf(row);
+    if (!row.quantity || row.quantity <= 0 || !formCheck?.quantity) return null;
+    return row.quantity * formCheck.quantity;
+  }
+
+  /**
+   * Preview of the ending series that will be generated during processing:
+   * starting series + (order quantity x form check quantity) - 1.
+   */
+  computedEndingSeries(row: CustomCheckOrderRow): string | null {
+    const start = this.parseSeries(row.startingSeries);
+    const total = this.totalChecks(row);
+    if (!start || !total) return null;
+    const end = String(start.number + total - 1);
+    if (end.length > start.width) return null;
+    return start.prefix + end.padStart(start.width, '0');
+  }
+
+  startingSeriesError(row: CustomCheckOrderRow): string | null {
+    if (!this.hasStartingSeries(row)) return null;
+    const start = this.parseSeries(row.startingSeries);
+    if (!start) return 'Starting series must end with a number (e.g. A0000001)';
+    const formCheck = this.formCheckOf(row);
+    if (formCheck && !formCheck.quantity)
+      return 'The selected form check has no check quantity configured';
+    const total = this.totalChecks(row);
+    if (total && String(start.number + total - 1).length > start.width)
+      return `Ending series would exceed ${start.width} digits`;
+    return null;
   }
 
   // ---------- Validation ----------
@@ -228,9 +285,8 @@ export class CustomOrderFileDialogComponent implements OnChanges, OnDestroy {
     if (!row.brstn) errors.push('BRSTN is required');
     if (!row.formCheckId) errors.push('Check / form type is required');
     if (!row.quantity || row.quantity <= 0) errors.push('Quantity must be greater than 0');
-    const hasStart = !!row.startingSeries?.trim();
-    const hasEnd = !!row.endingSeries?.trim();
-    if (hasStart !== hasEnd) errors.push('Provide both starting and ending series, or neither');
+    const seriesError = this.startingSeriesError(row);
+    if (seriesError) errors.push(seriesError);
     return errors;
   }
 
@@ -246,8 +302,7 @@ export class CustomOrderFileDialogComponent implements OnChanges, OnDestroy {
       case 'quantity':
         return !row.quantity || row.quantity <= 0;
       case 'startingSeries':
-      case 'endingSeries':
-        return !!row.startingSeries?.trim() !== !!row.endingSeries?.trim();
+        return !!this.startingSeriesError(row);
       default:
         return false;
     }
@@ -296,8 +351,10 @@ export class CustomOrderFileDialogComponent implements OnChanges, OnDestroy {
         mainAccountName: [accountName1, accountName2].filter((x) => !!x).join(' '),
         deliverTo: row.deliverTo ?? undefined,
         concode: row.concode?.trim() || undefined,
+        // Ending series is generated during processing from the starting series,
+        // order quantity and form check quantity. When no starting series is given,
+        // the series is taken from the check inventory instead.
         startingSeries: row.startingSeries?.trim() || undefined,
-        endingSeries: row.endingSeries?.trim() || undefined,
       };
     });
 
