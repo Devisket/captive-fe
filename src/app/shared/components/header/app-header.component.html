@@ -1,1 +1,15 @@
-<p-megaMenu [model]="items" />
+<p-megaMenu [model]="items" styleClass="app-header-menu">
+  <ng-template pTemplate="end">
+    <p-button
+      [icon]="themeService.isDark ? 'pi pi-sun' : 'pi pi-moon'"
+      [rounded]="true"
+      [text]="true"
+      severity="secondary"
+      styleClass="theme-toggle"
+      [pTooltip]="themeService.isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+      tooltipPosition="left"
+      [attr.aria-label]="themeService.isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+      (onClick)="toggleTheme()"
+    />
+  </ng-template>
+</p-megaMenu>

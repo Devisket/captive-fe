@@ -43,14 +43,14 @@
     transition: all 0.2s ease;
     
     &:hover:not(.error-row):not(.processing-row):not(.completed-row) {
-      background-color: #f8f9ff !important;
+      background-color: var(--highlight-bg) !important;
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
     
     td {
       padding: 1rem 0.75rem;
-      border-bottom: 1px solid #e9ecef;
+      border-bottom: 1px solid var(--surface-border);
       vertical-align: middle;
     }
   }
@@ -79,14 +79,14 @@
   transition: all 0.2s ease;
   
   &:hover {
-    background-color: #f8f9ff !important;
+    background-color: var(--highlight-bg) !important;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   }
   
   > td {
     padding: 1rem 0.75rem;
-    border-bottom: 1px solid #e9ecef;
+    border-bottom: 1px solid var(--surface-border);
     vertical-align: middle;
   }
 }
@@ -132,7 +132,7 @@
 
 // Row States
 .completed-row {
-  background-color: #f0f9f0 !important;
+  background-color: var(--tint-success) !important;
   border-left: 4px solid #22c55e;
   
   .file-name {
@@ -141,13 +141,13 @@
 }
 
 .processing-row {
-  background-color: #fff7ed !important;
+  background-color: var(--tint-warning) !important;
   border-left: 4px solid #f59e0b;
   animation: pulse-subtle 2s infinite;
 }
 
 .error-row {
-  background-color: #fef2f2 !important;
+  background-color: var(--tint-danger) !important;
   border-left: 4px solid #ef4444;
   animation: error-attention 3s infinite;
   
@@ -164,11 +164,11 @@
 @keyframes error-attention {
   0%, 100% { 
     border-left-color: #ef4444; 
-    background-color: #fef2f2;
+    background-color: var(--tint-danger);
   }
   50% { 
     border-left-color: #dc2626; 
-    background-color: #fee2e2;
+    background-color: var(--tint-danger-strong);
   }
 }
 
@@ -191,7 +191,7 @@
   justify-content: center;
   
   .file-name {
-    color: #374151;
+    color: var(--text-color);
     font-size: 0.95rem;
     line-height: 1.4;
     margin: 0;
@@ -213,11 +213,11 @@
 }
 
 .quantity-value {
-  background: #f3f4f6;
+  background: var(--surface-hover);
   padding: 0.25rem 0.75rem;
   border-radius: 20px;
   font-weight: 500;
-  color: #374151;
+  color: var(--text-color);
   border: 1px solid #e5e7eb;
 }
 
@@ -237,27 +237,27 @@
   }
   
   &.delete-btn:hover {
-    background-color: #fef2f2 !important;
+    background-color: var(--tint-danger) !important;
   }
   
   &.validate-btn:hover {
-    background-color: #eff6ff !important;
+    background-color: var(--highlight-bg) !important;
   }
   
   &.process-btn:hover {
-    background-color: #f0fdf4 !important;
+    background-color: var(--tint-success) !important;
   }
 }
 
 // Expansion Section
 .expansion-cell {
-  background: #f8f9fa !important;
+  background: var(--surface-ground) !important;
   padding: 0 !important;
 }
 
 .expansion-content {
   padding: 1.5rem;
-  background: linear-gradient(145deg, #f8f9fa, #ffffff);
+  background: linear-gradient(145deg, var(--surface-ground), var(--surface-card));
   border-radius: 8px;
   margin: 0.5rem;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -267,11 +267,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 2px solid #e9ecef;
+  border-bottom: 2px solid var(--surface-border);
   padding-bottom: 0.75rem;
   
   h6 {
-    color: #495057;
+    color: var(--text-color);
     font-weight: 600;
   }
   
@@ -290,12 +290,12 @@
   
   .p-datatable-tbody > tr {
     &.on-hold-row {
-      background-color: #fefbf3 !important;
+      background-color: var(--tint-warning) !important;
       border-left: 3px solid #f59e0b;
     }
     
     &.invalid-row {
-      background-color: #fef2f2 !important;
+      background-color: var(--tint-danger) !important;
       border-left: 3px solid #ef4444;
     }
     
@@ -327,16 +327,16 @@
   height: 32px;
   
   &:hover {
-    background-color: #f3f4f6 !important;
+    background-color: var(--surface-hover) !important;
   }
   
   &.error-attention {
-    background-color: #fef2f2 !important;
+    background-color: var(--tint-danger) !important;
     border: 2px solid #ef4444 !important;
     animation: expand-button-pulse 2s infinite;
     
     &:hover {
-      background-color: #fee2e2 !important;
+      background-color: var(--tint-danger-strong) !important;
       border-color: #dc2626 !important;
     }
   }
@@ -477,8 +477,8 @@
 // Upload Section Styling
 .upload-section {
   .upload-card {
-    background: linear-gradient(145deg, #ffffff, #f8f9fa);
-    border: 2px solid #e9ecef;
+    background: linear-gradient(145deg, var(--surface-card), var(--surface-ground));
+    border: 2px solid var(--surface-border);
     border-radius: 16px;
     padding: 1.5rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -493,12 +493,12 @@
 
   .upload-header {
     h5 {
-      color: #374151;
+      color: var(--text-color);
       font-weight: 600;
     }
     
     small {
-      color: #6b7280;
+      color: var(--text-color-secondary);
       font-weight: 500;
     }
   }
@@ -508,7 +508,7 @@
     border-radius: 12px;
     padding: 2rem;
     text-align: center;
-    background: #fafbfc;
+    background: var(--surface-ground);
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
@@ -519,18 +519,18 @@
     
     &:hover {
       border-color: #6366f1;
-      background: #f0f4ff;
+      background: var(--highlight-bg);
       transform: translateY(-1px);
     }
     
     &.has-files {
       border-color: #22c55e;
-      background: #f0fdf4;
+      background: var(--tint-success);
       border-style: solid;
       
       &:hover {
         border-color: #16a34a;
-        background: #dcfce7;
+        background: var(--tint-success-strong);
       }
     }
 
@@ -544,12 +544,12 @@
 
     .drop-zone-text {
       p:first-child {
-        color: #374151;
+        color: var(--text-color);
         font-size: 1rem;
       }
       
       p:last-child {
-        color: #6b7280;
+        color: var(--text-color-secondary);
         font-size: 0.875rem;
       }
     }
@@ -637,7 +637,7 @@
     transition: all 0.2s ease;
     
     &:hover:not(:disabled) {
-      background-color: #f3f4f6 !important;
+      background-color: var(--surface-hover) !important;
       transform: translateY(-1px);
     }
   }

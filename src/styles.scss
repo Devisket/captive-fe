@@ -1,9 +1,12 @@
-@import "primeng/resources/themes/lara-light-blue/theme.css";
+/* The PrimeNG theme (lara-light-blue / lara-dark-neutral) is loaded through <link id="app-theme"> in
+   index.html and swapped at runtime by ThemeService. Do not import it here. */
 @import "primeng/resources/primeng.css";
 @import "primeicons/primeicons.css";
 html, body { 
     height: 100%;
     font-family: var(--font-family);
+    background-color: var(--surface-ground);
+    color: var(--text-color);
     margin: 0;
     padding: 0;
     display: block;
@@ -11,4 +14,47 @@ html, body {
 
 .bg-light {
     background-color: var(--surface-card) !important;
+}
+
+/* Status tints used for row / panel backgrounds (light values match the original design) */
+html {
+    color-scheme: light;
+    --tint-danger: #fef2f2;
+    --tint-danger-strong: #fee2e2;
+    --tint-warning: #fff7ed;
+    --tint-success: #f0fdf4;
+    --tint-success-strong: #dcfce7;
+}
+
+html.app-dark {
+    color-scheme: dark;
+    --tint-danger: rgba(248, 113, 113, 0.12);
+    --tint-danger-strong: rgba(248, 113, 113, 0.22);
+    --tint-warning: rgba(251, 146, 60, 0.12);
+    --tint-success: rgba(74, 222, 128, 0.10);
+    --tint-success-strong: rgba(74, 222, 128, 0.20);
+}
+
+/* Smooth colour change when switching themes */
+body,
+.card,
+.p-component {
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* PrimeFlex/primeng "card" blocks used across the screens */
+.card {
+    background: var(--surface-card);
+    color: var(--text-color);
+    border-radius: var(--border-radius, 6px);
+}
+
+/* Light-only helpers used in templates */
+html.app-dark .text-muted {
+    color: var(--text-color-secondary) !important;
+}
+
+html.app-dark code {
+    background-color: var(--surface-overlay) !important;
+    color: var(--text-color);
 }

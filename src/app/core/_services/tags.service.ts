@@ -3,6 +3,8 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import {
   CheckInventory,
+  CheckInventoryDetailsQuery,
+  CheckInventoryDetailsResponse,
   CheckInventoryQueryRequest,
   ImportCheckInventoryResult,
 } from '../../_models/check-inventory';
@@ -28,6 +30,21 @@ export class TagsService {
     query.formCheckType?.forEach((t) => { params = params.append('formCheckType', t); });
 
     return this.http.get<any>(this.queryUrl + query.bankId + '/CheckInventory', { params });
+  }
+
+  getCheckInventoryDetails(query: CheckInventoryDetailsQuery) {
+    let params = new HttpParams()
+      .set('currentPage', query.currentPage)
+      .set('pageSize', query.pageSize);
+
+    if (query.checkInventoryId) params = params.set('checkInventoryId', query.checkInventoryId);
+    if (query.unassigned) params = params.set('unassigned', true);
+    if (query.search?.trim()) params = params.set('search', query.search.trim());
+
+    return this.http.get<CheckInventoryDetailsResponse>(
+      this.queryUrl + query.bankId + '/CheckInventory/details',
+      { params }
+    );
   }
 
   createCheckInventory(checkInventory: CheckInventory) {

@@ -1,6 +1,6 @@
 .rows-wrapper {
   overflow-x: auto;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--surface-border);
   border-radius: 8px;
 }
 
@@ -25,12 +25,12 @@
 
   tbody td {
     padding: 0.4rem 0.35rem;
-    border-bottom: 1px solid #f1f3f5;
+    border-bottom: 1px solid var(--surface-border);
     vertical-align: middle;
   }
 
   tbody tr.row-error {
-    background-color: #fff5f5;
+    background-color: var(--tint-danger);
   }
 
   .col-index {
@@ -81,7 +81,7 @@
 }
 
 .error-box {
-  background: #fef2f2;
+  background: var(--tint-danger);
   border: 1px solid #fecaca;
   color: #b91c1c;
   border-radius: 6px;

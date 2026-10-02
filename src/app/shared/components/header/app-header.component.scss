@@ -1,0 +1,21 @@
+.app-header-menu.p-megamenu {
+  display: flex;
+  align-items: center;
+  border-radius: 0;
+
+  /* Keep the menu items on the left and push the theme switch to the far right, on one line */
+  .p-megamenu-root-list {
+    flex: 1 1 auto;
+  }
+
+  .p-megamenu-end {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+  }
+
+  .theme-toggle.p-button {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}

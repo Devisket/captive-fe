@@ -6,6 +6,21 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <!-- PrimeNG theme, swapped at runtime by ThemeService (light: lara-light-blue, dark: lara-dark-neutral in src/assets/themes) -->
+  <link id="app-theme" rel="stylesheet" type="text/css" href="assets/themes/lara-light-blue/theme.css">
+  <script>
+    // Apply the saved/system theme before Angular boots to avoid a light flash in dark mode
+    (function () {
+      try {
+        var saved = localStorage.getItem('captive-theme');
+        var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (dark) {
+          document.getElementById('app-theme').setAttribute('href', 'assets/themes/lara-dark-neutral/theme.css');
+          document.documentElement.classList.add('app-dark');
+        }
+      } catch (e) { /* storage unavailable: keep light */ }
+    })();
+  </script>
 </head>
 <body>
   <app-root></app-root>

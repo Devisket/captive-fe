@@ -1,10 +1,20 @@
-<div class="grid">
+<div class="grid inventory-page">
 
-  <!-- Sidebar Filters -->
-  <div class="col-12 md:col-3">
-    <div class="card p-3">
-      <div class="flex justify-content-between align-items-center mb-3">
-        <h5 class="m-0">Filters</h5>
+  <!-- Filters (collapsible on small screens) -->
+  <div class="col-12 lg:col-3">
+    <div class="card p-3 filters-card">
+      <div class="flex justify-content-between align-items-center">
+        <button
+          type="button"
+          class="filters-toggle flex align-items-center gap-2 p-0 border-none bg-transparent cursor-pointer"
+          (click)="showFilters = !showFilters"
+          [attr.aria-expanded]="showFilters"
+        >
+          <i class="pi pi-filter"></i>
+          <h5 class="m-0">Filters</h5>
+          <span *ngIf="activeFilterCount" class="filter-count">{{ activeFilterCount }}</span>
+          <i class="pi lg:hidden" [ngClass]="showFilters ? 'pi-chevron-up' : 'pi-chevron-down'"></i>
+        </button>
         <button
           *ngIf="hasActiveFilters"
           pButton
@@ -15,160 +25,226 @@
         ></button>
       </div>
 
-      <div class="field">
-        <label class="block font-medium mb-1">Branch</label>
-        <p-multiSelect
-          [options]="bankValues?.branchValues"
-          [(ngModel)]="selectedBranchFilter"
-          optionLabel="value"
-          optionValue="id"
-          placeholder="All branches"
-          [showToggleAll]="true"
-          appendTo="body"
-          class="w-full"
-          (onChange)="onFilterChange()"
-        ></p-multiSelect>
-      </div>
+      <div class="filters-body mt-3 lg:block" [ngClass]="{ hidden: !showFilters }">
+        <div class="field">
+          <label class="block font-medium mb-1">Branch</label>
+          <p-multiSelect
+            [options]="bankValues?.branchValues"
+            [(ngModel)]="selectedBranchFilter"
+            optionLabel="value"
+            optionValue="id"
+            placeholder="All branches"
+            [showToggleAll]="true"
+            [filter]="true"
+            appendTo="body"
+            styleClass="w-full"
+            (onChange)="onFilterChange()"
+          ></p-multiSelect>
+        </div>
 
-      <div class="field">
-        <label class="block font-medium mb-1">Product</label>
-        <p-multiSelect
-          [options]="bankValues?.productValues"
-          [(ngModel)]="selectedProductFilter"
-          optionLabel="value"
-          optionValue="id"
-          placeholder="All products"
-          [showToggleAll]="true"
-          appendTo="body"
-          class="w-full"
-          (onChange)="onFilterChange()"
-        ></p-multiSelect>
-      </div>
+        <div class="field">
+          <label class="block font-medium mb-1">Product</label>
+          <p-multiSelect
+            [options]="bankValues?.productValues"
+            [(ngModel)]="selectedProductFilter"
+            optionLabel="value"
+            optionValue="id"
+            placeholder="All products"
+            [showToggleAll]="true"
+            appendTo="body"
+            styleClass="w-full"
+            (onChange)="onFilterChange()"
+          ></p-multiSelect>
+        </div>
 
-      <div class="field">
-        <label class="block font-medium mb-1">Form Check Type</label>
-        <p-multiSelect
-          [options]="formCheckOptions"
-          [(ngModel)]="selectedFormCheckFilter"
-          optionLabel="value"
-          optionValue="id"
-          placeholder="All types"
-          appendTo="body"
-          class="w-full"
-          (onChange)="onFilterChange()"
-        ></p-multiSelect>
+        <div class="field mb-0">
+          <label class="block font-medium mb-1">Form Check Type</label>
+          <p-multiSelect
+            [options]="formCheckOptions"
+            [(ngModel)]="selectedFormCheckFilter"
+            optionLabel="value"
+            optionValue="id"
+            placeholder="All types"
+            appendTo="body"
+            styleClass="w-full"
+            (onChange)="onFilterChange()"
+          ></p-multiSelect>
+        </div>
       </div>
-
     </div>
   </div>
 
   <!-- Inventory List -->
-  <div class="col-12 md:col-9">
+  <div class="col-12 lg:col-9">
     <div class="card p-3">
-      <div class="flex justify-content-between align-items-center mb-3">
+      <div class="flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
         <div class="flex align-items-center gap-2">
           <h5 class="m-0">Check Inventories</h5>
           <p-tag *ngIf="hasActiveFilters" value="Filtered" severity="info" [rounded]="true"></p-tag>
         </div>
-        <div class="flex gap-2">
+        <div class="flex flex-wrap gap-2 inventory-actions">
           <input #fileInput type="file" accept=".csv" style="display:none" (change)="onFileSelected($event)" />
           <button
             pButton
-            label="Export Active Check Inventory"
             icon="pi pi-download"
-            class="p-button-outlined p-button-success"
+            class="p-button-outlined p-button-success p-button-sm"
+            pTooltip="Export the active check inventories as CSV"
+            tooltipPosition="top"
             (click)="downloadActiveCsv()"
-          ></button>
+          >
+            <span class="ml-2 action-label">Export Active</span>
+          </button>
           <button
             pButton
-            label="Import CSV"
             icon="pi pi-upload"
-            class="p-button-outlined"
+            class="p-button-outlined p-button-sm"
             [loading]="isImporting"
+            pTooltip="Import check inventories from CSV"
+            tooltipPosition="top"
             (click)="triggerImport()"
-          ></button>
-          <button pButton label="Add Inventory" icon="pi pi-plus" (click)="openAddDialog()"></button>
+          >
+            <span class="ml-2 action-label">Import CSV</span>
+          </button>
+          <button pButton icon="pi pi-plus" class="p-button-sm" (click)="openAddDialog()">
+            <span class="ml-2 action-label">Add Inventory</span>
+          </button>
         </div>
       </div>
 
-      <p-table [value]="checkInventories" [tableStyle]="{ 'min-width': '60rem' }" [rowHover]="true">
+      <p class="text-500 text-sm mt-0 mb-2">
+        <i class="pi pi-info-circle mr-1"></i>Click a row to see the series assigned to check orders.
+      </p>
+
+      <p-table
+        [value]="tableRows"
+        [rowHover]="true"
+        [rowTrackBy]="trackRow"
+        responsiveLayout="stack"
+        breakpoint="960px"
+        styleClass="p-datatable-sm inventory-table"
+      >
         <ng-template pTemplate="header">
           <tr>
-            <th>Series Pattern</th>
+            <th>Prefix</th>
             <th>Range</th>
             <th>Branches</th>
             <th>Products</th>
             <th>Form Types</th>
             <th>Account</th>
             <th>Status</th>
-            <th>Actions</th>
+            <th class="text-right">Actions</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-inv>
-          <tr>
-            <td>{{ inv.seriesPattern }}</td>
-            <td>{{ inv.startingSeries }} – {{ inv.endingSeries }}</td>
-            <td>
-              <span *ngIf="!inv.viewMappingData?.branches?.length" class="text-500 text-sm">All</span>
-              <span *ngFor="let b of inv.viewMappingData?.branches; let last = last">
-                {{ b }}<span *ngIf="!last">, </span>
-              </span>
+          <!-- Virtual row: series assigned to check orders without a check inventory -->
+          <tr *ngIf="inv.isUnassigned; else inventoryRow" class="clickable-row unassigned-row" (click)="openDetails(inv)">
+            <td colspan="7">
+              <div class="flex align-items-center gap-2">
+                <i class="pi pi-pencil text-orange-500"></i>
+                <div>
+                  <div class="font-semibold">No check inventory (manual series)</div>
+                  <div class="text-500 text-sm">
+                    {{ unassignedCount }} series assigned to check orders with a manually entered series
+                  </div>
+                </div>
+              </div>
             </td>
-            <td>
-              <span *ngIf="!inv.viewMappingData?.products?.length" class="text-500 text-sm">All</span>
-              <span *ngFor="let p of inv.viewMappingData?.products; let last = last">
-                {{ p }}<span *ngIf="!last">, </span>
-              </span>
-            </td>
-            <td>
-              <span *ngIf="!inv.viewMappingData?.formCheckTypes?.length" class="text-500 text-sm">All</span>
-              <span *ngFor="let f of inv.viewMappingData?.formCheckTypes; let last = last">
-                {{ f }}<span *ngIf="!last">, </span>
-              </span>
-            </td>
-            <td>{{ inv.accountNumber || '—' }}</td>
-            <td>
-              <p-tag
-                *ngIf="inv.isDeprecated"
-                value="Deprecated"
-                severity="danger"
-              ></p-tag>
-              <p-tag
-                *ngIf="!inv.isDeprecated && inv.isActive"
-                value="Active"
-                severity="success"
-              ></p-tag>
-              <p-tag
-                *ngIf="!inv.isDeprecated && !inv.isActive"
-                value="Inactive"
-                severity="secondary"
-              ></p-tag>
-            </td>
-            <td>
+            <td class="text-right">
               <button
                 pButton
-                icon="pi pi-check-circle"
-                class="p-button-text p-button-success mr-1"
-                pTooltip="Set Active"
-                [disabled]="inv.isActive"
-                (click)="onSetActive(inv)"
-              ></button>
-              <button
-                pButton
-                icon="pi pi-pencil"
-                class="p-button-text mr-1"
-                pTooltip="Edit"
-                (click)="openEditDialog(inv)"
-              ></button>
-              <button
-                pButton
-                icon="pi pi-trash"
-                class="p-button-text p-button-danger"
-                pTooltip="Delete"
-                (click)="onDelete(inv)"
+                icon="pi pi-list"
+                class="p-button-text p-button-sm"
+                pTooltip="View series"
+                tooltipPosition="left"
+                (click)="$event.stopPropagation(); openDetails(inv)"
               ></button>
             </td>
           </tr>
+
+          <ng-template #inventoryRow>
+            <tr class="clickable-row" (click)="openDetails(inv)">
+              <td>
+                <span class="p-column-title">Prefix</span>
+                <span class="font-semibold">{{ inv.seriesPattern || '—' }}</span>
+              </td>
+              <td>
+                <span class="p-column-title">Range</span>
+                <div>
+                  <div class="white-space-nowrap">{{ inv.startingSeries }} – {{ inv.endingSeries }}</div>
+                  <small class="text-500">Current: {{ inv.currentSeries }}</small>
+                </div>
+              </td>
+              <td>
+                <span class="p-column-title">Branches</span>
+                <span *ngIf="!inv.viewMappingData?.branches?.length" class="text-500 text-sm">All</span>
+                <span class="mapping-text" *ngIf="inv.viewMappingData?.branches?.length">
+                  {{ inv.viewMappingData.branches.join(', ') }}
+                </span>
+              </td>
+              <td>
+                <span class="p-column-title">Products</span>
+                <span *ngIf="!inv.viewMappingData?.products?.length" class="text-500 text-sm">All</span>
+                <span class="mapping-text" *ngIf="inv.viewMappingData?.products?.length">
+                  {{ inv.viewMappingData.products.join(', ') }}
+                </span>
+              </td>
+              <td>
+                <span class="p-column-title">Form Types</span>
+                <span *ngIf="!inv.viewMappingData?.formCheckTypes?.length" class="text-500 text-sm">All</span>
+                <span *ngIf="inv.viewMappingData?.formCheckTypes?.length">
+                  {{ inv.viewMappingData.formCheckTypes.join(', ') }}
+                </span>
+              </td>
+              <td>
+                <span class="p-column-title">Account</span>
+                {{ inv.accountNumber || '—' }}
+              </td>
+              <td>
+                <span class="p-column-title">Status</span>
+                <p-tag *ngIf="inv.isDeprecated" value="Deprecated" severity="danger"></p-tag>
+                <p-tag *ngIf="!inv.isDeprecated && inv.isActive" value="Active" severity="success"></p-tag>
+                <p-tag *ngIf="!inv.isDeprecated && !inv.isActive" value="Inactive" severity="secondary"></p-tag>
+              </td>
+              <td class="text-right">
+                <span class="p-column-title">Actions</span>
+                <div class="inline-flex flex-nowrap">
+                  <button
+                    pButton
+                    icon="pi pi-list"
+                    class="p-button-text p-button-sm"
+                    pTooltip="View series"
+                    tooltipPosition="top"
+                    (click)="$event.stopPropagation(); openDetails(inv)"
+                  ></button>
+                  <button
+                    pButton
+                    icon="pi pi-check-circle"
+                    class="p-button-text p-button-success p-button-sm"
+                    pTooltip="Set Active"
+                    tooltipPosition="top"
+                    [disabled]="inv.isActive"
+                    (click)="$event.stopPropagation(); onSetActive(inv)"
+                  ></button>
+                  <button
+                    pButton
+                    icon="pi pi-pencil"
+                    class="p-button-text p-button-sm"
+                    pTooltip="Edit"
+                    tooltipPosition="top"
+                    (click)="$event.stopPropagation(); openEditDialog(inv)"
+                  ></button>
+                  <button
+                    pButton
+                    icon="pi pi-trash"
+                    class="p-button-text p-button-danger p-button-sm"
+                    pTooltip="Delete"
+                    tooltipPosition="top"
+                    (click)="$event.stopPropagation(); onDelete(inv)"
+                  ></button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
@@ -182,12 +258,132 @@
         [totalRecords]="totalRecords"
         [rowsPerPageOptions]="[10, 20, 30]"
         (onPageChange)="onPageChange($event)"
-        class="mt-2"
+        styleClass="mt-2 inventory-paginator"
       ></p-paginator>
     </div>
   </div>
 
 </div>
+
+<!-- Check Inventory Details (series assigned to check orders) -->
+<p-sidebar
+  [(visible)]="detailsVisible"
+  position="right"
+  [blockScroll]="true"
+  styleClass="inventory-details-sidebar"
+  (onHide)="closeDetails()"
+>
+  <ng-template pTemplate="header">
+    <div class="flex flex-column">
+      <span class="text-500 text-sm">
+        {{ selectedRow?.isUnassigned ? 'Manual series' : 'Check inventory' }}
+      </span>
+      <span class="font-semibold text-lg">{{ detailsTitle }}</span>
+    </div>
+  </ng-template>
+
+  <div *ngIf="selectedRow && !selectedRow.isUnassigned" class="details-summary grid mb-2">
+    <div class="col-6 md:col-3">
+      <div class="text-500 text-sm">Starting</div>
+      <div class="font-semibold">{{ selectedRow.startingSeries }}</div>
+    </div>
+    <div class="col-6 md:col-3">
+      <div class="text-500 text-sm">Ending</div>
+      <div class="font-semibold">{{ selectedRow.endingSeries }}</div>
+    </div>
+    <div class="col-6 md:col-3">
+      <div class="text-500 text-sm">Current</div>
+      <div class="font-semibold">{{ selectedRow.currentSeries }}</div>
+    </div>
+    <div class="col-6 md:col-3">
+      <div class="text-500 text-sm">Account</div>
+      <div class="font-semibold">{{ selectedRow.accountNumber || '—' }}</div>
+    </div>
+  </div>
+
+  <p *ngIf="selectedRow?.isUnassigned" class="text-500 text-sm mt-0">
+    Series that were entered manually on check orders and not taken from any check inventory.
+  </p>
+
+  <div class="flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+    <span class="p-input-icon-left details-search">
+      <i class="pi pi-search"></i>
+      <input
+        pInputText
+        type="text"
+        class="w-full p-inputtext-sm"
+        placeholder="Search series, account no. or name"
+        [(ngModel)]="detailsSearch"
+        (ngModelChange)="onDetailsSearch($event)"
+      />
+    </span>
+    <span class="text-500 text-sm">{{ detailsTotal }} record(s)</span>
+  </div>
+
+  <div *ngIf="detailsError" class="details-error mb-2">
+    <i class="pi pi-times-circle mr-2"></i>{{ detailsError }}
+  </div>
+
+  <p-table
+    [value]="details"
+    [loading]="detailsLoading"
+    responsiveLayout="stack"
+    breakpoint="640px"
+    styleClass="p-datatable-sm details-table"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Starting Series</th>
+        <th>Ending Series</th>
+        <th>Check Order Name</th>
+        <th>Account No.</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-d>
+      <tr>
+        <td>
+          <span class="p-column-title">Starting Series</span>
+          <span class="series">{{ d.startingSeries || '—' }}</span>
+        </td>
+        <td>
+          <span class="p-column-title">Ending Series</span>
+          <span class="series">{{ d.endingSeries || '—' }}</span>
+        </td>
+        <td>
+          <span class="p-column-title">Check Order Name</span>
+          <div *ngIf="d.checkOrderId; else noOrder">
+            <div>{{ d.checkOrderName || '—' }}</div>
+            <small *ngIf="d.batchName || d.orderFileName" class="text-500">
+              {{ d.batchName }}<span *ngIf="d.batchName && d.orderFileName"> · </span>{{ d.orderFileName }}
+            </small>
+          </div>
+          <ng-template #noOrder><span class="text-500">—</span></ng-template>
+        </td>
+        <td>
+          <span class="p-column-title">Account No.</span>
+          {{ d.checkOrderId ? (d.accountNumber || '—') : '—' }}
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="4" class="text-center text-500 py-4">
+          {{ detailsLoading ? 'Loading...' : 'No series have been assigned yet.' }}
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-paginator
+    *ngIf="detailsTotal > detailsPageSize"
+    [first]="detailsFirst"
+    [rows]="detailsPageSize"
+    [totalRecords]="detailsTotal"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    (onPageChange)="onDetailsPageChange($event)"
+    styleClass="mt-2"
+  ></p-paginator>
+</p-sidebar>
 
 <!-- CSV Preview Dialog -->
 <p-dialog

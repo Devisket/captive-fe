@@ -1,7 +1,10 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MegaMenuModule } from 'primeng/megamenu';
-import { MegaMenuItem } from 'primeng/api';
+import { MegaMenuItem, PrimeTemplate } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
+import { ThemeService } from '../../../core/_services/theme.service';
 
 @Component({
   selector: 'app-header',
@@ -9,12 +12,17 @@ import { MegaMenuItem } from 'primeng/api';
   imports: [
     FormsModule,
     MegaMenuModule,
+    PrimeTemplate,
+    ButtonModule,
+    TooltipModule,
   ],
   templateUrl: './app-header.component.html',
   styleUrl: './app-header.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class ApplicationHeaderComponent implements OnInit{
+  themeService = inject(ThemeService);
+
   ngOnInit(): void {
     this.items = [
       {
@@ -25,4 +33,8 @@ export class ApplicationHeaderComponent implements OnInit{
     ]
   }
   items:MegaMenuItem [] | undefined;
+
+  toggleTheme(): void {
+    this.themeService.toggle();
+  }
 }
